@@ -33,12 +33,14 @@ chmod +x create-user.sh
 ./create-user.sh 
 ```
 
-Testar o login
+Gerar um token JWT para testes
 ```sh
 chmod +x login-create-token.sh
 ./login-create-token.sh
 ```
 
+Guarde o token no contexto do terminal
+TOKEN=....
 
 ## Configurar o Kong
 http://localhost:8002/
@@ -56,3 +58,16 @@ Habilitar o plugin
 chmod +x enable-oidc.sh
 ./enable-oidc.sh
 ```
+
+Subir a aplicação na porta 3000 em outro console
+```sh
+cd api
+npm run start:dev
+```
+
+Validar a autorização com o token gerado anteriormente
+```sh
+./validate.sh $TOKEN
+```
+
+Para verificar a falha basta colocar um token inválido e rodar o script novamente para ver o erro 401
