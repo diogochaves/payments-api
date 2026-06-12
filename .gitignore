@@ -25,3 +25,7 @@ lerna-debug.log*
 
 .aws-sam
 .lambda_build_temp
+
+.terraform
+.terraform.lock.hcl
+terraform.tfvars

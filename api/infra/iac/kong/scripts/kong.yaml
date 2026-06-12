@@ -1,0 +1,102 @@
+_format_version: "3.0"
+services:
+- host: webshop-api
+  id: 43184efc-a485-524e-9531-96f3c98ca4a6
+  name: webshop-api
+  path: /
+  plugins: []
+  port: 3000
+  protocol: http
+  routes:
+  - id: 6f8c6d8e-a952-5f24-872e-a7e859322959
+    methods:
+    - POST
+    name: webshop-api_authcontroller-login
+    paths:
+    - ~/auth/login$
+    plugins: []
+    regex_priority: 200
+    strip_path: false
+    tags: []
+  - id: 0e5363a8-982e-5a45-8145-0e8835c5ec9d
+    methods:
+    - POST
+    name: webshop-api_authcontroller-register
+    paths:
+    - ~/auth/register$
+    plugins: []
+    regex_priority: 200
+    strip_path: false
+    tags: []
+  - id: 14f4f545-c40a-5d03-9485-a29235994024
+    methods:
+    - GET
+    name: webshop-api_appcontroller-getglenio
+    paths:
+    - ~/glenio$
+    plugins: []
+    regex_priority: 200
+    strip_path: false
+    tags: []
+  - id: e516f5ba-4030-5689-a51f-6fe4d242d944
+    methods:
+    - GET
+    name: webshop-api_appcontroller-getglenio2
+    paths:
+    - ~/glenio2$
+    plugins: []
+    regex_priority: 200
+    strip_path: false
+    tags: []
+  - id: 73119436-e654-5a00-a77c-a5d840cf9a97
+    methods:
+    - POST
+    name: webshop-api_groupbuyingcontroller-create
+    paths:
+    - ~/group-buying$
+    plugins: []
+    regex_priority: 200
+    strip_path: false
+    tags: []
+  - id: 2e2f303a-cb3d-5e70-a54b-5229fa6a981c
+    methods:
+    - POST
+    name: webshop-api_appcontroller-getkeycloaktest
+    paths:
+    - ~/keycloak-test$
+    plugins: []
+    regex_priority: 200
+    strip_path: false
+    tags: []
+  - id: 7012db3b-f81a-5c60-bdaa-8bbcf3f45e0a
+    methods:
+    - POST
+    name: webshop-api_appcontroller-createorder
+    paths:
+    - ~/order$
+    plugins: []
+    regex_priority: 200
+    strip_path: false
+    tags: []
+  - id: 972e3aa3-34ce-5dea-b7de-4bc8f587a9b9
+    methods:
+    - GET
+    name: webshop-api_appcontroller-getorder
+    paths:
+    - ~/order/(?<id>[^#?/]+)$
+    plugins: []
+    regex_priority: 100
+    strip_path: false
+    tags: []
+  - id: adc0d3cf-e75a-5e2a-a6e5-07840202dcad
+    methods:
+    - GET
+    name: webshop-api_appcontroller-getproducts
+    paths:
+    - ~/products$
+    plugins: []
+    regex_priority: 200
+    strip_path: false
+    tags: []
+  tags: []
+upstreams: []
