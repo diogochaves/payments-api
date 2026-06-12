@@ -2,7 +2,7 @@
 set -euo pipefail
 
 KEYCLOAK_URL="http://localhost:8080"
-REALM="magasiara"
+REALM="spire"
 #REALM="master"
 ADMIN_USER="admin"
 ADMIN_PASS="admin"

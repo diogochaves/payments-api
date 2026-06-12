@@ -4,7 +4,7 @@ set -euo pipefail
 # ---------------------------------------------
 # CONFIGURAÇÕES DO KEYCLOAK
 # ---------------------------------------------
-REALM="magasiara"
+REALM="spire"
 KEYCLOAK_URL="http://keycloak:8080/realms/$REALM/protocol/openid-connect/token"
 CLIENT_ID="webshop-api"
 CLIENT_SECRET=$(./get-client-secret.sh --raw)

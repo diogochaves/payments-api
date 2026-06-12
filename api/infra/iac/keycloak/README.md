@@ -1,6 +1,6 @@
 # Keycloak Terraform IaC
 
-Conteúdo: configuração de realm, grupos, roles, clients e mappers para a plataforma `magasiara`.
+Conteúdo: configuração de realm, grupos, roles, clients e mappers para a plataforma `spire`.
 
 ## Setup
 

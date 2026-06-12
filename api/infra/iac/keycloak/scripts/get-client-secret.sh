@@ -2,7 +2,7 @@
 set -euo pipefail
 
 KEYCLOAK_URL="http://keycloak:8080"
-REALM="magasiara"
+REALM="spire"
 ADMIN_USER="admin"
 ADMIN_PASS="admin"
 CLIENT_ID="admin-cli"

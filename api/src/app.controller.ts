@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AsaasWebhookDto } from './dto/asaas-webhook.dto';
@@ -28,5 +29,10 @@ export class AppController {
   async processQueue(@Body() payload: any) {
     await this.appService.processTransaction(payload);
     return { processed: true };
+  }
+
+  @Post('/keycloak-test')
+  echo(@Body() dto: any) {
+    return dto;
   }
 }

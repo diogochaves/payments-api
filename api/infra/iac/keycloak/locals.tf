@@ -1,4 +1,4 @@
 locals {
-  realm_name = "magasiara"
-  namespace  = "magasiara-keycloak"
+  realm_name = "spire"
+  namespace  = "spire-keycloak"
 }
