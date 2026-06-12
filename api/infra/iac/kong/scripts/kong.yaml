@@ -1,6 +1,6 @@
 _format_version: "3.0"
 services:
-- host: webshop-api
+- host: host.docker.internal
   id: 43184efc-a485-524e-9531-96f3c98ca4a6
   name: webshop-api
   path: /
