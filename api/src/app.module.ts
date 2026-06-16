@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from 'nestjs-pino';
 import awsConfig from './config/aws.config';
 import KafkaService from './infra/kafka.service';
+import { InvoicesModule } from './modules/invoices/invoices.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import KafkaService from './infra/kafka.service';
       wildcard: true,
       delimiter: '.',
     }),
+    InvoicesModule,
   ],
   controllers: [AppController],
   providers: [

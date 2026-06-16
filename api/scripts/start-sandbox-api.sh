@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export PORT="${PORT:-3011}"
+export INVOICE_REPOSITORY="${INVOICE_REPOSITORY:-memory}"
+export ENABLED_PAYMENT_PROVIDERS="${ENABLED_PAYMENT_PROVIDERS:-ASAAS}"
+export DEFAULT_PAYMENT_PROVIDER="${DEFAULT_PAYMENT_PROVIDER:-ASAAS}"
+
+npm run start
