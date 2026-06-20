@@ -18,10 +18,12 @@ export class InvoiceController {
   async createInvoice(
     @Body() createInvoiceDto: CreateInvoiceDto,
     @Headers('idempotency-key') idempotencyKey: string,
+    @Headers('x-correlation-id') correlationId?: string,
   ) {
     return await this.invoiceService.createInvoice(
       createInvoiceDto,
       idempotencyKey,
+      correlationId,
     );
   }
 }

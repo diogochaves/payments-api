@@ -62,6 +62,10 @@ export interface ProviderChargeRequest {
 export interface ProviderChargeResponse {
   id: string;
   status: string;
+  value?: number;
+  dueDate?: string;
+  billingType?: BillingType;
+  externalReference?: string;
   invoiceUrl?: string;
   bankSlipUrl?: string;
   transactionReceiptUrl?: string;

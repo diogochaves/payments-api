@@ -54,6 +54,10 @@ export class AsaasService {
       return {
         id,
         status: 'PENDING',
+        value: payload.value,
+        dueDate: payload.dueDate,
+        billingType: payload.billingType,
+        externalReference: payload.externalReference,
         invoiceUrl: `https://sandbox.asaas.com/i/${id}`,
         payload: {
           id,
@@ -70,6 +74,10 @@ export class AsaasService {
       return {
         id: data.id,
         status: data.status,
+        value: data.value,
+        dueDate: data.dueDate,
+        billingType: data.billingType,
+        externalReference: data.externalReference,
         invoiceUrl: data.invoiceUrl,
         bankSlipUrl: data.bankSlipUrl,
         transactionReceiptUrl: data.transactionReceiptUrl,
