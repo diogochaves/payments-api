@@ -10,6 +10,7 @@ export type InvoiceStatus =
   | 'RECEIVED'
   | 'CANCEL_REQUESTED'
   | 'CANCELLED'
+  | 'CANCEL_RECONCILIATION_REQUIRED'
   | 'FAILED';
 
 export interface InvoiceCustomer {

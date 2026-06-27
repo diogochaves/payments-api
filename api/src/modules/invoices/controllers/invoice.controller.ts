@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
   Headers,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
 } from '@nestjs/common';
 import { InvoiceService } from '../services/invoice.service';
@@ -22,6 +24,22 @@ export class InvoiceController {
   ) {
     return await this.invoiceService.createInvoice(
       createInvoiceDto,
+      idempotencyKey,
+      correlationId,
+    );
+  }
+
+  @Delete(':invoiceId')
+  @HttpCode(HttpStatus.OK)
+  async cancelInvoice(
+    @Param('invoiceId') invoiceId: string,
+    @Headers('x-tenant-id') tenantId: string,
+    @Headers('idempotency-key') idempotencyKey: string,
+    @Headers('x-correlation-id') correlationId?: string,
+  ) {
+    return await this.invoiceService.cancelInvoice(
+      tenantId,
+      invoiceId,
       idempotencyKey,
       correlationId,
     );

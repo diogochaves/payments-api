@@ -5,6 +5,7 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 import { AsaasService } from '../src/infra/asaas.service';
+import { SqsService } from '../src/infra/sqs.service';
 import { InvoiceRepository } from '../src/modules/invoices/services/invoice-repository.service';
 
 class AsaasServiceStub {
@@ -30,11 +31,21 @@ class AsaasServiceStub {
       ...payload,
     },
   }));
+
+  cancelCharge = jest.fn(async (providerPaymentId: string) => ({
+    id: providerPaymentId,
+    status: 'DELETED',
+  }));
+}
+
+class SqsServiceStub {
+  sendMessage = jest.fn(async () => ({ MessageId: 'msg_stub_123' }));
 }
 
 describe('Criar Invoice (acceptance)', () => {
   let app: INestApplication<App>;
   let asaas: AsaasServiceStub;
+  let sqs: SqsServiceStub;
   let repository: InvoiceRepository;
   let emitSpy: jest.SpyInstance;
 
@@ -62,12 +73,15 @@ describe('Criar Invoice (acceptance)', () => {
     process.env.DEFAULT_PAYMENT_PROVIDER = 'ASAAS';
 
     asaas = new AsaasServiceStub();
+    sqs = new SqsServiceStub();
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     })
       .overrideProvider(AsaasService)
       .useValue(asaas)
+      .overrideProvider(SqsService)
+      .useValue(sqs)
       .compile();
 
     app = moduleFixture.createNestApplication();
@@ -394,6 +408,177 @@ describe('Criar Invoice (acceptance)', () => {
       provider: 'ASAAS',
       errorType: 'provider_contract_violation',
       errorCode: 'provider_contract_violation: missing payment id',
+    });
+  });
+
+  describe('Cancelar Invoice', () => {
+    it('cancela invoice aberta com sucesso no Asaas', async () => {
+      const created = await request(app.getHttpServer())
+        .post('/invoices')
+        .set('Idempotency-Key', 'MS-100045:create')
+        .set('X-Correlation-Id', 'corr-cancel-create')
+        .send(basePayload)
+        .expect(201);
+
+      const response = await request(app.getHttpServer())
+        .delete(`/invoices/${created.body.invoiceId}`)
+        .set('X-Tenant-Id', basePayload.tenantId)
+        .set('Idempotency-Key', 'MS-100045:cancel')
+        .set('X-Correlation-Id', 'corr-cancel-success')
+        .expect(200);
+
+      expect(response.body).toMatchObject({
+        invoiceId: created.body.invoiceId,
+        orderId: 'MS-100045',
+        provider: 'ASAAS',
+        providerPaymentId: 'pay_stub_MS-100045',
+        status: 'CANCELLED',
+      });
+      expect(asaas.cancelCharge).toHaveBeenCalledWith('pay_stub_MS-100045');
+      expect(observableEventKeys()).toEqual(
+        expect.arrayContaining([
+          'pagamento.cancelamento.cobranca.cancelamento.solicitado',
+          'pagamento.cancelamento.cobranca.cancelada',
+        ]),
+      );
+      expect(emitSpy).toHaveBeenCalledWith(
+        'payment.cancelled',
+        expect.objectContaining({
+          invoiceId: created.body.invoiceId,
+          orderId: 'MS-100045',
+          provider: 'ASAAS',
+          providerPaymentId: 'pay_stub_MS-100045',
+        }),
+      );
+    });
+
+    it('nao chama Asaas novamente quando cancelamento e repetido com mesma idempotencia', async () => {
+      const created = await request(app.getHttpServer())
+        .post('/invoices')
+        .set('Idempotency-Key', 'MS-100045:create')
+        .send(basePayload)
+        .expect(201);
+
+      const first = await request(app.getHttpServer())
+        .delete(`/invoices/${created.body.invoiceId}`)
+        .set('X-Tenant-Id', basePayload.tenantId)
+        .set('Idempotency-Key', 'MS-100045:cancel')
+        .expect(200);
+
+      const second = await request(app.getHttpServer())
+        .delete(`/invoices/${created.body.invoiceId}`)
+        .set('X-Tenant-Id', basePayload.tenantId)
+        .set('Idempotency-Key', 'MS-100045:cancel')
+        .expect(200);
+
+      expect(second.body).toEqual(first.body);
+      expect(second.body.status).toBe('CANCELLED');
+      expect(asaas.cancelCharge).toHaveBeenCalledTimes(1);
+    });
+
+    it('impede cancelamento apos pagamento confirmado', async () => {
+      const created = await request(app.getHttpServer())
+        .post('/invoices')
+        .set('Idempotency-Key', 'MS-100045:create')
+        .send(basePayload)
+        .expect(201);
+
+      const existing = await repository.findInvoice(
+        basePayload.tenantId,
+        created.body.invoiceId,
+      );
+      await repository.updateInvoice(existing!, 'CONFIRMED');
+
+      const response = await request(app.getHttpServer())
+        .delete(`/invoices/${created.body.invoiceId}`)
+        .set('X-Tenant-Id', basePayload.tenantId)
+        .set('Idempotency-Key', 'MS-100045:cancel')
+        .expect(400);
+
+      expect(response.body.message).toBe(
+        'Invoice cancellation after confirmation requires refund flow',
+      );
+      expect(asaas.cancelCharge).not.toHaveBeenCalled();
+    });
+
+    it('mantem invoice para investigacao quando provedor informa cobranca inexistente', async () => {
+      const created = await request(app.getHttpServer())
+        .post('/invoices')
+        .set('Idempotency-Key', 'MS-100045:create')
+        .send(basePayload)
+        .expect(201);
+
+      asaas.cancelCharge.mockRejectedValueOnce(
+        Object.assign(new Error('payment not found'), { status: 404 }),
+      );
+
+      const response = await request(app.getHttpServer())
+        .delete(`/invoices/${created.body.invoiceId}`)
+        .set('X-Tenant-Id', basePayload.tenantId)
+        .set('Idempotency-Key', 'MS-100045:cancel')
+        .expect(409);
+
+      expect(response.body.message).toBe(
+        'Payment provider cancellation requires operational reconciliation',
+      );
+      expect(response.body.status).toBe('CANCEL_RECONCILIATION_REQUIRED');
+      expect(emitSpy).not.toHaveBeenCalledWith(
+        'payment.cancelled',
+        expect.anything(),
+      );
+    });
+
+    it('confirma cancelamento por webhook PAYMENT_DELETED sem duplicar evento canonico', async () => {
+      const created = await request(app.getHttpServer())
+        .post('/invoices')
+        .set('Idempotency-Key', 'MS-100045:create')
+        .send(basePayload)
+        .expect(201);
+      const existing = await repository.findInvoice(
+        basePayload.tenantId,
+        created.body.invoiceId,
+      );
+      await repository.updateInvoice(existing!, 'CANCEL_REQUESTED');
+
+      await request(app.getHttpServer())
+        .post('/webhook/payments')
+        .send({
+          event: 'PAYMENT_DELETED',
+          payment: {
+            id: created.body.providerPaymentId,
+            status: 'DELETED',
+            value: 159.9,
+            customer: 'cus_stub_customer-123',
+          },
+        })
+        .expect(201);
+
+      const cancelled = await repository.findInvoice(
+        basePayload.tenantId,
+        created.body.invoiceId,
+      );
+      expect(cancelled?.status).toBe('CANCELLED');
+      expect(sqs.sendMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          event: 'PAYMENT_DELETED',
+          payment: expect.objectContaining({
+            id: created.body.providerPaymentId,
+          }),
+        }),
+      );
+      expect(emitSpy).not.toHaveBeenCalledWith(
+        'payment.cancelled',
+        expect.anything(),
+      );
+      expect(
+        observableEvent(
+          'pagamento.cancelamento.webhook.cancelamento.confirmado',
+        ),
+      ).toMatchObject({
+        event_key: 'pagamento.cancelamento.webhook.cancelamento.confirmado',
+        stage: 'webhook_cancelamento',
+        providerPaymentId: created.body.providerPaymentId,
+      });
     });
   });
 

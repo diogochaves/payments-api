@@ -8,6 +8,7 @@ import { DynamoService } from './infra/dynamo.service';
 import { AsaasService } from './infra/asaas.service';
 import { SqsService } from './infra/sqs.service';
 import { ulid } from 'ulid';
+import { InvoiceService } from './modules/invoices/services/invoice.service';
 @Injectable()
 export class AppService {
   constructor(
@@ -16,6 +17,7 @@ export class AppService {
     private readonly sqs: SqsService,
     private readonly logger: Logger,
     private readonly eventEmitter: EventEmitter2,
+    private readonly invoiceService: InvoiceService,
   ) {}
 
   async createPayment(dto: CreatePaymentDto) {
@@ -90,6 +92,13 @@ export class AppService {
 
   async enqueueWebhook(payload: AsaasWebhookDto) {
     await this.sqs.sendMessage(payload);
+
+    if (payload.event === 'PAYMENT_DELETED') {
+      await this.invoiceService.confirmProviderCancellation(
+        payload.payment.id,
+        `webhook-${payload.payment.id}`,
+      );
+    }
   }
 
   async processTransaction(message: any) {

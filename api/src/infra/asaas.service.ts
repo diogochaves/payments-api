@@ -88,7 +88,47 @@ export class AsaasService {
     }
   }
 
+  async cancelCharge(providerPaymentId: string) {
+    if (this.mockEnabled()) {
+      return {
+        id: providerPaymentId,
+        status: 'DELETED',
+      };
+    }
+
+    try {
+      const { data } = await this.api.delete(`/payments/${providerPaymentId}`);
+      return data ?? { id: providerPaymentId, status: 'DELETED' };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const message = this.extractErrorMessage(error);
+        const providerError = new Error(message) as Error & {
+          status?: number;
+        };
+        providerError.status = error.response?.status;
+        throw providerError;
+      }
+
+      throw error;
+    }
+  }
+
   async createPayment(payload: any, eventEmitter) {
+    if (this.mockEnabled()) {
+      const id = `plink_mock_${payload.externalReference}`;
+      return {
+        id,
+        status: 'ACTIVE',
+        name: payload.name,
+        value: payload.value,
+        billingType: payload.billingType,
+        chargeType: payload.chargeType,
+        externalReference: payload.externalReference,
+        url: `https://sandbox.asaas.com/payment-links/${id}`,
+        payload,
+      };
+    }
+
     try {
       const { data } = await this.api.post('/paymentLinks', payload);
       return data;

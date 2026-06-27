@@ -69,6 +69,29 @@ export class InvoiceRepository {
     });
   }
 
+  async saveIdempotencyKey(
+    tenantId: string,
+    idempotencyKey: string,
+    invoice: InvoiceRecord,
+  ): Promise<void> {
+    if (!this.useDynamo) {
+      this.idempotency.set(
+        this.idempotencyKey(tenantId, idempotencyKey),
+        invoice.invoiceId,
+      );
+      return;
+    }
+
+    await this.dynamo.putItem('PaymentsTable', {
+      PK: `TENANT#${tenantId}`,
+      SK: `IDEMPOTENCY#${idempotencyKey}`,
+      invoiceId: invoice.invoiceId,
+      orderId: invoice.orderId,
+      operation: 'CANCEL_INVOICE',
+      createdAt: new Date().toISOString(),
+    });
+  }
+
   async updateInvoice(
     invoice: InvoiceRecord,
     status: InvoiceStatus,
@@ -108,6 +131,18 @@ export class InvoiceRepository {
     );
 
     return item?.invoice as InvoiceRecord | undefined;
+  }
+
+  async findByProviderPaymentId(
+    providerPaymentId: string,
+  ): Promise<InvoiceRecord | undefined> {
+    if (!this.useDynamo) {
+      return Array.from(this.invoices.values()).find(
+        (invoice) => invoice.providerPaymentId === providerPaymentId,
+      );
+    }
+
+    return undefined;
   }
 
   async findCustomerLink(

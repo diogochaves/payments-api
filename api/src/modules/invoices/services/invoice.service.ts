@@ -1,7 +1,9 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   Logger,
+  NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -246,6 +248,179 @@ export class InvoiceService {
     }
   }
 
+  async cancelInvoice(
+    tenantId: string,
+    invoiceId: string,
+    idempotencyKey: string,
+    correlationId?: string,
+  ): Promise<InvoiceResponseDto> {
+    this.validateCancelInvoice(tenantId, invoiceId, idempotencyKey);
+    const resolvedCorrelationId = correlationId?.trim() || `corr_${ulid()}`;
+
+    const existing = await this.repository.findByIdempotencyKey(
+      tenantId,
+      idempotencyKey,
+    );
+
+    if (existing?.status === 'CANCELLED') {
+      return this.toResponse(existing);
+    }
+
+    const invoice =
+      existing ?? (await this.repository.findInvoice(tenantId, invoiceId));
+
+    if (!invoice) {
+      throw new NotFoundException('Invoice not found');
+    }
+
+    if (invoice.status === 'CONFIRMED' || invoice.status === 'RECEIVED') {
+      throw new BadRequestException(
+        'Invoice cancellation after confirmation requires refund flow',
+      );
+    }
+
+    if (!invoice.providerPaymentId) {
+      throw new BadRequestException(
+        'Invoice cancellation requires providerPaymentId',
+      );
+    }
+
+    if (invoice.status === 'CANCELLED') {
+      await this.repository.saveIdempotencyKey(
+        tenantId,
+        idempotencyKey,
+        invoice,
+      );
+      return this.toResponse(invoice);
+    }
+
+    const cancelRequested = await this.repository.updateInvoice(
+      invoice,
+      'CANCEL_REQUESTED',
+    );
+    this.emitObservable(
+      'pagamento.cancelamento.cobranca.cancelamento.solicitado',
+      {
+        invoice: cancelRequested,
+        correlationId: resolvedCorrelationId,
+        stage: 'cancelamento_solicitado',
+        flow: 'cancelamento',
+        step: 1,
+        providerOperation: `DELETE /v3/payments/${invoice.providerPaymentId}`,
+      },
+    );
+
+    try {
+      await this.asaas.cancelCharge(invoice.providerPaymentId);
+    } catch (error) {
+      if (this.providerStatus(error) === 404) {
+        const reconciliationInvoice = await this.repository.updateInvoice(
+          cancelRequested,
+          'CANCEL_RECONCILIATION_REQUIRED',
+          {
+            failureReason:
+              error instanceof Error ? error.message : 'payment not found',
+          },
+        );
+        this.emitObservable(
+          'pagamento.cancelamento.cobranca.conciliacao.requerida',
+          {
+            invoice: reconciliationInvoice,
+            correlationId: resolvedCorrelationId,
+            stage: 'conciliacao_cancelamento',
+            flow: 'cancelamento',
+            step: 2,
+            providerOperation: `DELETE /v3/payments/${invoice.providerPaymentId}`,
+            errorType: 'provider_not_found',
+            retryable: false,
+          },
+        );
+
+        throw new ConflictException({
+          message:
+            'Payment provider cancellation requires operational reconciliation',
+          invoiceId: reconciliationInvoice.invoiceId,
+          status: reconciliationInvoice.status,
+        });
+      }
+
+      throw error;
+    }
+
+    const cancelledInvoice = await this.repository.updateInvoice(
+      cancelRequested,
+      'CANCELLED',
+    );
+    await this.repository.saveIdempotencyKey(
+      tenantId,
+      idempotencyKey,
+      cancelledInvoice,
+    );
+
+    const eventPayload = {
+      invoiceId: cancelledInvoice.invoiceId,
+      orderId: cancelledInvoice.orderId,
+      provider: cancelledInvoice.provider,
+      providerPaymentId: cancelledInvoice.providerPaymentId,
+      cancelledAt: cancelledInvoice.updatedAt,
+    };
+    this.eventEmitter.emit('payment.cancelled', eventPayload);
+    this.eventEmitter.emit('payments.invoice.cancelled', {
+      ...eventPayload,
+      timestamp: cancelledInvoice.updatedAt,
+    });
+    this.emitObservable('pagamento.cancelamento.cobranca.cancelada', {
+      invoice: cancelledInvoice,
+      correlationId: resolvedCorrelationId,
+      stage: 'fatura_cancelada',
+      flow: 'cancelamento',
+      step: 3,
+      providerOperation: `DELETE /v3/payments/${invoice.providerPaymentId}`,
+      providerStatus: 'DELETED',
+    });
+
+    return this.toResponse(cancelledInvoice);
+  }
+
+  async confirmProviderCancellation(
+    providerPaymentId: string,
+    correlationId?: string,
+  ): Promise<InvoiceResponseDto | undefined> {
+    const invoice =
+      await this.repository.findByProviderPaymentId(providerPaymentId);
+
+    if (!invoice) {
+      return undefined;
+    }
+
+    if (invoice.status === 'CANCELLED') {
+      return this.toResponse(invoice);
+    }
+
+    if (invoice.status !== 'CANCEL_REQUESTED') {
+      return this.toResponse(invoice);
+    }
+
+    const cancelledInvoice = await this.repository.updateInvoice(
+      invoice,
+      'CANCELLED',
+    );
+    const resolvedCorrelationId = correlationId?.trim() || `corr_${ulid()}`;
+    this.emitObservable(
+      'pagamento.cancelamento.webhook.cancelamento.confirmado',
+      {
+        invoice: cancelledInvoice,
+        correlationId: resolvedCorrelationId,
+        stage: 'webhook_cancelamento',
+        flow: 'cancelamento',
+        step: 4,
+        providerStatus: 'PAYMENT_DELETED',
+      },
+    );
+
+    return this.toResponse(cancelledInvoice);
+  }
+
   private async ensureProviderCustomer(
     invoice: InvoiceRecord,
     provider: PaymentProvider,
@@ -432,6 +607,32 @@ export class InvoiceService {
     }
   }
 
+  private validateCancelInvoice(
+    tenantId: string,
+    invoiceId: string,
+    idempotencyKey: string,
+  ): void {
+    const missingFields: string[] = [];
+
+    if (!tenantId?.trim()) {
+      missingFields.push('X-Tenant-Id header');
+    }
+
+    if (!invoiceId?.trim()) {
+      missingFields.push('invoiceId');
+    }
+
+    if (!idempotencyKey?.trim()) {
+      missingFields.push('Idempotency-Key header');
+    }
+
+    if (missingFields.length > 0) {
+      throw new BadRequestException(
+        `Missing required fields: ${missingFields.join(', ')}`,
+      );
+    }
+  }
+
   private toResponse(invoice: InvoiceRecord): InvoiceResponseDto {
     if (!invoice.providerPaymentId) {
       throw new ServiceUnavailableException({
@@ -490,7 +691,12 @@ export class InvoiceService {
   }
 
   private withoutInternalPayload(payload: Record<string, unknown>) {
-    const { invoice, correlationId, stage, flow, step, ...rest } = payload;
+    const rest = { ...payload };
+    delete rest.invoice;
+    delete rest.correlationId;
+    delete rest.stage;
+    delete rest.flow;
+    delete rest.step;
     return rest;
   }
 
@@ -503,5 +709,11 @@ export class InvoiceService {
 
   private isRetryableProviderError(message: string): boolean {
     return /timeout|5\d\d|ECONNRESET|ETIMEDOUT/i.test(message);
+  }
+
+  private providerStatus(error: unknown): number | undefined {
+    return typeof error === 'object' && error !== null && 'status' in error
+      ? Number((error as { status?: number }).status)
+      : undefined;
   }
 }
