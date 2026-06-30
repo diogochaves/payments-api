@@ -1,9 +1,12 @@
 export class AsaasWebhookDto {
   event: string;
   payment: {
-    id: string;
-    status: string;
-    value: number;
-    customer: string;
+    id?: string;
+    status?: string;
+    value?: number;
+    customer?: string;
+    externalReference?: string;
+    confirmedDate?: string;
+    paymentDate?: string;
   };
 }

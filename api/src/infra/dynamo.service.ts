@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import {
   DynamoDBDocumentClient,
@@ -7,8 +6,14 @@ import {
   UpdateCommand,
 } from '@aws-sdk/lib-dynamodb';
 
+type DynamoItem = Record<string, unknown> & {
+  PK: string;
+  SK: string;
+};
+
 export class DynamoService {
   private client: DynamoDBDocumentClient;
+  private memoryStore = new Map<string, DynamoItem>();
 
   constructor() {
     const isLocal = process.env.AWS_DYNAMODB_ENDPOINT !== undefined;
@@ -42,22 +47,36 @@ export class DynamoService {
   //   }),
   // );
 
-  async getItem(table: string, pk: string, sk: string) {
-    return this.client
-      .send(
+  async getItem(
+    table: string,
+    pk: string,
+    sk: string,
+  ): Promise<Record<string, unknown> | undefined> {
+    if (this.mockEnabled()) {
+      return this.memoryStore.get(this.key(table, pk, sk));
+    }
+
+    try {
+      const result = await this.client.send(
         new GetCommand({
           TableName: table,
           Key: { PK: pk, SK: sk },
         }),
-      )
-      .then((r) => r.Item)
-      .catch((error) => {
-        console.error('DynamoDB getItem error:', error);
-        throw error;
-      });
+      );
+
+      return result.Item;
+    } catch (error) {
+      console.error('DynamoDB getItem error:', error);
+      throw error;
+    }
   }
 
-  async putItem(table: string, item: any) {
+  async putItem(table: string, item: DynamoItem) {
+    if (this.mockEnabled()) {
+      this.memoryStore.set(this.key(table, item.PK, item.SK), item);
+      return { mocked: true };
+    }
+
     return await this.client.send(
       new PutCommand({
         TableName: table,
@@ -66,7 +85,20 @@ export class DynamoService {
     );
   }
 
-  async updateItem(table: string, pk: string, sk: string, attrs: any) {
+  async updateItem(
+    table: string,
+    pk: string,
+    sk: string,
+    attrs: Record<string, unknown>,
+  ) {
+    if (this.mockEnabled()) {
+      const key = this.key(table, pk, sk);
+      const current = this.memoryStore.get(key) ?? { PK: pk, SK: sk };
+      const updated = { ...current, ...attrs };
+      this.memoryStore.set(key, updated);
+      return { mocked: true };
+    }
+
     const updates = Object.keys(attrs)
       .map((k) => `#${k} = :${k}`)
       .join(', ');
@@ -84,5 +116,13 @@ export class DynamoService {
         ),
       }),
     );
+  }
+
+  private mockEnabled(): boolean {
+    return process.env.DYNAMO_MOCK === 'true';
+  }
+
+  private key(table: string, pk: string, sk: string): string {
+    return `${table}::${pk}::${sk}`;
   }
 }

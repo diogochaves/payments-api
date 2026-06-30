@@ -27,7 +27,7 @@ export class AsaasService {
     mobilePhone?: string;
     externalReference: string;
     notificationDisabled?: boolean;
-  }) {
+  }): Promise<{ id: string } & Record<string, unknown>> {
     if (this.mockEnabled()) {
       return {
         id: `cus_mock_${payload.externalReference}`,
@@ -39,7 +39,10 @@ export class AsaasService {
     }
 
     try {
-      const { data } = await this.api.post('/customers', payload);
+      const { data } = await this.api.post<{ id: string }>(
+        '/customers',
+        payload,
+      );
       return data;
     } catch (error) {
       throw new Error(this.extractErrorMessage(error));
@@ -110,35 +113,6 @@ export class AsaasService {
       }
 
       throw error;
-    }
-  }
-
-  async createPayment(payload: any, eventEmitter) {
-    if (this.mockEnabled()) {
-      const id = `plink_mock_${payload.externalReference}`;
-      return {
-        id,
-        status: 'ACTIVE',
-        name: payload.name,
-        value: payload.value,
-        billingType: payload.billingType,
-        chargeType: payload.chargeType,
-        externalReference: payload.externalReference,
-        url: `https://sandbox.asaas.com/payment-links/${id}`,
-        payload,
-      };
-    }
-
-    try {
-      const { data } = await this.api.post('/paymentLinks', payload);
-      return data;
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      eventEmitter.emit('payments.invoice.psp_not_integrated', {
-        timestamp: new Date(),
-        payload: { message: error.message },
-      });
-      return null;
     }
   }
 

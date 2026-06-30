@@ -5,9 +5,11 @@ import {
   Logger,
   NotFoundException,
   ServiceUnavailableException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ulid } from 'ulid';
+import { AsaasWebhookDto } from '../../../dto/asaas-webhook.dto';
 import { AsaasService } from '../../../infra/asaas.service';
 import { CreateInvoiceDto } from '../dto/create-invoice.dto';
 import { InvoiceResponseDto } from '../dto/invoice-response.dto';
@@ -421,6 +423,139 @@ export class InvoiceService {
     return this.toResponse(cancelledInvoice);
   }
 
+  async processProviderWebhook(
+    payload: AsaasWebhookDto,
+    accessToken?: string,
+  ): Promise<InvoiceResponseDto | undefined> {
+    this.validateWebhookToken(accessToken);
+
+    const eventKey = this.providerEventKey(payload);
+    const isNewEvent = await this.repository.saveRawProviderEvent(
+      eventKey,
+      payload,
+    );
+
+    if (!isNewEvent) {
+      const invoice = await this.findWebhookInvoice(payload);
+      return invoice?.providerPaymentId ? this.toResponse(invoice) : undefined;
+    }
+
+    switch (payload.event) {
+      case 'PAYMENT_DELETED':
+        return payload.payment?.id
+          ? this.confirmProviderCancellation(
+              payload.payment.id,
+              `webhook-${payload.payment.id}`,
+            )
+          : undefined;
+      case 'PAYMENT_CONFIRMED':
+        return this.confirmProviderPayment(payload);
+      case 'PAYMENT_RECEIVED':
+        return this.receiveProviderPayment(payload);
+      case 'PAYMENT_OVERDUE':
+        return this.recordIgnoredProviderEvent(payload, 'PAYMENT_OVERDUE');
+      default:
+        return this.recordIgnoredProviderEvent(payload, payload.event);
+    }
+  }
+
+  private async confirmProviderPayment(
+    payload: AsaasWebhookDto,
+  ): Promise<InvoiceResponseDto | undefined> {
+    const invoice = await this.findWebhookInvoice(payload);
+
+    if (!invoice) {
+      return undefined;
+    }
+
+    if (invoice.status === 'CONFIRMED' || invoice.status === 'RECEIVED') {
+      return this.toResponse(invoice);
+    }
+
+    const confirmedInvoice = await this.repository.updateInvoice(
+      invoice,
+      'CONFIRMED',
+      this.webhookProviderAttrs(invoice, payload),
+    );
+    const eventPayload = {
+      invoiceId: confirmedInvoice.invoiceId,
+      orderId: confirmedInvoice.orderId,
+      provider: confirmedInvoice.provider,
+      providerPaymentId: confirmedInvoice.providerPaymentId,
+      confirmedAt: payload.payment?.confirmedDate ?? confirmedInvoice.updatedAt,
+    };
+
+    this.eventEmitter.emit('payment.confirmed', eventPayload);
+    this.eventEmitter.emit('payments.invoice.confirmed', {
+      ...eventPayload,
+      timestamp: confirmedInvoice.updatedAt,
+    });
+    this.emitObservable('pagamento.confirmacao.webhook.pagamento.confirmado', {
+      invoice: confirmedInvoice,
+      correlationId: `webhook-${confirmedInvoice.providerPaymentId}`,
+      stage: 'webhook_confirmacao',
+      flow: 'confirmacao',
+      step: 1,
+      providerStatus: payload.payment?.status ?? 'CONFIRMED',
+    });
+
+    return this.toResponse(confirmedInvoice);
+  }
+
+  private async receiveProviderPayment(
+    payload: AsaasWebhookDto,
+  ): Promise<InvoiceResponseDto | undefined> {
+    const invoice = await this.findWebhookInvoice(payload);
+
+    if (!invoice) {
+      return undefined;
+    }
+
+    if (invoice.status === 'RECEIVED') {
+      return this.toResponse(invoice);
+    }
+
+    const receivedInvoice = await this.repository.updateInvoice(
+      invoice,
+      'RECEIVED',
+      this.webhookProviderAttrs(invoice, payload),
+    );
+    this.emitObservable('pagamento.confirmacao.webhook.pagamento.recebido', {
+      invoice: receivedInvoice,
+      correlationId: `webhook-${receivedInvoice.providerPaymentId}`,
+      stage: 'webhook_recebimento',
+      flow: 'confirmacao',
+      step: 2,
+      providerStatus: payload.payment?.status ?? 'RECEIVED',
+      reconciliationEvent: true,
+      paymentDate: payload.payment?.paymentDate,
+    });
+
+    return this.toResponse(receivedInvoice);
+  }
+
+  private async recordIgnoredProviderEvent(
+    payload: AsaasWebhookDto,
+    providerStatus: string,
+  ): Promise<InvoiceResponseDto | undefined> {
+    const invoice = await this.findWebhookInvoice(payload);
+
+    if (!invoice) {
+      return undefined;
+    }
+
+    this.emitObservable('pagamento.confirmacao.webhook.evento.ignorado', {
+      invoice,
+      correlationId: `webhook-${invoice.providerPaymentId}`,
+      stage: 'webhook_evento_ignorado',
+      flow: 'confirmacao',
+      step: 3,
+      providerStatus,
+    });
+
+    return this.toResponse(invoice);
+  }
+
   private async ensureProviderCustomer(
     invoice: InvoiceRecord,
     provider: PaymentProvider,
@@ -631,6 +766,63 @@ export class InvoiceService {
         `Missing required fields: ${missingFields.join(', ')}`,
       );
     }
+  }
+
+  private validateWebhookToken(accessToken?: string): void {
+    const expectedToken = process.env.ASAAS_WEBHOOK_TOKEN;
+
+    if (expectedToken && accessToken !== expectedToken) {
+      this.eventEmitter.emit('payments.security.webhook_rejected', {
+        provider: 'ASAAS',
+        reason: 'invalid_token',
+        timestamp: new Date().toISOString(),
+      });
+      throw new UnauthorizedException('Invalid Asaas webhook token');
+    }
+  }
+
+  private providerEventKey(payload: AsaasWebhookDto): string {
+    const paymentId =
+      payload.payment?.id ??
+      payload.payment?.externalReference ??
+      `unknown_${ulid()}`;
+
+    return `${payload.event}:${paymentId}`;
+  }
+
+  private async findWebhookInvoice(
+    payload: AsaasWebhookDto,
+  ): Promise<InvoiceRecord | undefined> {
+    if (payload.payment?.id) {
+      const invoice = await this.repository.findByProviderPaymentId(
+        payload.payment.id,
+      );
+
+      if (invoice) {
+        return invoice;
+      }
+    }
+
+    if (payload.payment?.externalReference) {
+      return this.repository.findByExternalReference(
+        payload.payment.externalReference,
+      );
+    }
+
+    return undefined;
+  }
+
+  private webhookProviderAttrs(
+    invoice: InvoiceRecord,
+    payload: AsaasWebhookDto,
+  ): Partial<InvoiceRecord> {
+    if (invoice.providerPaymentId || !payload.payment?.id) {
+      return {};
+    }
+
+    return {
+      providerPaymentId: payload.payment.id,
+    };
   }
 
   private toResponse(invoice: InvoiceRecord): InvoiceResponseDto {

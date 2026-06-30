@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { InvoiceController } from './controllers/invoice.controller';
+import { AsaasWebhookController } from './controllers/asaas-webhook.controller';
 import { InvoiceService } from './services/invoice.service';
-import { CustomerService } from './services/customer.service';
-import { CustomerCreationService } from './services/customer-creation.service';
-import { PaymentProcessingService } from './services/payment-processing.service';
 import { DynamoService } from '../../infra/dynamo.service';
 import { AsaasService } from '../../infra/asaas.service';
 import { InvoiceRepository } from './services/invoice-repository.service';
@@ -40,24 +38,14 @@ import { ProviderRouterService } from './services/provider-router.service';
  */
 @Module({
   imports: [EventEmitterModule],
-  controllers: [InvoiceController],
+  controllers: [InvoiceController, AsaasWebhookController],
   providers: [
     InvoiceService,
-    CustomerService,
-    CustomerCreationService,
-    PaymentProcessingService,
     DynamoService,
     AsaasService,
     InvoiceRepository,
     ProviderRouterService,
   ],
-  exports: [
-    InvoiceService,
-    CustomerService,
-    CustomerCreationService,
-    PaymentProcessingService,
-    InvoiceRepository,
-    ProviderRouterService,
-  ],
+  exports: [InvoiceService, InvoiceRepository, ProviderRouterService],
 })
 export class InvoicesModule {}

@@ -11,9 +11,10 @@ async function bootstrap() {
       'Idempotency-Key',
       'X-Correlation-Id',
       'X-Tenant-Id',
+      'asaas-access-token',
     ],
   });
   await app.listen(process.env.PORT ?? 3000);
   console.log(`API is running on port ${process.env.PORT ?? 3000}`);
 }
-bootstrap();
+void bootstrap();

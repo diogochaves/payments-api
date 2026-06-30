@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { INestApplication } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -5,7 +10,6 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 import { AsaasService } from '../src/infra/asaas.service';
-import { SqsService } from '../src/infra/sqs.service';
 import { InvoiceRepository } from '../src/modules/invoices/services/invoice-repository.service';
 
 class AsaasServiceStub {
@@ -38,14 +42,9 @@ class AsaasServiceStub {
   }));
 }
 
-class SqsServiceStub {
-  sendMessage = jest.fn(async () => ({ MessageId: 'msg_stub_123' }));
-}
-
 describe('Criar Invoice (acceptance)', () => {
   let app: INestApplication<App>;
   let asaas: AsaasServiceStub;
-  let sqs: SqsServiceStub;
   let repository: InvoiceRepository;
   let emitSpy: jest.SpyInstance;
 
@@ -71,17 +70,15 @@ describe('Criar Invoice (acceptance)', () => {
     process.env.INVOICE_REPOSITORY = 'memory';
     process.env.ENABLED_PAYMENT_PROVIDERS = 'ASAAS';
     process.env.DEFAULT_PAYMENT_PROVIDER = 'ASAAS';
+    process.env.ASAAS_WEBHOOK_TOKEN = 'webhook-secret';
 
     asaas = new AsaasServiceStub();
-    sqs = new SqsServiceStub();
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     })
       .overrideProvider(AsaasService)
       .useValue(asaas)
-      .overrideProvider(SqsService)
-      .useValue(sqs)
       .compile();
 
     app = moduleFixture.createNestApplication();
@@ -96,6 +93,7 @@ describe('Criar Invoice (acceptance)', () => {
     delete process.env.INVOICE_REPOSITORY;
     delete process.env.ENABLED_PAYMENT_PROVIDERS;
     delete process.env.DEFAULT_PAYMENT_PROVIDER;
+    delete process.env.ASAAS_WEBHOOK_TOKEN;
   });
 
   it('cria invoice com sucesso no Asaas usando cliente ja vinculado', async () => {
@@ -542,6 +540,7 @@ describe('Criar Invoice (acceptance)', () => {
 
       await request(app.getHttpServer())
         .post('/webhook/payments')
+        .set('asaas-access-token', 'webhook-secret')
         .send({
           event: 'PAYMENT_DELETED',
           payment: {
@@ -558,14 +557,11 @@ describe('Criar Invoice (acceptance)', () => {
         created.body.invoiceId,
       );
       expect(cancelled?.status).toBe('CANCELLED');
-      expect(sqs.sendMessage).toHaveBeenCalledWith(
-        expect.objectContaining({
-          event: 'PAYMENT_DELETED',
-          payment: expect.objectContaining({
-            id: created.body.providerPaymentId,
-          }),
-        }),
-      );
+      expect(
+        await repository.hasRawProviderEvent(
+          `PAYMENT_DELETED:${created.body.providerPaymentId}`,
+        ),
+      ).toBe(true);
       expect(emitSpy).not.toHaveBeenCalledWith(
         'payment.cancelled',
         expect.anything(),
@@ -579,6 +575,236 @@ describe('Criar Invoice (acceptance)', () => {
         stage: 'webhook_cancelamento',
         providerPaymentId: created.body.providerPaymentId,
       });
+    });
+  });
+
+  describe('Confirmar Pagamento', () => {
+    it('confirma pagamento com webhook PAYMENT_CONFIRMED autenticado', async () => {
+      const created = await request(app.getHttpServer())
+        .post('/invoices')
+        .set('Idempotency-Key', 'MS-100045:create')
+        .send(basePayload)
+        .expect(201);
+
+      await request(app.getHttpServer())
+        .post('/webhook/payments')
+        .set('asaas-access-token', 'webhook-secret')
+        .send({
+          event: 'PAYMENT_CONFIRMED',
+          payment: {
+            id: created.body.providerPaymentId,
+            status: 'CONFIRMED',
+            value: 159.9,
+            customer: 'cus_stub_customer-123',
+            confirmedDate: '2026-06-21',
+          },
+        })
+        .expect(201);
+
+      const invoice = await repository.findInvoice(
+        basePayload.tenantId,
+        created.body.invoiceId,
+      );
+      expect(invoice?.status).toBe('CONFIRMED');
+      expect(
+        await repository.hasRawProviderEvent(
+          `PAYMENT_CONFIRMED:${created.body.providerPaymentId}`,
+        ),
+      ).toBe(true);
+      expect(emitSpy).toHaveBeenCalledWith(
+        'payment.confirmed',
+        expect.objectContaining({
+          invoiceId: created.body.invoiceId,
+          orderId: 'MS-100045',
+          provider: 'ASAAS',
+          providerPaymentId: created.body.providerPaymentId,
+          confirmedAt: expect.any(String),
+        }),
+      );
+    });
+
+    it('concilia PAYMENT_RECEIVED sem liberar pedido novamente', async () => {
+      const created = await request(app.getHttpServer())
+        .post('/invoices')
+        .set('Idempotency-Key', 'MS-100045:create')
+        .send(basePayload)
+        .expect(201);
+      const existing = await repository.findInvoice(
+        basePayload.tenantId,
+        created.body.invoiceId,
+      );
+      await repository.updateInvoice(existing!, 'CONFIRMED');
+
+      await request(app.getHttpServer())
+        .post('/webhook/payments')
+        .set('asaas-access-token', 'webhook-secret')
+        .send({
+          event: 'PAYMENT_RECEIVED',
+          payment: {
+            id: created.body.providerPaymentId,
+            status: 'RECEIVED',
+            value: 159.9,
+            customer: 'cus_stub_customer-123',
+            paymentDate: '2026-06-22',
+          },
+        })
+        .expect(201);
+
+      const invoice = await repository.findInvoice(
+        basePayload.tenantId,
+        created.body.invoiceId,
+      );
+      expect(invoice?.status).toBe('RECEIVED');
+      expect(emitSpy).not.toHaveBeenCalledWith(
+        'payment.confirmed',
+        expect.anything(),
+      );
+    });
+
+    it('rejeita webhook com token invalido sem alterar estado', async () => {
+      const created = await request(app.getHttpServer())
+        .post('/invoices')
+        .set('Idempotency-Key', 'MS-100045:create')
+        .send(basePayload)
+        .expect(201);
+
+      await request(app.getHttpServer())
+        .post('/webhook/payments')
+        .set('asaas-access-token', 'wrong-token')
+        .send({
+          event: 'PAYMENT_CONFIRMED',
+          payment: {
+            id: created.body.providerPaymentId,
+            status: 'CONFIRMED',
+            value: 159.9,
+            customer: 'cus_stub_customer-123',
+          },
+        })
+        .expect(401);
+
+      const invoice = await repository.findInvoice(
+        basePayload.tenantId,
+        created.body.invoiceId,
+      );
+      expect(invoice?.status).toBe('OPEN');
+      expect(emitSpy).not.toHaveBeenCalledWith(
+        'payment.confirmed',
+        expect.anything(),
+      );
+      expect(
+        await repository.hasRawProviderEvent(
+          `PAYMENT_CONFIRMED:${created.body.providerPaymentId}`,
+        ),
+      ).toBe(false);
+    });
+
+    it('trata PAYMENT_CONFIRMED duplicado como sucesso tecnico sem evento duplicado', async () => {
+      const created = await request(app.getHttpServer())
+        .post('/invoices')
+        .set('Idempotency-Key', 'MS-100045:create')
+        .send(basePayload)
+        .expect(201);
+
+      const webhook = {
+        event: 'PAYMENT_CONFIRMED',
+        payment: {
+          id: created.body.providerPaymentId,
+          status: 'CONFIRMED',
+          value: 159.9,
+          customer: 'cus_stub_customer-123',
+        },
+      };
+
+      await request(app.getHttpServer())
+        .post('/webhook/payments')
+        .set('asaas-access-token', 'webhook-secret')
+        .send(webhook)
+        .expect(201);
+      await request(app.getHttpServer())
+        .post('/webhook/payments')
+        .set('asaas-access-token', 'webhook-secret')
+        .send(webhook)
+        .expect(201);
+
+      expect(
+        emitSpy.mock.calls.filter(
+          ([eventName]) => eventName === 'payment.confirmed',
+        ),
+      ).toHaveLength(1);
+    });
+
+    it('correlaciona confirmacao por externalReference antes de consolidar providerPaymentId', async () => {
+      const created = await request(app.getHttpServer())
+        .post('/invoices')
+        .set('Idempotency-Key', 'MS-100045:create')
+        .send(basePayload)
+        .expect(201);
+      const existing = await repository.findInvoice(
+        basePayload.tenantId,
+        created.body.invoiceId,
+      );
+      await repository.updateInvoice(existing!, 'OPEN', {
+        providerPaymentId: undefined,
+      });
+
+      await request(app.getHttpServer())
+        .post('/webhook/payments')
+        .set('asaas-access-token', 'webhook-secret')
+        .send({
+          event: 'PAYMENT_CONFIRMED',
+          payment: {
+            id: 'pay_asaas_early',
+            status: 'CONFIRMED',
+            value: 159.9,
+            customer: 'cus_stub_customer-123',
+            externalReference: 'MS-100045',
+          },
+        })
+        .expect(201);
+
+      const invoice = await repository.findInvoice(
+        basePayload.tenantId,
+        created.body.invoiceId,
+      );
+      expect(invoice?.status).toBe('CONFIRMED');
+      expect(invoice?.providerPaymentId).toBe('pay_asaas_early');
+    });
+
+    it('registra PAYMENT_OVERDUE sem publicar payment.confirmed', async () => {
+      const created = await request(app.getHttpServer())
+        .post('/invoices')
+        .set('Idempotency-Key', 'MS-100045:create')
+        .send(basePayload)
+        .expect(201);
+
+      await request(app.getHttpServer())
+        .post('/webhook/payments')
+        .set('asaas-access-token', 'webhook-secret')
+        .send({
+          event: 'PAYMENT_OVERDUE',
+          payment: {
+            id: created.body.providerPaymentId,
+            status: 'OVERDUE',
+            value: 159.9,
+            customer: 'cus_stub_customer-123',
+          },
+        })
+        .expect(201);
+
+      const invoice = await repository.findInvoice(
+        basePayload.tenantId,
+        created.body.invoiceId,
+      );
+      expect(invoice?.status).toBe('OPEN');
+      expect(
+        await repository.hasRawProviderEvent(
+          `PAYMENT_OVERDUE:${created.body.providerPaymentId}`,
+        ),
+      ).toBe(true);
+      expect(emitSpy).not.toHaveBeenCalledWith(
+        'payment.confirmed',
+        expect.anything(),
+      );
     });
   });
 

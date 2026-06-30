@@ -58,16 +58,6 @@ services:
     regex_priority: 200
     strip_path: false
     tags: []
-  - id: 2e2f303a-cb3d-5e70-a54b-5229fa6a981c
-    methods:
-    - POST
-    name: webshop-api_appcontroller-getkeycloaktest
-    paths:
-    - ~/keycloak-test$
-    plugins: []
-    regex_priority: 200
-    strip_path: false
-    tags: []
   - id: 7012db3b-f81a-5c60-bdaa-8bbcf3f45e0a
     methods:
     - POST

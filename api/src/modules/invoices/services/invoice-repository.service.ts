@@ -12,6 +12,7 @@ export class InvoiceRepository {
   private readonly invoices = new Map<string, InvoiceRecord>();
   private readonly idempotency = new Map<string, string>();
   private readonly customerLinks = new Map<string, CustomerProviderLink>();
+  private readonly rawProviderEvents = new Map<string, unknown>();
   private readonly useDynamo = process.env.INVOICE_REPOSITORY === 'dynamo';
 
   constructor(private readonly dynamo: DynamoService) {}
@@ -34,12 +35,14 @@ export class InvoiceRepository {
       `TENANT#${tenantId}`,
       `IDEMPOTENCY#${idempotencyKey}`,
     );
+    const invoiceId =
+      typeof item?.invoiceId === 'string' ? item.invoiceId : undefined;
 
-    if (!item?.invoiceId) {
+    if (!invoiceId) {
       return undefined;
     }
 
-    return this.findInvoice(tenantId, item.invoiceId as string);
+    return this.findInvoice(tenantId, invoiceId);
   }
 
   async saveInvoice(
@@ -133,16 +136,84 @@ export class InvoiceRepository {
     return item?.invoice as InvoiceRecord | undefined;
   }
 
-  async findByProviderPaymentId(
+  findByProviderPaymentId(
     providerPaymentId: string,
   ): Promise<InvoiceRecord | undefined> {
     if (!this.useDynamo) {
-      return Array.from(this.invoices.values()).find(
-        (invoice) => invoice.providerPaymentId === providerPaymentId,
+      return Promise.resolve(
+        Array.from(this.invoices.values()).find(
+          (invoice) => invoice.providerPaymentId === providerPaymentId,
+        ),
       );
     }
 
-    return undefined;
+    return Promise.resolve(undefined);
+  }
+
+  findByExternalReference(
+    externalReference: string,
+  ): Promise<InvoiceRecord | undefined> {
+    if (!this.useDynamo) {
+      return Promise.resolve(
+        Array.from(this.invoices.values()).find(
+          (invoice) =>
+            invoice.externalReference === externalReference ||
+            invoice.orderId === externalReference,
+        ),
+      );
+    }
+
+    return Promise.resolve(undefined);
+  }
+
+  async saveRawProviderEvent(
+    eventKey: string,
+    payload: unknown,
+  ): Promise<boolean> {
+    if (!this.useDynamo) {
+      if (this.rawProviderEvents.has(eventKey)) {
+        return false;
+      }
+
+      this.rawProviderEvents.set(eventKey, {
+        eventKey,
+        payload,
+        receivedAt: new Date().toISOString(),
+      });
+      return true;
+    }
+
+    const existing = await this.dynamo.getItem(
+      'TransactionsTable',
+      `PROVIDER_EVENT#${eventKey}`,
+      'RAW',
+    );
+
+    if (existing) {
+      return false;
+    }
+
+    await this.dynamo.putItem('TransactionsTable', {
+      PK: `PROVIDER_EVENT#${eventKey}`,
+      SK: 'RAW',
+      eventKey,
+      payload,
+      receivedAt: new Date().toISOString(),
+    });
+    return true;
+  }
+
+  async hasRawProviderEvent(eventKey: string): Promise<boolean> {
+    if (!this.useDynamo) {
+      return this.rawProviderEvents.has(eventKey);
+    }
+
+    const existing = await this.dynamo.getItem(
+      'TransactionsTable',
+      `PROVIDER_EVENT#${eventKey}`,
+      'RAW',
+    );
+    return Boolean(existing);
   }
 
   async findCustomerLink(
