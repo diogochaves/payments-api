@@ -76,8 +76,8 @@ h2 {
 }
 
 .api-field {
-  max-width: 520px;
-  width: min(48vw, 520px);
+  max-width: 420px;
+  width: min(32vw, 420px);
 }
 
 label {
@@ -265,34 +265,19 @@ textarea:focus {
   min-height: 720px;
 }
 
+.feature-row {
+  display: grid;
+  gap: 18px;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.feature-panel {
+  min-width: 0;
+}
+
 .payload-header {
   align-items: start;
-}
-
-.mode-switch {
-  background: #e8edf1;
-  border: 1px solid #d1d9df;
-  border-radius: 8px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  padding: 3px;
-}
-
-.mode-switch button {
-  background: transparent;
-  border: 0;
-  border-radius: 6px;
-  color: #4f5d66;
-  font-size: 0.86rem;
-  font-weight: 800;
-  min-height: 34px;
-  padding: 6px 12px;
-}
-
-.mode-switch button.active {
-  background: #ffffff;
-  color: #162028;
-  box-shadow: 0 1px 8px rgba(18, 24, 29, 0.12);
 }
 
 .invoice-options {
@@ -321,6 +306,7 @@ textarea:focus {
 }
 
 .primary-button,
+.danger-button,
 .secondary-button {
   align-items: center;
   border-radius: 8px;
@@ -343,6 +329,12 @@ textarea:focus {
   color: #26323a;
 }
 
+.danger-button {
+  background: #a43b3b;
+  border: 1px solid #a43b3b;
+  color: #ffffff;
+}
+
 .headers-box {
   background: #f4f7f8;
   border: 1px solid #dce2e7;
@@ -362,6 +354,66 @@ textarea:focus {
 .headers-box code {
   color: #172026;
   overflow-wrap: anywhere;
+}
+
+.status-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.status-grid.compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.status-grid div {
+  background: #f4f7f8;
+  border: 1px solid #dce2e7;
+  border-radius: 8px;
+  min-width: 0;
+  padding: 12px;
+}
+
+.status-grid span {
+  color: #5b6770;
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.status-grid strong {
+  color: #172026;
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.status-grid .status-ok {
+  color: #1b7f6b;
+}
+
+.status-grid .status-danger {
+  color: #a43b3b;
+}
+
+.webhook-preview {
+  background: #101820;
+  border: 1px solid #101820;
+  border-radius: 8px;
+  color: #d7f7ed;
+  font-family:
+    "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  margin: 14px 0 0;
+  max-height: 260px;
+  overflow: auto;
+  padding: 12px;
+  white-space: pre-wrap;
+}
+
+.webhook-event-field {
+  margin-top: 14px;
 }
 
 .response {
@@ -401,6 +453,10 @@ textarea:focus {
     grid-template-columns: 1fr;
   }
 
+  .feature-row {
+    grid-template-columns: 1fr;
+  }
+
   .payload-panel {
     min-height: 620px;
   }
@@ -426,7 +482,8 @@ textarea:focus {
 
   .cart-item,
   .form-grid,
-  .invoice-options {
+  .invoice-options,
+  .status-grid {
     grid-template-columns: 1fr;
   }
 
@@ -444,6 +501,7 @@ textarea:focus {
   }
 
   .primary-button,
+  .danger-button,
   .secondary-button {
     justify-content: center;
     width: 100%;

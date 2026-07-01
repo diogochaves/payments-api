@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
+  Ban,
+  CheckCircle2,
   Copy,
   Loader2,
   Minus,
@@ -8,11 +10,12 @@ import {
   Send,
   ShoppingCart,
   Trash2,
+  Webhook,
 } from 'lucide-react';
 
-type PaymentMode = 'payments' | 'invoices';
 type BillingType = 'BOLETO' | 'PIX' | 'CREDIT_CARD' | 'UNDEFINED';
 type Provider = 'ASAAS' | 'ITAU';
+type WebhookEvent = 'PAYMENT_CONFIRMED' | 'PAYMENT_RECEIVED' | 'PAYMENT_OVERDUE';
 
 type CartItem = {
   id: string;
@@ -23,7 +26,6 @@ type CartItem = {
 
 type CustomerForm = {
   id: string;
-  externalId: string;
   name: string;
   email: string;
   document: string;
@@ -34,6 +36,18 @@ type SendResult = {
   ok: boolean;
   status: number;
   body: unknown;
+};
+
+type InvoiceResponse = {
+  invoiceId: string;
+  orderId: string;
+  provider: Provider;
+  providerPaymentId: string;
+  status: string;
+  amount: number;
+  currency: string;
+  paymentUrl?: string;
+  externalReference: string;
 };
 
 const currencyFormatter = new Intl.NumberFormat('pt-BR', {
@@ -56,7 +70,6 @@ const initialItems: CartItem[] = [
 
 const initialCustomer: CustomerForm = {
   id: 'customer-sandbox-001',
-  externalId: 'external-sandbox-001',
   name: 'Cliente Sandbox Magazine Siara',
   email: 'sandbox@example.com',
   document: '11144477735',
@@ -65,7 +78,7 @@ const initialCustomer: CustomerForm = {
 
 function App() {
   const [apiUrl, setApiUrl] = useState('http://localhost:3011');
-  const [mode, setMode] = useState<PaymentMode>('invoices');
+  const [webhookToken, setWebhookToken] = useState('webhook-secret');
   const [tenantId, setTenantId] = useState('magazine-siara');
   const [orderId, setOrderId] = useState(makeOrderId);
   const [customer, setCustomer] = useState<CustomerForm>(initialCustomer);
@@ -74,11 +87,17 @@ function App() {
   const [dueDate, setDueDate] = useState(() => futureDate(7));
   const [billingType, setBillingType] = useState<BillingType>('PIX');
   const [provider, setProvider] = useState<Provider>('ASAAS');
+  const [webhookEvent, setWebhookEvent] = useState<WebhookEvent>('PAYMENT_CONFIRMED');
   const [payloadText, setPayloadText] = useState('');
   const [isPayloadDirty, setIsPayloadDirty] = useState(false);
   const [result, setResult] = useState<SendResult | null>(null);
+  const [lastInvoice, setLastInvoice] = useState<InvoiceResponse | null>(null);
+  const [confirmationResult, setConfirmationResult] = useState<SendResult | null>(null);
+  const [cancelResult, setCancelResult] = useState<SendResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
 
   const amount = useMemo(
     () => items.reduce((total, item) => total + item.quantity * item.unitPrice, 0),
@@ -93,20 +112,6 @@ function App() {
   }, [items, orderId]);
 
   const payload = useMemo(() => {
-    if (mode === 'payments') {
-      return {
-        tenantId,
-        amount: Number(amount.toFixed(2)),
-        description,
-        customer: {
-          externalId: customer.externalId,
-          name: customer.name,
-          email: customer.email,
-          cpfCnpj: customer.document,
-        },
-      };
-    }
-
     return {
       tenantId,
       orderId,
@@ -124,18 +129,26 @@ function App() {
       provider,
       description,
     };
-  }, [
-    amount,
-    billingType,
-    currency,
-    customer,
-    description,
-    dueDate,
-    mode,
-    orderId,
-    provider,
-    tenantId,
-  ]);
+  }, [amount, billingType, currency, customer, description, dueDate, orderId, provider, tenantId]);
+
+  const confirmationPayload = useMemo(() => {
+    if (!lastInvoice) {
+      return null;
+    }
+
+    return {
+      event: webhookEvent,
+      payment: {
+        id: lastInvoice.providerPaymentId,
+        status: webhookStatus(webhookEvent),
+        value: lastInvoice.amount,
+        customer: customer.id,
+        externalReference: lastInvoice.externalReference,
+        confirmedDate: new Date().toISOString().slice(0, 10),
+        paymentDate: new Date().toISOString().slice(0, 10),
+      },
+    };
+  }, [customer.id, lastInvoice, webhookEvent]);
 
   useEffect(() => {
     if (!isPayloadDirty) {
@@ -143,8 +156,9 @@ function App() {
     }
   }, [isPayloadDirty, payload]);
 
-  const endpoint = mode === 'payments' ? '/payments' : '/invoices';
+  const endpoint = '/invoices';
   const idempotencyKey = `${orderId}:create`;
+  const cancelIdempotencyKey = `${lastInvoice?.orderId ?? orderId}:cancel`;
 
   const updateItem = <K extends keyof CartItem>(
     id: string,
@@ -194,12 +208,9 @@ function App() {
       const parsedPayload = JSON.parse(payloadText) as unknown;
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
+        'Idempotency-Key': idempotencyKey,
+        'X-Correlation-Id': `frontend-${orderId}`,
       };
-
-      if (mode === 'invoices') {
-        headers['Idempotency-Key'] = idempotencyKey;
-        headers['X-Correlation-Id'] = `frontend-${orderId}`;
-      }
 
       const response = await fetch(`${apiUrl.replace(/\/$/, '')}${endpoint}`, {
         method: 'POST',
@@ -210,6 +221,12 @@ function App() {
       const text = await response.text();
       const body = text ? safeJsonParse(text) : null;
       setResult({ ok: response.ok, status: response.status, body });
+      setConfirmationResult(null);
+      setCancelResult(null);
+
+      if (response.ok && isInvoiceResponse(body)) {
+        setLastInvoice(body);
+      }
     } catch (sendError) {
       setError(
         sendError instanceof Error
@@ -221,12 +238,89 @@ function App() {
     }
   };
 
+  const confirmPayment = async () => {
+    if (!confirmationPayload) {
+      return;
+    }
+
+    setIsConfirming(true);
+    setError(null);
+    setConfirmationResult(null);
+
+    try {
+      const response = await fetch(`${apiUrl.replace(/\/$/, '')}/webhook/payments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'asaas-access-token': webhookToken,
+        },
+        body: JSON.stringify(confirmationPayload),
+      });
+
+      const text = await response.text();
+      const body = text ? safeJsonParse(text) : null;
+      setConfirmationResult({ ok: response.ok, status: response.status, body });
+
+      if (response.ok && lastInvoice) {
+        setLastInvoice({ ...lastInvoice, status: localStatusAfterWebhook(webhookEvent, lastInvoice.status) });
+      }
+    } catch (confirmationError) {
+      setError(
+        confirmationError instanceof Error
+          ? confirmationError.message
+          : 'Falha ao confirmar o pagamento.',
+      );
+    } finally {
+      setIsConfirming(false);
+    }
+  };
+
+  const cancelInvoice = async () => {
+    if (!lastInvoice) {
+      return;
+    }
+
+    setIsCancelling(true);
+    setError(null);
+    setCancelResult(null);
+
+    try {
+      const response = await fetch(
+        `${apiUrl.replace(/\/$/, '')}/invoices/${lastInvoice.invoiceId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'X-Tenant-Id': tenantId,
+            'Idempotency-Key': cancelIdempotencyKey,
+            'X-Correlation-Id': `frontend-cancel-${lastInvoice.orderId}`,
+          },
+        },
+      );
+
+      const text = await response.text();
+      const body = text ? safeJsonParse(text) : null;
+      setCancelResult({ ok: response.ok, status: response.status, body });
+
+      if (response.ok && isInvoiceResponse(body)) {
+        setLastInvoice(body);
+      }
+    } catch (cancelError) {
+      setError(
+        cancelError instanceof Error
+          ? cancelError.message
+          : 'Falha ao cancelar a invoice.',
+      );
+    } finally {
+      setIsCancelling(false);
+    }
+  };
+
   return (
     <main className="app-shell">
       <section className="toolbar">
         <div>
           <p className="eyebrow">Payments API</p>
-          <h1>Testador de carrinho e payload</h1>
+          <h1>Testador BDD de pagamentos</h1>
         </div>
 
         <label className="api-field">
@@ -235,6 +329,14 @@ function App() {
             value={apiUrl}
             onChange={(event) => setApiUrl(event.target.value)}
             placeholder="http://localhost:3011"
+          />
+        </label>
+        <label className="api-field">
+          <span>Webhook token</span>
+          <input
+            value={webhookToken}
+            onChange={(event) => setWebhookToken(event.target.value)}
+            placeholder="ASAAS_WEBHOOK_TOKEN"
           />
         </label>
       </section>
@@ -385,10 +487,8 @@ function App() {
             <label>
               <span>External ID</span>
               <input
-                value={customer.externalId}
-                onChange={(event) =>
-                  setCustomer({ ...customer, externalId: event.target.value })
-                }
+                value={orderId}
+                readOnly
               />
             </label>
           </div>
@@ -397,72 +497,48 @@ function App() {
         <div className="panel payload-panel">
           <div className="panel-header payload-header">
             <div>
-              <p className="eyebrow">Payload</p>
-              <h2>{endpoint}</h2>
+              <p className="eyebrow">Feature 1</p>
+              <h2>Criar invoice</h2>
             </div>
-
-            <div className="mode-switch" role="group" aria-label="Tipo de payload">
-              <button
-                className={mode === 'invoices' ? 'active' : ''}
-                type="button"
-                onClick={() => {
-                  setMode('invoices');
-                  setIsPayloadDirty(false);
-                }}
-              >
-                Invoices
-              </button>
-              <button
-                className={mode === 'payments' ? 'active' : ''}
-                type="button"
-                onClick={() => {
-                  setMode('payments');
-                  setIsPayloadDirty(false);
-                }}
-              >
-                Payments
-              </button>
-            </div>
+            <Send size={24} />
           </div>
 
-          {mode === 'invoices' && (
-            <div className="invoice-options">
-              <label>
-                <span>Vencimento</span>
-                <input
-                  type="date"
-                  value={dueDate}
-                  onChange={(event) => setDueDate(event.target.value)}
-                />
-              </label>
-              <label>
-                <span>Billing</span>
-                <select
-                  value={billingType}
-                  onChange={(event) => setBillingType(event.target.value as BillingType)}
-                >
-                  <option value="PIX">PIX</option>
-                  <option value="BOLETO">BOLETO</option>
-                  <option value="CREDIT_CARD">CREDIT_CARD</option>
-                  <option value="UNDEFINED">UNDEFINED</option>
-                </select>
-              </label>
-              <label>
-                <span>Provider</span>
-                <select
-                  value={provider}
-                  onChange={(event) => setProvider(event.target.value as Provider)}
-                >
-                  <option value="ASAAS">ASAAS</option>
-                  <option value="ITAU">ITAU</option>
-                </select>
-              </label>
-              <label>
-                <span>Moeda</span>
-                <input value={currency} onChange={(event) => setCurrency(event.target.value)} />
-              </label>
-            </div>
-          )}
+          <div className="invoice-options">
+            <label>
+              <span>Vencimento</span>
+              <input
+                type="date"
+                value={dueDate}
+                onChange={(event) => setDueDate(event.target.value)}
+              />
+            </label>
+            <label>
+              <span>Billing</span>
+              <select
+                value={billingType}
+                onChange={(event) => setBillingType(event.target.value as BillingType)}
+              >
+                <option value="PIX">PIX</option>
+                <option value="BOLETO">BOLETO</option>
+                <option value="CREDIT_CARD">CREDIT_CARD</option>
+                <option value="UNDEFINED">UNDEFINED</option>
+              </select>
+            </label>
+            <label>
+              <span>Provider</span>
+              <select
+                value={provider}
+                onChange={(event) => setProvider(event.target.value as Provider)}
+              >
+                <option value="ASAAS">ASAAS</option>
+                <option value="ITAU">ITAU</option>
+              </select>
+            </label>
+            <label>
+              <span>Moeda</span>
+              <input value={currency} onChange={(event) => setCurrency(event.target.value)} />
+            </label>
+          </div>
 
           <textarea
             className="payload-editor"
@@ -490,16 +566,14 @@ function App() {
               disabled={isSending || items.length === 0}
             >
               {isSending ? <Loader2 className="spin" size={18} /> : <Send size={18} />}
-              Enviar
+              Criar invoice
             </button>
           </div>
 
-          {mode === 'invoices' && (
-            <div className="headers-box">
-              <span>Idempotency-Key</span>
-              <code>{idempotencyKey}</code>
-            </div>
-          )}
+          <div className="headers-box">
+            <span>POST {endpoint} | Idempotency-Key</span>
+            <code>{idempotencyKey}</code>
+          </div>
 
           {error && <pre className="response error">{error}</pre>}
 
@@ -517,6 +591,151 @@ function App() {
             </pre>
           )}
         </div>
+
+        <div className="feature-row">
+          <div className="panel feature-panel">
+            <div className="panel-header">
+              <div>
+                <p className="eyebrow">Feature 2</p>
+                <h2>Cancelar invoice</h2>
+              </div>
+              <Ban size={24} />
+            </div>
+
+            <div className="status-grid compact">
+              <div>
+                <span>Invoice</span>
+                <strong>{lastInvoice?.invoiceId ?? 'Aguardando criação'}</strong>
+              </div>
+              <div>
+                <span>Status</span>
+                <strong className={lastInvoice?.status === 'CANCELLED' ? 'status-danger' : ''}>
+                  {lastInvoice?.status ?? 'NAO_CRIADA'}
+                </strong>
+              </div>
+              <div>
+                <span>Provider payment</span>
+                <strong>{lastInvoice?.providerPaymentId ?? '-'}</strong>
+              </div>
+              <div>
+                <span>DELETE</span>
+                <strong>{lastInvoice ? `/invoices/${lastInvoice.invoiceId}` : '/invoices/:id'}</strong>
+              </div>
+            </div>
+
+            <div className="headers-box">
+              <span>X-Tenant-Id</span>
+              <code>{tenantId}</code>
+              <span>Idempotency-Key</span>
+              <code>{cancelIdempotencyKey}</code>
+            </div>
+
+            <div className="actions">
+              <button
+                className="danger-button"
+                type="button"
+                onClick={cancelInvoice}
+                disabled={!lastInvoice || isCancelling || lastInvoice.status === 'CONFIRMED'}
+              >
+                {isCancelling ? <Loader2 className="spin" size={18} /> : <Ban size={18} />}
+                Cancelar invoice
+              </button>
+            </div>
+
+            {lastInvoice?.status === 'CONFIRMED' && (
+              <pre className="response error">
+                Cancelamento bloqueado para invoice confirmada. Use o fluxo de estorno.
+              </pre>
+            )}
+
+            {cancelResult && (
+              <pre className={cancelResult.ok ? 'response success' : 'response error'}>
+                {JSON.stringify(
+                  {
+                    status: cancelResult.status,
+                    ok: cancelResult.ok,
+                    body: cancelResult.body,
+                  },
+                  null,
+                  2,
+                )}
+              </pre>
+            )}
+          </div>
+
+        <div className="panel feature-panel">
+          <div className="panel-header">
+            <div>
+              <p className="eyebrow">Feature 3</p>
+              <h2>Webhook de pagamento</h2>
+            </div>
+            <Webhook size={24} />
+          </div>
+
+          <div className="status-grid">
+            <div>
+              <span>Invoice</span>
+              <strong>{lastInvoice?.invoiceId ?? 'Aguardando criação'}</strong>
+            </div>
+            <div>
+              <span>Status</span>
+              <strong className={lastInvoice?.status === 'CONFIRMED' ? 'status-ok' : ''}>
+                {lastInvoice?.status ?? 'NAO_CRIADA'}
+              </strong>
+            </div>
+            <div>
+              <span>Provider payment</span>
+              <strong>{lastInvoice?.providerPaymentId ?? '-'}</strong>
+            </div>
+            <div>
+              <span>External reference</span>
+              <strong>{lastInvoice?.externalReference ?? orderId}</strong>
+            </div>
+          </div>
+
+          <label className="webhook-event-field">
+            <span>Evento Asaas</span>
+            <select
+              value={webhookEvent}
+              onChange={(event) => setWebhookEvent(event.target.value as WebhookEvent)}
+            >
+              <option value="PAYMENT_CONFIRMED">PAYMENT_CONFIRMED</option>
+              <option value="PAYMENT_RECEIVED">PAYMENT_RECEIVED</option>
+              <option value="PAYMENT_OVERDUE">PAYMENT_OVERDUE</option>
+            </select>
+          </label>
+
+          <pre className="webhook-preview">
+            {JSON.stringify(confirmationPayload ?? { event: webhookEvent }, null, 2)}
+          </pre>
+
+          <div className="actions">
+            <button
+              className="primary-button"
+              type="button"
+              onClick={confirmPayment}
+              disabled={!confirmationPayload || isConfirming}
+            >
+              {isConfirming ? <Loader2 className="spin" size={18} /> : <CheckCircle2 size={18} />}
+              Enviar webhook
+            </button>
+          </div>
+
+          {confirmationResult && (
+            <pre className={confirmationResult.ok ? 'response success' : 'response error'}>
+              {JSON.stringify(
+                {
+                  status: confirmationResult.status,
+                  ok: confirmationResult.ok,
+                  body: confirmationResult.body,
+                },
+                null,
+                2,
+              )}
+            </pre>
+          )}
+        </div>
+        </div>
       </section>
     </main>
   );
@@ -528,6 +747,45 @@ function safeJsonParse(text: string) {
   } catch {
     return text;
   }
+}
+
+function webhookStatus(event: WebhookEvent) {
+  if (event === 'PAYMENT_RECEIVED') {
+    return 'RECEIVED';
+  }
+
+  if (event === 'PAYMENT_OVERDUE') {
+    return 'OVERDUE';
+  }
+
+  return 'CONFIRMED';
+}
+
+function localStatusAfterWebhook(event: WebhookEvent, currentStatus: string) {
+  if (event === 'PAYMENT_CONFIRMED') {
+    return 'CONFIRMED';
+  }
+
+  if (event === 'PAYMENT_RECEIVED') {
+    return 'RECEIVED';
+  }
+
+  return currentStatus;
+}
+
+function isInvoiceResponse(body: unknown): body is InvoiceResponse {
+  if (!body || typeof body !== 'object') {
+    return false;
+  }
+
+  const invoice = body as Partial<InvoiceResponse>;
+
+  return (
+    typeof invoice.invoiceId === 'string' &&
+    typeof invoice.orderId === 'string' &&
+    typeof invoice.providerPaymentId === 'string' &&
+    typeof invoice.externalReference === 'string'
+  );
 }
 
 export default App;

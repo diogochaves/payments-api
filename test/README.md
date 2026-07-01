@@ -1,6 +1,6 @@
 # Payments API Tester
 
-Frontend Vite para montar um carrinho, gerar payloads de pagamento e enviar requisições para a API local.
+Frontend Vite para montar um carrinho, gerar payloads de invoice, cancelar invoice e acionar webhooks de confirmação contra a API local.
 
 ## Rodando
 
@@ -23,7 +23,8 @@ Esse script usa armazenamento em memória e mock do Asaas por padrão.
 
 ## Fluxos
 
-- `POST /invoices`: usa o contrato de `CreateInvoiceDto` e envia `Idempotency-Key`.
-- `POST /payments`: usa o contrato de `CreatePaymentDto`.
+- Criar invoice: `POST /invoices` usando o contrato de `CreateInvoiceDto`, `Idempotency-Key` e `X-Correlation-Id`.
+- Cancelar invoice: `DELETE /invoices/:invoiceId` usando `X-Tenant-Id`, `Idempotency-Key` e a invoice criada no primeiro passo.
+- Confirmar pagamento: `POST /webhook/payments` com eventos `PAYMENT_CONFIRMED`, `PAYMENT_RECEIVED` ou `PAYMENT_OVERDUE` usando a invoice criada e header `asaas-access-token`.
 
-O JSON pode ser editado antes do envio. O botão `Sincronizar` recria o payload a partir do carrinho.
+O JSON da invoice pode ser editado antes do envio. O botão `Sincronizar` recria o payload a partir do carrinho. Depois que a invoice retorna `OPEN`, os painéis de cancelamento e confirmação passam a usar `invoiceId`, `providerPaymentId` e `externalReference` retornados pelo backend.
