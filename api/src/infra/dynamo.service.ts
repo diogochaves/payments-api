@@ -3,6 +3,7 @@ import {
   DynamoDBDocumentClient,
   GetCommand,
   PutCommand,
+  QueryCommand,
   UpdateCommand,
 } from '@aws-sdk/lib-dynamodb';
 
@@ -83,6 +84,56 @@ export class DynamoService {
         Item: item,
       }),
     );
+  }
+
+  async queryByIndex(
+    table: string,
+    indexName: string,
+    partitionKeyName: string,
+    partitionKeyValue: string,
+    sortKeyName?: string,
+    sortKeyValue?: string,
+  ): Promise<Record<string, unknown>[]> {
+    if (this.mockEnabled()) {
+      return Array.from(this.memoryStore.entries())
+        .filter(([key]) => key.startsWith(`${table}::`))
+        .map(([, item]) => item)
+        .filter((item) => item[partitionKeyName] === partitionKeyValue)
+        .filter((item) =>
+          sortKeyName && sortKeyValue
+            ? item[sortKeyName] === sortKeyValue
+            : true,
+        );
+    }
+
+    const hasSortKey = Boolean(sortKeyName && sortKeyValue);
+    const result = await this.client.send(
+      new QueryCommand({
+        TableName: table,
+        IndexName: indexName,
+        KeyConditionExpression: hasSortKey
+          ? '#pk = :pk and #sk = :sk'
+          : '#pk = :pk',
+        ExpressionAttributeNames: hasSortKey
+          ? {
+              '#pk': partitionKeyName,
+              '#sk': sortKeyName!,
+            }
+          : {
+              '#pk': partitionKeyName,
+            },
+        ExpressionAttributeValues: hasSortKey
+          ? {
+              ':pk': partitionKeyValue,
+              ':sk': sortKeyValue,
+            }
+          : {
+              ':pk': partitionKeyValue,
+            },
+      }),
+    );
+
+    return result.Items ?? [];
   }
 
   async updateItem(

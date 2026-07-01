@@ -465,6 +465,7 @@ export class InvoiceService {
     const invoice = await this.findWebhookInvoice(payload);
 
     if (!invoice) {
+      this.emitUncorrelatedWebhook(payload, 'CONFIRMED');
       return undefined;
     }
 
@@ -508,6 +509,7 @@ export class InvoiceService {
     const invoice = await this.findWebhookInvoice(payload);
 
     if (!invoice) {
+      this.emitUncorrelatedWebhook(payload, 'RECEIVED');
       return undefined;
     }
 
@@ -541,6 +543,7 @@ export class InvoiceService {
     const invoice = await this.findWebhookInvoice(payload);
 
     if (!invoice) {
+      this.emitUncorrelatedWebhook(payload, providerStatus);
       return undefined;
     }
 
@@ -810,6 +813,26 @@ export class InvoiceService {
     }
 
     return undefined;
+  }
+
+  private emitUncorrelatedWebhook(
+    payload: AsaasWebhookDto,
+    providerStatus: string,
+  ): void {
+    const providerPaymentId = payload.payment?.id;
+    const externalReference = payload.payment?.externalReference;
+
+    this.emitObservable('pagamento.confirmacao.webhook.nao_correlacionado', {
+      correlationId: `webhook-${providerPaymentId ?? externalReference ?? 'unknown'}`,
+      stage: 'webhook_nao_correlacionado',
+      flow: 'confirmacao',
+      step: 0,
+      provider: 'ASAAS',
+      providerPaymentId,
+      externalReference,
+      providerStatus,
+      eventType: payload.event,
+    });
   }
 
   private webhookProviderAttrs(

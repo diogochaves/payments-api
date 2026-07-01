@@ -806,6 +806,37 @@ describe('Criar Invoice (acceptance)', () => {
         expect.anything(),
       );
     });
+
+    it('emite evento observavel quando webhook nao encontra invoice correlacionada', async () => {
+      await request(app.getHttpServer())
+        .post('/webhook/payments')
+        .set('asaas-access-token', 'webhook-secret')
+        .send({
+          event: 'PAYMENT_CONFIRMED',
+          payment: {
+            id: 'pay_unknown',
+            status: 'CONFIRMED',
+            value: 159.9,
+            customer: 'cus_unknown',
+          },
+        })
+        .expect(201);
+
+      expect(
+        observableEvent('pagamento.confirmacao.webhook.nao_correlacionado'),
+      ).toMatchObject({
+        event_key: 'pagamento.confirmacao.webhook.nao_correlacionado',
+        stage: 'webhook_nao_correlacionado',
+        flow: 'confirmacao',
+        provider: 'ASAAS',
+        providerPaymentId: 'pay_unknown',
+        providerStatus: 'CONFIRMED',
+      });
+      expect(emitSpy).not.toHaveBeenCalledWith(
+        'payment.confirmed',
+        expect.anything(),
+      );
+    });
   });
 
   function observableEvents() {
@@ -821,4 +852,122 @@ describe('Criar Invoice (acceptance)', () => {
   function observableEvent(eventKey: string) {
     return observableEvents().find((event) => event.event_key === eventKey);
   }
+});
+
+describe('Confirmar Pagamento com Dynamo (acceptance)', () => {
+  let app: INestApplication<App>;
+  let repository: InvoiceRepository;
+
+  const basePayload = {
+    tenantId: 'magazine-siara',
+    orderId: 'MS-200045',
+    customer: {
+      id: 'customer-200',
+      name: 'Joao Silva',
+      document: '12345678909',
+      email: 'joao@example.com',
+      mobilePhone: '11987654321',
+    },
+    amount: 219.9,
+    currency: 'BRL',
+    dueDate: '2026-06-20',
+    billingType: 'PIX',
+    provider: 'ASAAS',
+    description: 'Pedido MS-200045',
+  };
+
+  beforeEach(async () => {
+    process.env.INVOICE_REPOSITORY = 'dynamo';
+    process.env.DYNAMO_MOCK = 'true';
+    process.env.ENABLED_PAYMENT_PROVIDERS = 'ASAAS';
+    process.env.DEFAULT_PAYMENT_PROVIDER = 'ASAAS';
+    process.env.ASAAS_WEBHOOK_TOKEN = 'webhook-secret';
+
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    })
+      .overrideProvider(AsaasService)
+      .useValue(new AsaasServiceStub())
+      .compile();
+
+    app = moduleFixture.createNestApplication();
+    repository = moduleFixture.get(InvoiceRepository);
+    await app.init();
+  });
+
+  afterEach(async () => {
+    await app.close();
+    delete process.env.INVOICE_REPOSITORY;
+    delete process.env.DYNAMO_MOCK;
+    delete process.env.ENABLED_PAYMENT_PROVIDERS;
+    delete process.env.DEFAULT_PAYMENT_PROVIDER;
+    delete process.env.ASAAS_WEBHOOK_TOKEN;
+  });
+
+  it('confirma pagamento localizando invoice por providerPaymentId no Dynamo', async () => {
+    const created = await request(app.getHttpServer())
+      .post('/invoices')
+      .set('Idempotency-Key', 'MS-200045:create')
+      .send(basePayload)
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post('/webhook/payments')
+      .set('asaas-access-token', 'webhook-secret')
+      .send({
+        event: 'PAYMENT_CONFIRMED',
+        payment: {
+          id: created.body.providerPaymentId,
+          status: 'CONFIRMED',
+          value: 219.9,
+          customer: 'cus_stub_customer-200',
+          confirmedDate: '2026-06-21',
+        },
+      })
+      .expect(201);
+
+    const invoice = await repository.findInvoice(
+      basePayload.tenantId,
+      created.body.invoiceId,
+    );
+    expect(invoice?.status).toBe('CONFIRMED');
+  });
+
+  it('correlaciona webhook por externalReference no Dynamo quando providerPaymentId ainda nao foi consolidado', async () => {
+    const created = await request(app.getHttpServer())
+      .post('/invoices')
+      .set('Idempotency-Key', 'MS-200045:create')
+      .send(basePayload)
+      .expect(201);
+    const existing = await repository.findInvoice(
+      basePayload.tenantId,
+      created.body.invoiceId,
+    );
+    await repository.updateInvoice(existing!, 'OPEN', {
+      providerPaymentId: undefined,
+    });
+
+    await request(app.getHttpServer())
+      .post('/webhook/payments')
+      .set('asaas-access-token', 'webhook-secret')
+      .send({
+        event: 'PAYMENT_CONFIRMED',
+        payment: {
+          id: 'pay_asaas_early_dynamo',
+          status: 'CONFIRMED',
+          value: 219.9,
+          customer: 'cus_stub_customer-200',
+          externalReference: 'MS-200045',
+          confirmedDate: '2026-06-21',
+        },
+      })
+      .expect(201);
+
+    const invoice = await repository.findInvoice(
+      basePayload.tenantId,
+      created.body.invoiceId,
+    );
+    expect(invoice?.status).toBe('CONFIRMED');
+    expect(invoice?.providerPaymentId).toBe('pay_asaas_early_dynamo');
+  });
 });

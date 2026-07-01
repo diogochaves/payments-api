@@ -62,6 +62,7 @@ export class InvoiceRepository {
     }
 
     await this.dynamo.putItem('PaymentsTable', this.toPaymentItem(invoice));
+    await this.saveExternalReferenceLookup(invoice);
     await this.dynamo.putItem('PaymentsTable', {
       PK: `TENANT#${invoice.tenantId}`,
       SK: `IDEMPOTENCY#${idempotencyKey}`,
@@ -116,6 +117,7 @@ export class InvoiceRepository {
     }
 
     await this.dynamo.putItem('PaymentsTable', this.toPaymentItem(updated));
+    await this.saveExternalReferenceLookup(updated);
     return updated;
   }
 
@@ -147,7 +149,7 @@ export class InvoiceRepository {
       );
     }
 
-    return Promise.resolve(undefined);
+    return this.findDynamoInvoiceByProviderPaymentId(providerPaymentId);
   }
 
   findByExternalReference(
@@ -163,7 +165,7 @@ export class InvoiceRepository {
       );
     }
 
-    return Promise.resolve(undefined);
+    return this.findDynamoInvoiceByExternalReference(externalReference);
   }
 
   async saveRawProviderEvent(
@@ -274,6 +276,62 @@ export class InvoiceRepository {
       createdAt: invoice.createdAt,
       updatedAt: invoice.updatedAt,
     };
+  }
+
+  private async findDynamoInvoiceByProviderPaymentId(
+    providerPaymentId: string,
+  ): Promise<InvoiceRecord | undefined> {
+    const providers: PaymentProvider[] = ['ASAAS', 'ITAU'];
+
+    for (const provider of providers) {
+      const [item] = await this.dynamo.queryByIndex(
+        'PaymentsTable',
+        'ProviderPaymentIndex',
+        'GSI1PK',
+        `PROVIDER#${provider}`,
+        'GSI1SK',
+        `PAYMENT#${providerPaymentId}`,
+      );
+
+      if (item?.invoice) {
+        return item.invoice as InvoiceRecord;
+      }
+    }
+
+    return undefined;
+  }
+
+  private async findDynamoInvoiceByExternalReference(
+    externalReference: string,
+  ): Promise<InvoiceRecord | undefined> {
+    const item = await this.dynamo.getItem(
+      'PaymentsTable',
+      `EXTERNAL_REFERENCE#${externalReference}`,
+      'INVOICE',
+    );
+    const tenantId = typeof item?.tenantId === 'string' ? item.tenantId : '';
+    const invoiceId =
+      typeof item?.invoiceId === 'string' ? item.invoiceId : '';
+
+    if (!tenantId || !invoiceId) {
+      return undefined;
+    }
+
+    return this.findInvoice(tenantId, invoiceId);
+  }
+
+  private async saveExternalReferenceLookup(
+    invoice: InvoiceRecord,
+  ): Promise<void> {
+    await this.dynamo.putItem('PaymentsTable', {
+      PK: `EXTERNAL_REFERENCE#${invoice.externalReference}`,
+      SK: 'INVOICE',
+      tenantId: invoice.tenantId,
+      invoiceId: invoice.invoiceId,
+      orderId: invoice.orderId,
+      provider: invoice.provider,
+      updatedAt: invoice.updatedAt,
+    });
   }
 
   private invoiceKey(tenantId: string, invoiceId: string) {
