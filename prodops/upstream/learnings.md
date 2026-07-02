@@ -27,3 +27,23 @@ Key learnings:
 
 Downstream candidate only after the next experiment chooses the capture model
 and produces OBC, BDD, DTO, observability, and Reliability Plan updates.
+
+## Hosted vs Tokenized Credit Card
+
+The focused comparison favors hosted Asaas card entry as the first Downstream
+slice.
+
+Validated learning:
+
+- Hosted card entry can reuse the current `POST /invoices` shape because Asaas
+  can create a `CREDIT_CARD` payment without card fields and return an
+  `invoiceUrl` for payer completion.
+- Tokenized card payment is viable, but it is not just a UI option. It requires
+  `creditCardToken`, `remoteIp`, explicit timeout, refusal mapping, risk-analysis
+  mapping, and storage/security rules for token ownership.
+- Direct raw card capture should remain out of the first Downstream slice unless
+  Magazine Siará explicitly accepts PCI/security and antifraud obligations.
+- The Validation Workbench now exposes the proposed tokenized payload shape and
+  card-specific webhook events for functional exploration.
+- The capability is almost ready for Downstream as hosted card entry, but
+  tokenized payment still needs product and security approval before delivery.

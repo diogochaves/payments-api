@@ -86,6 +86,23 @@ Incidentes já ocorreram anteriormente e podem voltar a acontecer sem detecção
 - Integração ao processo corporativo de gestão de incidentes.
 - Dependências entre Ecommerce, Payments, Marketing, Vendas, Infraestrutura e Arquitetura.
 
+## Riscos Upstream - Cartao de credito Asaas
+
+- Checkout hospedado no Asaas reduz risco de PCI porque Payments API nao
+  trafega dados sensiveis de cartao, mas depende da experiencia de pagamento
+  hospedada e da URL de invoice retornada pelo provedor.
+- Pagamento tokenizado exige contrato explicito para `creditCardToken`,
+  `remoteIp`, timeout minimo de 60 segundos, estados de autorizacao, analise de
+  risco e recusa de captura.
+- Captura direta de dados de cartao aumenta a superficie de seguranca e nao deve
+  entrar em Downstream sem decisao formal de compliance, UX e antifraude.
+- Eventos `PAYMENT_AUTHORIZED`, `PAYMENT_AWAITING_RISK_ANALYSIS`,
+  `PAYMENT_REPROVED_BY_RISK_ANALYSIS` e
+  `PAYMENT_CREDIT_CARD_CAPTURE_REFUSED` ainda nao possuem estados internos
+  completos nem SLOs aceitos.
+- Cancelar cobranca aberta por `DELETE /v3/payments` nao cobre estorno de
+  pagamento confirmado; cartao confirmado exige fronteira de refund/reversal.
+
 ---
 
 # Recomendações para o Reliability Plan

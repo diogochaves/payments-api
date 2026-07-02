@@ -219,3 +219,94 @@ payment for the Magazine Siará checkout. The output should be:
 - required DTO fields;
 - required observability events;
 - Reliability Plan risk updates.
+
+---
+
+# Focused Upstream Experiment - Hosted vs Tokenized Credit Card
+
+## Experiment
+
+Compare hosted Asaas card entry and tokenized card payment for Magazine Siará
+checkout before promoting credit card support to Downstream.
+
+## Business Goal
+
+Select the safest first credit card slice that increases payment options without
+creating unmanaged PCI, antifraud, timeout or webhook-state risk.
+
+## Hypothesis
+
+Hosted card entry can move to Downstream first because it reuses the current
+invoice creation shape and keeps card data outside Payments API. Tokenized card
+payment is viable later, but needs explicit contract, timeout, event mapping and
+security decisions.
+
+## Code Produced
+
+The Validation Workbench was updated to generate proposed tokenized card payload
+fields (`creditCardToken` and `remoteIp`) and to simulate card-specific Asaas
+webhook events.
+
+No production credit card processing path was implemented.
+
+## Validation Workbench Updated
+
+Yes. The Workbench now supports:
+
+- hosted invoice mode for `billingType: CREDIT_CARD`;
+- tokenized card payload exploration with `creditCardToken` and `remoteIp`;
+- Asaas card events for authorization, risk analysis, capture refusal, deletion
+  and refund.
+
+## Contracts Updated
+
+Draft contract artifacts were produced:
+
+- BDD: `prodops/current-state/features/credit-card-payment.feature`
+- OBC: `prodops/assessment/reliability-plan/obcs/credit-card-authorization-confirmation.md`
+- Tracking List: `prodops/current-state/tracking-list.md`
+- Reliability risks: `prodops/assessment/reliability-plan/risks.md`
+
+## BDD Updated
+
+Yes. Added scenarios for hosted card entry, tokenized card payment,
+authorization, risk analysis, capture refusal, confirmation and refund boundary.
+
+## Reliability Impact
+
+Hosted card entry minimizes sensitive-data handling and can reuse the current
+provider charge flow. Tokenized payment introduces timeout, token ownership,
+risk-analysis, refusal and idempotency requirements. Direct raw card capture
+remains outside the recommended first slice.
+
+## Result
+
+Choose hosted Asaas card entry as the first Downstream candidate. Keep tokenized
+card payment in Upstream until product, security and antifraud approve the
+contract and reliability rules.
+
+## Learning
+
+The current API can plausibly support a hosted credit card slice because
+`CreateInvoiceDto` already accepts `CREDIT_CARD`, `AsaasService.createCharge`
+already posts to `/v3/payments`, and the response contract already carries
+`paymentUrl`. Tokenized card payment requires DTO and provider request changes
+because the current service does not forward `creditCardToken` or `remoteIp`.
+
+## Should move downstream?
+
+Partially.
+
+Move hosted card entry to Downstream after PM and Tech Lead accept the OBC and
+BDD. Do not move tokenized card payment yet.
+
+## Next step
+
+Add hosted credit card payment to `prodops/downstream/iteration-backlog.md`
+only after approving:
+
+- OBC draft;
+- BDD scenarios;
+- payment URL UX in Checkout;
+- webhook card event handling scope;
+- refund boundary for confirmed card payments.

@@ -15,7 +15,18 @@ import {
 
 type BillingType = 'BOLETO' | 'PIX' | 'CREDIT_CARD' | 'UNDEFINED';
 type Provider = 'ASAAS' | 'ITAU';
-type WebhookEvent = 'PAYMENT_CONFIRMED' | 'PAYMENT_RECEIVED' | 'PAYMENT_OVERDUE';
+type CreditCardFlow = 'HOSTED_INVOICE' | 'TOKENIZED';
+type WebhookEvent =
+  | 'PAYMENT_AWAITING_RISK_ANALYSIS'
+  | 'PAYMENT_APPROVED_BY_RISK_ANALYSIS'
+  | 'PAYMENT_REPROVED_BY_RISK_ANALYSIS'
+  | 'PAYMENT_AUTHORIZED'
+  | 'PAYMENT_CONFIRMED'
+  | 'PAYMENT_RECEIVED'
+  | 'PAYMENT_CREDIT_CARD_CAPTURE_REFUSED'
+  | 'PAYMENT_OVERDUE'
+  | 'PAYMENT_DELETED'
+  | 'PAYMENT_REFUNDED';
 
 type CartItem = {
   id: string;
@@ -86,6 +97,9 @@ function App() {
   const [currency, setCurrency] = useState('BRL');
   const [dueDate, setDueDate] = useState(() => futureDate(7));
   const [billingType, setBillingType] = useState<BillingType>('PIX');
+  const [creditCardFlow, setCreditCardFlow] = useState<CreditCardFlow>('HOSTED_INVOICE');
+  const [creditCardToken, setCreditCardToken] = useState('card_token_sandbox');
+  const [remoteIp, setRemoteIp] = useState('127.0.0.1');
   const [provider, setProvider] = useState<Provider>('ASAAS');
   const [webhookEvent, setWebhookEvent] = useState<WebhookEvent>('PAYMENT_CONFIRMED');
   const [payloadText, setPayloadText] = useState('');
@@ -128,8 +142,27 @@ function App() {
       billingType,
       provider,
       description,
+      ...(billingType === 'CREDIT_CARD' && creditCardFlow === 'TOKENIZED'
+        ? {
+            creditCardToken,
+            remoteIp,
+          }
+        : {}),
     };
-  }, [amount, billingType, currency, customer, description, dueDate, orderId, provider, tenantId]);
+  }, [
+    amount,
+    billingType,
+    creditCardFlow,
+    creditCardToken,
+    currency,
+    customer,
+    description,
+    dueDate,
+    orderId,
+    provider,
+    remoteIp,
+    tenantId,
+  ]);
 
   const confirmationPayload = useMemo(() => {
     if (!lastInvoice) {
@@ -159,6 +192,7 @@ function App() {
   const endpoint = '/invoices';
   const idempotencyKey = `${orderId}:create`;
   const cancelIdempotencyKey = `${lastInvoice?.orderId ?? orderId}:cancel`;
+  const isCreditCard = billingType === 'CREDIT_CARD';
 
   const updateItem = <K extends keyof CartItem>(
     id: string,
@@ -540,6 +574,48 @@ function App() {
             </label>
           </div>
 
+          {isCreditCard && (
+            <div className="card-experiment-grid">
+              <label>
+                <span>Fluxo cartão</span>
+                <select
+                  value={creditCardFlow}
+                  onChange={(event) => {
+                    setCreditCardFlow(event.target.value as CreditCardFlow);
+                    setIsPayloadDirty(false);
+                  }}
+                >
+                  <option value="HOSTED_INVOICE">HOSTED_INVOICE</option>
+                  <option value="TOKENIZED">TOKENIZED</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Credit card token</span>
+                <input
+                  value={creditCardToken}
+                  onChange={(event) => {
+                    setCreditCardToken(event.target.value);
+                    setIsPayloadDirty(false);
+                  }}
+                  disabled={creditCardFlow !== 'TOKENIZED'}
+                />
+              </label>
+
+              <label>
+                <span>Remote IP</span>
+                <input
+                  value={remoteIp}
+                  onChange={(event) => {
+                    setRemoteIp(event.target.value);
+                    setIsPayloadDirty(false);
+                  }}
+                  disabled={creditCardFlow !== 'TOKENIZED'}
+                />
+              </label>
+            </div>
+          )}
+
           <textarea
             className="payload-editor"
             spellCheck={false}
@@ -699,11 +775,26 @@ function App() {
               value={webhookEvent}
               onChange={(event) => setWebhookEvent(event.target.value as WebhookEvent)}
             >
-              <option value="PAYMENT_CONFIRMED">PAYMENT_CONFIRMED</option>
-              <option value="PAYMENT_RECEIVED">PAYMENT_RECEIVED</option>
-              <option value="PAYMENT_OVERDUE">PAYMENT_OVERDUE</option>
-            </select>
-          </label>
+                <option value="PAYMENT_CONFIRMED">PAYMENT_CONFIRMED</option>
+                <option value="PAYMENT_RECEIVED">PAYMENT_RECEIVED</option>
+                <option value="PAYMENT_AWAITING_RISK_ANALYSIS">
+                  PAYMENT_AWAITING_RISK_ANALYSIS
+                </option>
+                <option value="PAYMENT_APPROVED_BY_RISK_ANALYSIS">
+                  PAYMENT_APPROVED_BY_RISK_ANALYSIS
+                </option>
+                <option value="PAYMENT_REPROVED_BY_RISK_ANALYSIS">
+                  PAYMENT_REPROVED_BY_RISK_ANALYSIS
+                </option>
+                <option value="PAYMENT_AUTHORIZED">PAYMENT_AUTHORIZED</option>
+                <option value="PAYMENT_CREDIT_CARD_CAPTURE_REFUSED">
+                  PAYMENT_CREDIT_CARD_CAPTURE_REFUSED
+                </option>
+                <option value="PAYMENT_OVERDUE">PAYMENT_OVERDUE</option>
+                <option value="PAYMENT_DELETED">PAYMENT_DELETED</option>
+                <option value="PAYMENT_REFUNDED">PAYMENT_REFUNDED</option>
+              </select>
+            </label>
 
           <pre className="webhook-preview">
             {JSON.stringify(confirmationPayload ?? { event: webhookEvent }, null, 2)}
@@ -750,12 +841,31 @@ function safeJsonParse(text: string) {
 }
 
 function webhookStatus(event: WebhookEvent) {
+  if (event === 'PAYMENT_AUTHORIZED') {
+    return 'AUTHORIZED';
+  }
+
   if (event === 'PAYMENT_RECEIVED') {
     return 'RECEIVED';
   }
 
+  if (event === 'PAYMENT_DELETED') {
+    return 'DELETED';
+  }
+
+  if (event === 'PAYMENT_REFUNDED') {
+    return 'REFUNDED';
+  }
+
   if (event === 'PAYMENT_OVERDUE') {
     return 'OVERDUE';
+  }
+
+  if (
+    event === 'PAYMENT_CREDIT_CARD_CAPTURE_REFUSED' ||
+    event === 'PAYMENT_REPROVED_BY_RISK_ANALYSIS'
+  ) {
+    return 'REFUSED';
   }
 
   return 'CONFIRMED';

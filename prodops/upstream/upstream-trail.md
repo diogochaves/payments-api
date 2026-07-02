@@ -163,3 +163,74 @@ whether they are ready for Downstream.
 Use `validation-workbench/` for future Upstream functional validation and mark
 all Upstream code as disposable until a successful experiment is promoted into
 the Downstream flow.
+
+## 2026-07-02 15:00
+
+### Experiment
+
+Compare hosted Asaas card entry with tokenized card payment for Magazine Siará
+checkout.
+
+### Business Goal
+
+Choose the safest first credit card slice before committing the capability to
+Downstream delivery.
+
+### Hypothesis
+
+Hosted card entry can be promoted first because it reuses the current invoice
+creation shape and keeps sensitive card data outside Payments API. Tokenized
+card payment is viable later, but requires explicit DTO, provider, timeout,
+security and webhook-state decisions.
+
+### Code Produced
+
+Updated `validation-workbench/` to support Upstream exploration of hosted vs
+tokenized card payloads and Asaas card-specific webhook events. No production
+credit card processing path was implemented.
+
+### Validation Workbench Updated
+
+Yes. Added hosted/tokenized card mode fields, tokenized payload fields
+`creditCardToken` and `remoteIp`, and webhook event options for authorization,
+risk analysis, capture refusal, deletion and refund.
+
+### Contracts Updated
+
+Drafted `prodops/assessment/reliability-plan/obcs/credit-card-authorization-confirmation.md`
+and updated Reliability Plan risks and Tracking List.
+
+### BDD Updated
+
+Yes. Added `prodops/current-state/features/credit-card-payment.feature`.
+
+### Reliability Impact
+
+Hosted entry reduces PCI exposure and can reuse the existing provider charge
+boundary. Tokenized payment adds required decisions for token ownership,
+`remoteIp`, 60-second provider timeout, authorization, risk analysis, capture
+refusal, idempotency and refund boundary.
+
+### Result
+
+Hosted Asaas card entry is the recommended first Downstream candidate.
+Tokenized card payment remains in Upstream until product, security and
+antifraud approve the contract and reliability rules.
+
+### Learning
+
+The existing API already accepts `billingType: CREDIT_CARD` and can create a
+generic Asaas charge, but it does not forward tokenized card fields to Asaas.
+That makes hosted card entry a smaller first slice and tokenized payment a
+separate capability.
+
+### Should move downstream?
+
+Partially. Move hosted card entry only after PM and Tech Lead accept the OBC,
+BDD, Checkout payment URL UX, webhook event scope and refund boundary. Do not
+move tokenized card payment yet.
+
+### Next Step
+
+Review the drafted OBC and BDD, then add only the hosted card entry slice to
+`prodops/downstream/iteration-backlog.md` if approved.

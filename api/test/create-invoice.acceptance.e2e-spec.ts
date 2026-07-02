@@ -162,6 +162,42 @@ describe('Criar Invoice (acceptance)', () => {
     });
   });
 
+  it('cria invoice de cartao hospedado usando o contrato generico do Asaas', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/invoices')
+      .set('Idempotency-Key', 'MS-100045:credit-card-hosted')
+      .set('X-Correlation-Id', 'corr-credit-card-hosted')
+      .send({
+        ...basePayload,
+        billingType: 'CREDIT_CARD',
+        description: 'Pedido MS-100045 com cartao hospedado',
+      })
+      .expect(201);
+
+    expect(response.body).toMatchObject({
+      orderId: 'MS-100045',
+      provider: 'ASAAS',
+      providerPaymentId: 'pay_stub_MS-100045',
+      status: 'OPEN',
+      paymentUrl: 'https://sandbox.asaas.com/i/MS-100045',
+      externalReference: 'MS-100045',
+    });
+    expect(asaas.createCharge).toHaveBeenCalledWith(
+      expect.objectContaining({
+        billingType: 'CREDIT_CARD',
+        description: 'Pedido MS-100045 com cartao hospedado',
+        externalReference: 'MS-100045',
+      }),
+    );
+    expect(
+      observableEvent('pagamento.processamento.pagamentos.fatura.criada'),
+    ).toMatchObject({
+      billingType: 'CREDIT_CARD',
+      paymentUrl: 'https://sandbox.asaas.com/i/MS-100045',
+      providerOperation: 'POST /v3/payments',
+    });
+  });
+
   it('cria cliente Asaas antes da invoice quando nao houver vinculo', async () => {
     await request(app.getHttpServer())
       .post('/invoices')

@@ -237,7 +237,8 @@ textarea:focus {
 }
 
 .form-grid,
-.invoice-options {
+.invoice-options,
+.card-experiment-grid {
   display: grid;
   gap: 12px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -282,6 +283,14 @@ textarea:focus {
 
 .invoice-options {
   margin-bottom: 12px;
+}
+
+.card-experiment-grid {
+  background: #f4f7f8;
+  border: 1px solid #dce2e7;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  padding: 12px;
 }
 
 .payload-editor {
@@ -483,6 +492,7 @@ textarea:focus {
   .cart-item,
   .form-grid,
   .invoice-options,
+  .card-experiment-grid,
   .status-grid {
     grid-template-columns: 1fr;
   }
