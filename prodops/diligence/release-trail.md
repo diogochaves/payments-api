@@ -33,3 +33,37 @@ Implemented in-repo Reliability Plan P0 hardening for payment confirmation: Dyna
 ### Notes
 
 Remaining Reliability Plan items outside this change include Checkout Feature Flag readiness, retry policy for transient provider failures, required webhook token validation for release environments, Asaas timeout configuration and durable publication strategy for `payment.confirmed`.
+
+## 2026-07-02 09:58
+
+### Summary
+
+Updated the repository home in `README.md` to present payments-api as the ProdOps University reference project, connecting the functional sandbox to product, reliability, observability, testing and operational artifacts.
+
+### Related
+
+- Reliability Plan: `prodops/assessment/reliability-plan/Reliability_Plan.md`
+- OBC: Product Deck and Service Deck OBC sections referenced in the README
+- BDD Feature: `prodops/current-state/features`
+
+### Code
+
+- `README.md`
+
+### Tests
+
+- Tests created or updated: none
+- Validation executed: checked referenced README paths exist
+- Validation executed: `git diff --check -- README.md prodops/diligence/release-trail.md`
+
+### Artifacts Updated
+
+- Product Deck: referenced, not changed
+- Service Deck: referenced, not changed
+- Tracking List: referenced, not changed
+- Reliability Plan: referenced, not changed
+- OBC: referenced, not changed
+
+### Notes
+
+README now calls out educational roadmap gaps explicitly: OpenAPI, OpenSLO, dedicated runbooks, Decision Trail, postmortems, dashboards and event contracts.
