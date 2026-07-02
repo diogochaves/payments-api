@@ -23,7 +23,7 @@ A decisao principal e reduzir o lote: entregar uma jornada menor, completa e com
 
 | Risco | Impacto no negocio | Probabilidade | Influencia sobre o escopo |
 | --- | --- | --- | --- |
-| Novo gateway ainda desabilitado por Feature Flag devido a bug localizado. | Muito alto: impede ativacao da Release e, segundo `Riscos_Premortem_Payments.md`, existe risco contratual relevante. | Alta | Reduzir escopo para a jornada mais importante, evitando incluir funcionalidades paralelas que desviem foco da ativacao. |
+| Novo gateway ainda desabilitado por Feature Flag devido a bug localizado. | Muito alto: impede ativacao da Release e, segundo `prodops/assessment/reliability-plan/risks.md`, existe risco contratual relevante. | Alta | Reduzir escopo para a jornada mais importante, evitando incluir funcionalidades paralelas que desviem foco da ativacao. |
 | Notification Service ja teve incidentes que afetaram confirmacao ao cliente. | Alto: cliente pode pagar e nao receber informacao confiavel. | Alta | Manter notificacao de status dentro da Release, mas apenas como parte da jornada principal, nao como plataforma completa de comunicacao. |
 | Desacoplamento do monolito aumenta complexidade entre times e servicos. | Alto: falhas de integracao podem impedir a experiencia ponta a ponta. | Alta | Preferir uma jornada completa menor em vez de multiplas jornadas incompletas. |
 | Pix e Boleto possuem regras e expectativas diferentes. | Medio/alto: tratar ambos como variacao simples pode aumentar erro de negocio. | Media | Dividir Boleto e nao comprometer a Release principal com todas as variacoes do meio de pagamento. |
@@ -89,15 +89,15 @@ Fallback/Itau ficou fora porque aumentaria muito o tamanho da Release. A oportun
 ## Fontes consultadas
 
 - `prodops/current-state/product-deck.md`
-- `prodops/current-state/service-deck-compra-com-pix.md`
+- `prodops/current-state/service-decks/compra-com-pix.md`
 - `prodops/current-state/icebox-backlog.md`
 - `prodops/current-state/features/create-invoice.feature`
 - `prodops/current-state/features/payment-confirmation.feature`
 - `prodops/current-state/features/cancel-invoice.feature`
-- `prodops/assessment/premortem-prodops-payments-checkout.md`
-- `prodops/assessment/reliability-plan/Riscos_Premortem_Payments.md`
-- `prodops/assessment/reliability-plan/Oportunidades_Premortem_Payments.md`
-- `prodops/assessment/reliability-plan/Tracking_List_Payments.md`
+- `prodops/assessment/premortem.md`
+- `prodops/assessment/reliability-plan/risks.md`
+- `prodops/assessment/reliability-plan/opportunities.md`
+- `prodops/assessment/reliability-plan/iteration-backlog.md`
 - `prodops/assessment/event-storming/plan.json`
 - `api/src/modules/invoices`
 - `api/src/infra/asaas.service.ts`

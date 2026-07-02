@@ -1,9 +1,9 @@
 ---
-name: synk
-description: "Execute the SYNK engineering flow: check whether newer remote code exists, fetch and update local base branches, bring the latest base into the current work branch, resolve conflicts, preserve the branch's TDD evidence, and validate the synchronized result. Use when Codex is asked to sync, update from main, refresh a branch, resolve merge conflicts, or ensure a feature branch is current."
+name: sync
+description: "Execute the SYNC engineering flow: check whether newer remote code exists, fetch and update local base branches, bring the latest base into the current work branch, resolve conflicts, preserve the branch's TDD evidence, and validate the synchronized result. Use when Codex is asked to sync, update from main, refresh a branch, resolve merge conflicts, or ensure a feature branch is current."
 ---
 
-# SYNK
+# SYNC
 
 ## Flow
 

@@ -6,7 +6,7 @@ Implemented in-repo Reliability Plan P0 hardening for payment confirmation: Dyna
 
 ### Related
 
-- Reliability Plan: `prodops/assessment/reliability-plan/Reliability_Plan.md`
+- Reliability Plan: `prodops/assessment/reliability-plan/README.md`
 - OBC: Confirmacao de pagamento confiavel para a jornada Checkout -> Payments
 - BDD Feature: `prodops/current-state/features/payment-confirmation.feature`
 
@@ -42,7 +42,7 @@ Updated the repository home in `README.md` to present payments-api as the ProdOp
 
 ### Related
 
-- Reliability Plan: `prodops/assessment/reliability-plan/Reliability_Plan.md`
+- Reliability Plan: `prodops/assessment/reliability-plan/README.md`
 - OBC: Product Deck and Service Deck OBC sections referenced in the README
 - BDD Feature: `prodops/current-state/features`
 
@@ -102,3 +102,35 @@ Removed the tracked frontend `node_modules` tree from Git and updated the reposi
 ### Notes
 
 The local `test/node_modules` directory can remain on disk for the developer environment, but it is no longer tracked by Git.
+
+## 2026-07-02 11:38
+
+### What changed?
+
+Organized the repository for Claude, Codex, and Copilot agents with ProdOps as the single source of context. Added root agent guidance, Claude/Codex-specific instructions, Copilot prompts, generic execution skills, canonical ProdOps folders, and operation/diligence placeholders.
+
+### Why?
+
+To separate product context from execution workflows and tool-specific configuration, reducing duplicated business knowledge across agent surfaces.
+
+### Related OBC
+
+Not applicable; repository organization change.
+
+### Related BDD
+
+Not applicable; no product behavior changed.
+
+### Evidence
+
+- Created root `AGENTS.md` flow: Current State -> Assessment -> Reliability Plan -> BDD Feature -> Skill -> Code -> Release Trail.
+- Added generic skills under `skills/`.
+- Moved ProdOps artifacts to canonical paths under `prodops/current-state/`, `prodops/assessment/`, `prodops/diligence/`, and `prodops/operation/`.
+- Updated old ProdOps path references.
+- Validation executed: expected structure presence check.
+- Validation executed: old path/name reference search.
+- Validation executed: root skill frontmatter check.
+
+### Next steps
+
+Keep future product context in `prodops/` and keep skills limited to execution procedure.

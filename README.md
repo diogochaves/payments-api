@@ -47,16 +47,16 @@ O repositório materializa vários elementos do Framework ProdOps:
 | Método ou artefato | Como aparece neste projeto |
 | --- | --- |
 | Product Deck | O contexto do produto Payments está documentado em [prodops/current-state/product-deck.md](prodops/current-state/product-deck.md). |
-| Service Deck | A jornada Compra com Pix está descrita em [prodops/current-state/service-deck-compra-com-pix.md](prodops/current-state/service-deck-compra-com-pix.md). |
+| Service Deck | A jornada Compra com Pix está descrita em [prodops/current-state/service-decks/compra-com-pix.md](prodops/current-state/service-decks/compra-com-pix.md). |
 | Observable Business Contract / OBC | OBCs aparecem como seções do Product Deck e Service Deck, conectando eventos, SLIs, SLOs iniciais, impacto, resposta e dono. |
 | OpenAPI | Não há um arquivo OpenAPI completo no estado atual. Existe um ODD/contrato operacional em [api/odd/create_invoice.yaml](api/odd/create_invoice.yaml). |
 | BDD / cenários de comportamento | Os cenários estão em [prodops/current-state/features](prodops/current-state/features) e também em [docs/features](docs/features). |
 | Observability Driven Design | Existe um artefato ODD para criação de invoice em [api/odd/create_invoice.yaml](api/odd/create_invoice.yaml), além de eventos observáveis no código. |
 | Product Reliability Engineering / PRE | O repositório inclui premortem, riscos, oportunidades, tracking list e reliability plan em [prodops/assessment](prodops/assessment). |
-| Reliability Plan | O plano de confiabilidade da release está em [prodops/assessment/reliability-plan/Reliability_Plan.md](prodops/assessment/reliability-plan/Reliability_Plan.md). |
+| Reliability Plan | O plano de confiabilidade da release está em [prodops/assessment/reliability-plan/README.md](prodops/assessment/reliability-plan/README.md). |
 | SLOs / OpenSLO | SLOs iniciais existem em formato documental no Product Deck e Service Deck. Não há arquivo OpenSLO dedicado. |
 | Runbooks | Há seções de runbook nos decks e no premortem, mas ainda não há runbooks operacionais dedicados em arquivos separados. |
-| Postmortem / Premortem | Existe um premortem em [prodops/assessment/premortem-prodops-payments-checkout.md](prodops/assessment/premortem-prodops-payments-checkout.md). Não há postmortems versionados no momento. |
+| Postmortem / Premortem | Existe um premortem em [prodops/assessment/premortem.md](prodops/assessment/premortem.md). Não há postmortems versionados no momento. |
 | Decision Trail / Release Trail | O Release Trail está em [prodops/diligence/release-trail.md](prodops/diligence/release-trail.md). Não há Decision Trail separado. |
 | GitOps / CI/CD / Delivery Flow | O workflow de release está em [.github/workflows/release.yml](.github/workflows/release.yml). Ele instala dependências, faz build, executa testes de aceitação e publica artefatos de release. |
 | Local testing | O sandbox local está documentado pelos scripts em [api/scripts](api/scripts), pela skill local em [.codex/skills/payments-api-local-testing](.codex/skills/payments-api-local-testing) e pelo frontend em [test](test). Algumas referências locais ainda citam o endpoint legado `/payments`; o fluxo atual do código fonte está concentrado em invoices. |
@@ -68,17 +68,17 @@ O repositório materializa vários elementos do Framework ProdOps:
 | Artefato | Caminho | Papel no estudo |
 | --- | --- | --- |
 | Product Deck | [prodops/current-state/product-deck.md](prodops/current-state/product-deck.md) | Define visão, stakeholders, arquitetura do produto, eventos, OBCs e SLOs iniciais. |
-| Service Deck Compra com Pix | [prodops/current-state/service-deck-compra-com-pix.md](prodops/current-state/service-deck-compra-com-pix.md) | Detalha a jornada Pix, blueprint, eventos, riscos, indicadores e runbooks esperados. |
+| Service Deck Compra com Pix | [prodops/current-state/service-decks/compra-com-pix.md](prodops/current-state/service-decks/compra-com-pix.md) | Detalha a jornada Pix, blueprint, eventos, riscos, indicadores e runbooks esperados. |
 | Tracking List atual | [prodops/current-state/tracking-list.md](prodops/current-state/tracking-list.md) | Lista demandas e próximas ações do produto. |
 | Icebox Backlog | [prodops/current-state/icebox-backlog.md](prodops/current-state/icebox-backlog.md) | Guarda oportunidades e itens ainda fora do fluxo priorizado. |
 | Features BDD | [prodops/current-state/features](prodops/current-state/features) | Especifica comportamentos esperados para invoice, confirmação e cancelamento. |
 | Event Storming | [prodops/assessment/event-storming/plan.json](prodops/assessment/event-storming/plan.json) | Estrutura eventos, fluxos e sugestões de confiabilidade para análise. |
-| Premortem | [prodops/assessment/premortem-prodops-payments-checkout.md](prodops/assessment/premortem-prodops-payments-checkout.md) | Antecipação de falhas prováveis na release entre Checkout, Payments e Notification. |
-| Reliability Plan | [prodops/assessment/reliability-plan/Reliability_Plan.md](prodops/assessment/reliability-plan/Reliability_Plan.md) | Priorização de riscos e iniciativas de confiabilidade para a release. |
-| Iteration Plan | [prodops/assessment/reliability-plan/Iteration_Plan.md](prodops/assessment/reliability-plan/Iteration_Plan.md) | Define o recorte funcional recomendado para a iteração. |
-| Riscos do Premortem | [prodops/assessment/reliability-plan/Riscos_Premortem_Payments.md](prodops/assessment/reliability-plan/Riscos_Premortem_Payments.md) | Consolida riscos identificados no premortem. |
-| Oportunidades do Premortem | [prodops/assessment/reliability-plan/Oportunidades_Premortem_Payments.md](prodops/assessment/reliability-plan/Oportunidades_Premortem_Payments.md) | Consolida oportunidades de melhoria e evolução. |
-| Tracking List da release | [prodops/assessment/reliability-plan/Tracking_List_Payments.md](prodops/assessment/reliability-plan/Tracking_List_Payments.md) | Registra demandas associadas a observabilidade, negócio, operação e confiabilidade. |
+| Premortem | [prodops/assessment/premortem.md](prodops/assessment/premortem.md) | Antecipação de falhas prováveis na release entre Checkout, Payments e Notification. |
+| Reliability Plan | [prodops/assessment/reliability-plan/README.md](prodops/assessment/reliability-plan/README.md) | Priorização de riscos e iniciativas de confiabilidade para a release. |
+| Iteration Plan | [prodops/assessment/iteration-plan.md](prodops/assessment/iteration-plan.md) | Define o recorte funcional recomendado para a iteração. |
+| Riscos do Premortem | [prodops/assessment/reliability-plan/risks.md](prodops/assessment/reliability-plan/risks.md) | Consolida riscos identificados no premortem. |
+| Oportunidades do Premortem | [prodops/assessment/reliability-plan/opportunities.md](prodops/assessment/reliability-plan/opportunities.md) | Consolida oportunidades de melhoria e evolução. |
+| Tracking List da release | [prodops/assessment/reliability-plan/iteration-backlog.md](prodops/assessment/reliability-plan/iteration-backlog.md) | Registra demandas associadas a observabilidade, negócio, operação e confiabilidade. |
 | Release Trail | [prodops/diligence/release-trail.md](prodops/diligence/release-trail.md) | Registra entregas e evidências de execução. |
 
 ## Mapa do Repositório
@@ -318,13 +318,13 @@ aws logs delete-log-group \
 Uma trilha recomendada para alunos:
 
 1. Entenda o contexto do produto em [prodops/current-state/product-deck.md](prodops/current-state/product-deck.md).
-2. Leia a jornada Compra com Pix em [prodops/current-state/service-deck-compra-com-pix.md](prodops/current-state/service-deck-compra-com-pix.md).
+2. Leia a jornada Compra com Pix em [prodops/current-state/service-decks/compra-com-pix.md](prodops/current-state/service-decks/compra-com-pix.md).
 3. Explore os cenários BDD em [prodops/current-state/features](prodops/current-state/features).
 4. Compare os cenários com o código em [api/src/modules/invoices](api/src/modules/invoices).
 5. Rode o backend sandbox e o frontend de teste.
 6. Execute `npm run test:acceptance` em [api](api) para observar a cobertura comportamental.
 7. Leia o ODD em [api/odd/create_invoice.yaml](api/odd/create_invoice.yaml) e procure os eventos observáveis no código.
-8. Avalie riscos e confiabilidade no [premortem](prodops/assessment/premortem-prodops-payments-checkout.md) e no [Reliability Plan](prodops/assessment/reliability-plan/Reliability_Plan.md).
+8. Avalie riscos e confiabilidade no [premortem](prodops/assessment/premortem.md) e no [Reliability Plan](prodops/assessment/reliability-plan/README.md).
 9. Consulte o [Release Trail](prodops/diligence/release-trail.md) para entender como mudanças ficam registradas.
 10. Proponha evoluções usando os métodos ProdOps: novo OBC, OpenAPI, OpenSLO, runbook, dashboard, teste de contrato ou melhoria de confiabilidade.
 

@@ -1,7 +1,7 @@
 # Reliability Plan - Payments Release
 
 > Documento gerado a partir de `prodops/assessment/reliability-plan/setup/reliability-plan.prompt.md`.
-> Entrada principal: `prodops/assessment/reliability-plan/Iteration_Plan.md`.
+> Entrada principal: `prodops/assessment/iteration-plan.md`.
 
 ## Executive Summary
 
@@ -15,9 +15,9 @@ Os maiores riscos de confiabilidade para esse escopo aprovado estao na diferenca
 
 | Funcionalidade | Decisao no Iteration Plan | Evidencia |
 | --- | --- | --- |
-| Habilitar novo gateway para o Checkout na jornada priorizada | Entrou | `Iteration_Plan.md`, linha da tabela "Iteration Plan recomendado". |
-| Criar invoice via Pix | Entrou | `Iteration_Plan.md`; `prodops/current-state/features/create-invoice.feature`; `InvoiceController.createInvoice`; `InvoiceService.createInvoice`. |
-| Confirmacao de pagamento | Entrou | `Iteration_Plan.md`; `prodops/current-state/features/payment-confirmation.feature`; `AsaasWebhookController`; `InvoiceService.processProviderWebhook`. |
+| Habilitar novo gateway para o Checkout na jornada priorizada | Entrou | `prodops/assessment/iteration-plan.md`, linha da tabela "Iteration Plan recomendado". |
+| Criar invoice via Pix | Entrou | `prodops/assessment/iteration-plan.md`; `prodops/current-state/features/create-invoice.feature`; `InvoiceController.createInvoice`; `InvoiceService.createInvoice`. |
+| Confirmacao de pagamento | Entrou | `prodops/assessment/iteration-plan.md`; `prodops/current-state/features/payment-confirmation.feature`; `AsaasWebhookController`; `InvoiceService.processProviderWebhook`. |
 
 Itens explicitamente ignorados por nao terem decisao exatamente `Entrou`: `Notificacao de status de pagamento` (`Entrou como MVP`), `Criar invoice via Boleto` (`Dividida`), `Cancelar invoice pendente` (`Adiada`), `Integracao corporativa de incidentes/ITSM` (`Saiu`) e `Gateway fallback/Itau` (`Saiu`).
 
@@ -198,10 +198,10 @@ Estas melhorias estao relacionadas a funcionalidades que nao fazem parte desta R
 
 ## Fontes consultadas
 
-- `prodops/assessment/reliability-plan/Iteration_Plan.md`
-- `prodops/assessment/premortem-prodops-payments-checkout.md`
-- `prodops/assessment/reliability-plan/Riscos_Premortem_Payments.md`
-- `prodops/current-state/service-deck-compra-com-pix.md`
+- `prodops/assessment/iteration-plan.md`
+- `prodops/assessment/premortem.md`
+- `prodops/assessment/reliability-plan/risks.md`
+- `prodops/current-state/service-decks/compra-com-pix.md`
 - `prodops/current-state/features/create-invoice.feature`
 - `prodops/current-state/features/payment-confirmation.feature`
 - `api/src/modules/invoices/controllers/invoice.controller.ts`

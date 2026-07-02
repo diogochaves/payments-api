@@ -278,4 +278,4 @@ Regras
 Sua única responsabilidade é definir o escopo de negócio mais adequado para maximizar as chances de sucesso da próxima Release.
 
 Instruções gerais
-crie o arquivo Iteration_Plan.md com o conteúdo solicitado, seguindo o formato definido acima na paste prodops/assessment/reliability-plan/.
+crie o arquivo prodops/assessment/iteration-plan.md com o conteúdo solicitado.

@@ -1,6 +1,6 @@
-# SYNK Workflow
+# SYNC Workflow
 
-SYNK is the synchronization phase. The agent repeats the work engineers did manually: fetch newest code, update local branches, integrate current base, resolve conflicts, preserve TDD evidence, validate.
+SYNC is the synchronization phase. The agent repeats the work engineers did manually: fetch newest code, update local branches, integrate current base, resolve conflicts, preserve TDD evidence, validate.
 
 ## Preflight
 
