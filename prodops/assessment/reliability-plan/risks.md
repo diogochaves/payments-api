@@ -30,6 +30,20 @@ A Feature Flag que habilita o novo Gateway permanece desativada devido a um bug 
 - Testes automatizados sobre a Feature Flag
 - War Room durante a ativação
 
+## Evidencia Upstream requerida
+
+O experimento `prodops/upstream/experiments/004-feature-flag-readiness.md`
+classifica esta incerteza como P0 e requer evidencias de Checkout antes de
+promocao final:
+
+- bug exato que mantem a flag desligada;
+- dono e status da correcao;
+- regra de targeting e rollout gradual;
+- auditoria de ativacao/desativacao;
+- telemetria que distingue gateway antigo e novo por pedido;
+- criterio de pausa e rollback;
+- politica para pedidos ja iniciados no Payments quando a flag for desligada.
+
 ---
 
 # Doom 3 — Complexidade da migração para microserviços

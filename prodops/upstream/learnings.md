@@ -47,3 +47,21 @@ Validated learning:
   card-specific webhook events for functional exploration.
 - The capability is almost ready for Downstream as hosted card entry, but
   tokenized payment still needs product and security approval before delivery.
+
+## Checkout Gateway Feature Flag Readiness
+
+The highest-priority uncertainty in the current product context is not a
+Payments API endpoint. It is whether Checkout can safely enable the new gateway
+through Feature Flag with rollout, auditability and rollback evidence.
+
+Reusable learning:
+
+- A release can have a working Payments API and still fail to deliver value if
+  the Checkout routing flag cannot be activated safely.
+- Feature Flag readiness is a cross-system contract between Checkout, Payments
+  and operations.
+- Rollback must define what happens to orders already started in Payments;
+  simply turning off new traffic is not enough.
+- The repository can prove Payments-side idempotency, correlation and webhook
+  behavior, but cannot prove Checkout targeting or rollback without external
+  evidence.

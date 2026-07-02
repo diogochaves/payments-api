@@ -3,48 +3,150 @@ name: upstream
 description: Execute ProdOps exploratory engineering. Use when exploring, experimenting, implementing disposable code, creating endpoints or integrations, updating contracts, building prototypes, validating hypotheses, refining OBCs, preparing BDDs, updating Reliability Plan or Event Storming, updating the Validation Workbench, or turning uncertainty into Downstream-ready work.
 ---
 
-# UPSTREAM
+# Upstream Skill
 
-Use this skill for exploratory engineering before delivery commitment.
-Upstream can produce executable code, prototypes, contracts, functional
-validation, tests, and ProdOps artifact updates. The commitment is learning, not
-delivery.
+## Purpose
 
-## Inputs
+Use this skill for exploratory engineering before committing work to the Downstream delivery flow.
 
-- `AGENTS.md`
+Upstream exists to reduce uncertainty.
+
+It can produce code, prototypes, BDD scenarios, contracts, Validation Workbench changes and updated ProdOps artifacts, but it does not represent a delivery commitment.
+
+## When to Use
+
+Use Upstream when the work is:
+
+- exploratory;
+- uncertain;
+- experimental;
+- a spike;
+- a prototype;
+- a technical investigation;
+- a business flow validation;
+- preparation for an OBC;
+- preparation for the Reliability Plan;
+- not yet ready for Downstream.
+
+## Required Reading
+
+Before starting, read:
+
 - `prodops/current-state/`
 - `prodops/assessment/reliability-plan/`
-- `prodops/assessment/event-storming/plan.json`
+- `prodops/upstream/README.md`
+- `prodops/upstream/experiments.md`
+- `templates/upstream-experiment.md`
+
+## Repository Scope Gate
+
+Before creating or updating an experiment, BDD Feature, OBC, prototype,
+Validation Workbench flow, or code artifact, verify whether the capability can
+be developed or validated in this repository.
+
+Proceed with Upstream execution artifacts only when this repository owns or can
+directly exercise at least one of:
+
+- Payments API behavior;
+- Payments domain logic;
+- provider integration;
+- webhook handling;
+- persistence;
+- API/event contract owned by Payments;
+- Validation Workbench behavior;
+- local tests or executable evidence.
+
+If the request belongs primarily to another repository or system, do not create
+Features, experiments, prototypes, or implementation artifacts here. Capture it
+only as an external dependency, release risk, Tracking List item, Reliability
+Plan note, or required evidence from the owning team.
+
+Out-of-repository examples:
+
+- Checkout Feature Flag implementation or rollout targeting;
+- Notification Service delivery behavior;
+- Order Management fulfillment behavior;
+- corporate ITSM integration not implemented by Payments API.
+
+## Operating Rules
+
+Every Upstream experiment must:
+
+1. Apply the Repository Scope Gate.
+2. Start with explicit questions.
+3. Define a hypothesis.
+4. Produce executable artifacts only when this repository can validate them.
+5. Update the Validation Workbench only for flows this repository can exercise.
+6. Stop when the hypothesis is answered.
+7. Avoid expanding into unrelated or out-of-repository capabilities.
+8. Update impacted ProdOps artifacts.
+9. Register progress in `prodops/upstream/upstream-trail.md`.
+10. Register reusable findings in `prodops/upstream/learnings.md`.
+11. Finish with a recommendation.
+
+## Expected Outputs
+
+An experiment may produce:
+
+- code;
+- prototypes;
+- Validation Workbench updates;
+- BDD scenarios;
+- OpenAPI updates;
+- AsyncAPI updates;
+- OBC drafts;
+- Event Storming updates;
+- Reliability Plan updates;
+- Tracking List items;
+- architecture findings.
+
+Documentation alone is acceptable only when the experiment is explicitly documentation-only.
+
+## Artifact Updates
+
+Whenever new knowledge is produced, update impacted artifacts.
+
+Possible targets:
+
+- `prodops/current-state/product-deck.md`
+- `prodops/current-state/service-decks/`
 - `prodops/current-state/tracking-list.md`
-- Existing exploration notes in `prodops/upstream/`
+- `prodops/current-state/features/`
+- `prodops/assessment/event-storming/`
+- `prodops/assessment/reliability-plan/`
+- `prodops/assessment/reliability-plan/obcs/`
+- `prodops/upstream/learnings.md`
+- `prodops/upstream/upstream-trail.md`
 
-## Flow
+Do not update unrelated artifacts.
 
-1. Read Current State.
-2. Read the Reliability Plan.
-3. Read Event Storming.
-4. Read the Tracking List.
-5. Formulate the hypothesis and business goal.
-6. Implement code when necessary.
-7. Update `validation-workbench/` when functional validation is useful.
-8. Update OpenAPI, AsyncAPI, or other contracts when the experiment changes a
-   contract hypothesis.
-9. Update or create BDD Features when behavior is being explored.
-10. Update OBCs, Reliability Plan, Event Storming, Tracking List, or docs only
-    when the experiment produces evidence.
-11. Register learning in `prodops/upstream/upstream-trail.md`.
-12. Explicitly decide whether the capability is ready for Downstream and justify
-    the decision.
+## Experiment Completion
 
-## Guardrails
+An experiment is complete when:
 
-- Do not use Upstream to bypass Downstream governance for committed delivery.
-- Do not invent product context or acceptance criteria.
-- Treat all Upstream code as disposable until promoted.
-- If successful, Upstream code can be reused, refactored, or promoted during the
-  Downstream flow.
-- Do not ship from Upstream.
-- Always record whether the capability is ready for Downstream.
-- Do not duplicate Product Deck, Service Deck, BDD, OBC, Reliability Plan, or
-  Event Storming content inside the skill.
+- the original hypothesis has been validated or rejected;
+- all questions have been classified as answered, partially answered or still unknown;
+- code or executable evidence has been produced when useful;
+- architecture impact has been documented;
+- impacted artifacts have been updated;
+- new backlog items have been classified;
+- a recommendation has been produced;
+- the Decision Package is complete.
+
+## Recommendation Options
+
+Every experiment must end with one recommendation:
+
+- Move downstream.
+- Run another upstream experiment.
+- Discard the capability.
+- Wait for business decision.
+- Wait for external dependency.
+
+## Golden Rule
+
+Upstream produces learning.
+
+Code is a vehicle for learning.
+
+Do not continue implementation after the experiment question has been answered.

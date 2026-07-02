@@ -1,312 +1,127 @@
-# Upstream Experiment
+# Upstream Experiments
 
-## Experiment
+## Purpose
 
-Validate the feasibility of integrating the Payments API with Asaas to support the complete credit card payment lifecycle.
+This document indexes every Upstream experiment executed for this product.
 
-The experiment covers:
+Experiments reduce uncertainty before implementation moves to Downstream.
 
-- Create Credit Card Invoice
-- Confirm Payment
-- Cancel Payment
+Each experiment should answer one primary question.
 
-The goal is to understand the Asaas APIs, validate the integration approach, identify technical constraints, and prepare the necessary artifacts for a future downstream implementation.
+Do not duplicate experiment content here.
 
----
-
-## Hypothesis
-
-The Payments API can expose a unified payment interface while integrating transparently with Asaas for credit card operations.
-
-It should be possible to:
-
-- create a credit card invoice;
-- receive payment confirmation through webhook or polling;
-- process payment cancellation;
-- expose standardized events and contracts independent of the payment provider.
-
-The experiment should provide enough knowledge to create an Observable Business Contract (OBC) and prepare a future Reliability Plan.
+Reference the experiment file instead.
 
 ---
 
-## What was tried
+# Workflow
 
-- Study the Asaas API documentation related to credit card payments.
-- Identify the required endpoints.
-- Understand the authentication model.
-- Create a local proof of concept without affecting existing production flows.
-- Validate invoice creation.
-- Validate payment confirmation flow.
-- Validate payment cancellation flow.
-- Evaluate webhook support.
-- Evaluate idempotency requirements.
-- Identify required domain events.
-- Identify possible error scenarios.
-- Identify required observability signals.
-- Compare the resulting contracts with the current Payments API architecture.
+```text
+Business Question
 
-No production code should be considered final during this experiment.
+↓
 
----
+Experiment
 
-## Result
+↓
 
-Executed as an upstream documentation and architecture experiment. No
-production code was changed.
+Learning
 
-APIs validated from Asaas documentation:
+↓
 
-- `POST /v3/payments/` creates a credit card charge.
-- `POST /v3/payments/{id}/payWithCreditCard` pays an existing charge by credit
-  card after the charge already exists.
-- `DELETE /v3/payments/{id}` removes an active charge before it should remain
-  available to the payer.
-- Payment webhooks include card-relevant events such as
-  `PAYMENT_AWAITING_RISK_ANALYSIS`, `PAYMENT_APPROVED_BY_RISK_ANALYSIS`,
-  `PAYMENT_REPROVED_BY_RISK_ANALYSIS`, `PAYMENT_AUTHORIZED`,
-  `PAYMENT_CONFIRMED`, `PAYMENT_RECEIVED`,
-  `PAYMENT_CREDIT_CARD_CAPTURE_REFUSED`, `PAYMENT_DELETED`, and
-  `PAYMENT_REFUNDED`.
+Decision
 
-Current Payments API compatibility:
+↓
 
-- The current `CreateInvoiceDto` already accepts `billingType: "CREDIT_CARD"`.
-- The current `AsaasService.createCharge` already posts to `/payments`.
-- The current cancellation flow already calls `DELETE /v3/payments/{id}` and
-  protects confirmed/received invoices from simple cancellation.
-- The current webhook flow already handles `PAYMENT_CONFIRMED`,
-  `PAYMENT_RECEIVED`, `PAYMENT_DELETED`, and ignored events.
+Assessment
 
-Technical blockers and unknowns:
+↓
 
-- The current API has no contract for `creditCard`, `creditCardHolderInfo`,
-  `creditCardToken`, `authorizeOnly`, installments, or `remoteIp`.
-- The current gateway treats invoice creation as a generic provider charge; it
-  does not distinguish redirect-to-invoice credit card flow from transparent
-  checkout card capture.
-- Immediate card capture may return `HTTP 400` without persisting the charge
-  when authorization is refused. This needs explicit state and idempotency
-  rules before Downstream implementation.
-- Asaas recommends a minimum timeout of 60 seconds for immediate credit card
-  processing, while the current axios client has no explicit timeout.
-- Card data capture introduces PCI/security constraints. A future Downstream
-  design should prefer tokenized card flow unless the product explicitly
-  commits to handling sensitive card data.
-- `PAYMENT_AUTHORIZED` and risk-analysis events are not yet modeled as invoice
-  states or BDD scenarios.
-- Deleting a payment is not a refund/reversal. Refund flow for confirmed card
-  payments remains outside the current cancellation contract.
-
-Architecture decision from the experiment:
-
-- Do not implement credit card as a blind extension of the existing Pix invoice
-  scenario. First split the target flow into either:
-  - hosted Asaas invoice/card entry via `invoiceUrl`; or
-  - transparent checkout with tokenized or direct card data.
-
-Compatibility assessment:
-
-- The existing architecture is compatible with a hosted or tokenized credit card
-  flow after DTO, BDD, OBC, timeout, event mapping, and idempotency refinements.
-- The existing architecture is not yet ready for direct card-data capture as a
-  Downstream item because the security boundary and refusal/authorization states
-  are not specified.
-
-Evidence sources:
-
-- Asaas credit card payment creation:
-  `https://docs.asaas.com/reference/create-new-payment-with-credit-card`
-- Asaas pay existing charge with credit card:
-  `https://docs.asaas.com/reference/pay-a-charge-with-credit-card`
-- Asaas payment deletion:
-  `https://docs.asaas.com/reference/delete-payment`
-- Asaas payment webhook events:
-  `https://docs.asaas.com/docs/payment-events`
-- Asaas webhook delivery behavior:
-  `https://docs.asaas.com/docs/about-webhooks`
+Downstream
+```
 
 ---
 
-## Learning
+# Experiment Status
 
-Document the main findings, including:
-
-- Business rules discovered
-- API limitations
-- Authentication considerations
-- Error handling strategy
-- Retry strategy
-- Idempotency behavior
-- Required telemetry
-- Required BDD scenarios
-- Opportunities to improve the current architecture
-
-Identify which findings should update:
-
-- Product Deck: payment method capability should distinguish hosted card
-  payment, tokenized card payment, and direct card capture.
-- Service Deck: add credit card branch with authorization, risk analysis,
-  confirmation, receipt, deletion, and refund/reversal decision points.
-- Tracking List: add a Downstream candidate only after the product chooses the
-  card capture model.
-- Reliability Plan: add risks for timeout, duplicate capture attempts, risk
-  analysis delay, PCI/security boundary, webhook queue loss, and refund vs
-  deletion confusion.
-- Event Storming: add provider events for `PAYMENT_AUTHORIZED`,
-  `PAYMENT_AWAITING_RISK_ANALYSIS`, `PAYMENT_REPROVED_BY_RISK_ANALYSIS`, and
-  `PAYMENT_CREDIT_CARD_CAPTURE_REFUSED`.
-- OBC: define observable business contract for "credit card payment
-  authorization and confirmation" before implementation.
-
-Primary learning:
-
-- Credit card support is feasible in the current gateway shape, but it is not a
-  single endpoint toggle. It changes the contract because payment can be
-  authorized, refused, under risk analysis, confirmed, received, deleted, or
-  refunded.
-- The safest first Downstream slice is hosted or tokenized credit card payment,
-  not direct handling of raw card data.
-- `DELETE /v3/payments/{id}` remains valid for removing unpaid/open charges, but
-  confirmed card payment cancellation must be treated as refund/reversal work.
-- Webhook processing must explicitly map card-specific provider events to
-  internal states and observable events before production rollout.
+| ID | Capability | Status | Recommendation | Next Step |
+|----|------------|--------|----------------|-----------|
+| 001 | Credit Card Lifecycle | 🟡 In Progress | Another Experiment | 002 |
+| 002 | Sandbox Funding | 🟡 In Progress | Wait for External Dependency | Collect Asaas Sandbox evidence |
+| 003 | Hosted vs Tokenized | 🟡 In Progress | Move Downstream | Prepare hosted card Downstream intake |
 
 ---
 
-## Should move downstream?
+# Status Legend
 
-Decision:
-
-- [ ] Yes
-- [ ] No
-- [x] Needs another experiment
-
-Reason:
-
-The experiment produced enough evidence to confirm feasibility, but not enough
-to justify immediate implementation through Downstream. The missing decision is
-the credit card capture model:
-
-- hosted card entry through Asaas `invoiceUrl`;
-- tokenized card payment;
-- direct transparent checkout with raw card data.
-
-Only after that decision can the team write the OBC, BDD scenarios, DTO changes,
-security boundary, and Reliability Plan risks with enough precision.
+| Icon | Meaning |
+|------|---------|
+| ⏳ | Planned |
+| 🟡 | In Progress |
+| ✅ | Completed |
+| 🚀 | Promoted to Downstream |
+| ❌ | Cancelled |
 
 ---
 
-## Next step
+# Recommendations
 
-If approved for Downstream:
+Each completed experiment should end with exactly one recommendation.
 
-- Create or update the corresponding OBC.
-- Refine the BDD scenarios.
-- Update the Event Storming.
-- Update the Reliability Plan.
-- Add the capability to the Iteration Backlog.
-- Execute the Downstream delivery workflow.
+Possible recommendations:
 
-If not approved:
-
-Run a focused upstream experiment comparing hosted card entry vs tokenized card
-payment for the Magazine Siará checkout. The output should be:
-
-- chosen card capture model;
-- draft OBC;
-- BDD scenarios for authorization, risk analysis, refusal, confirmation,
-  receipt, deletion, and refund/reversal boundary;
-- required DTO fields;
-- required observability events;
-- Reliability Plan risk updates.
+- Move Downstream
+- Run another Upstream experiment
+- Wait for Business Decision
+- Wait for External Dependency
+- Discard Capability
 
 ---
 
-# Focused Upstream Experiment - Hosted vs Tokenized Credit Card
+# Promotion Rules
 
-## Experiment
+A capability may move to Downstream only when:
 
-Compare hosted Asaas card entry and tokenized card payment for Magazine Siará
-checkout before promoting credit card support to Downstream.
+- Business behavior is understood.
+- Main technical uncertainties are resolved.
+- Reliability impacts are documented.
+- OBC is sufficiently defined.
+- BDD scenarios are defined.
+- Validation Workbench demonstrates the expected business flow.
+- Assessment approves the capability.
 
-## Business Goal
+---
 
-Select the safest first credit card slice that increases payment options without
-creating unmanaged PCI, antifraud, timeout or webhook-state risk.
+# Current Focus
 
-## Hypothesis
+Current capability under investigation:
 
-Hosted card entry can move to Downstream first because it reuses the current
-invoice creation shape and keeps card data outside Payments API. Tokenized card
-payment is viable later, but needs explicit contract, timeout, event mapping and
-security decisions.
+**Credit Card Payment with Asaas**
 
-## Code Produced
+Current experiment:
 
-The Validation Workbench was updated to generate proposed tokenized card payload
-fields (`creditCardToken` and `remoteIp`) and to simulate card-specific Asaas
-webhook events.
+**003 - Hosted vs Tokenized Credit Card**
 
-No production credit card processing path was implemented.
+Next planned experiments:
 
-## Validation Workbench Updated
+- Continue 002 with Asaas Sandbox evidence
+- Prepare Downstream intake for hosted card payment after Product and Tech Lead approval
 
-Yes. The Workbench now supports:
+---
 
-- hosted invoice mode for `billingType: CREDIT_CARD`;
-- tokenized card payload exploration with `creditCardToken` and `remoteIp`;
-- Asaas card events for authorization, risk analysis, capture refusal, deletion
-  and refund.
+# Completed Experiments
 
-## Contracts Updated
+Move completed experiments here after promotion.
 
-Draft contract artifacts were produced:
+| ID | Capability | Downstream Release |
+|----|------------|--------------------|
 
-- BDD: `prodops/current-state/features/credit-card-payment.feature`
-- OBC: `prodops/assessment/reliability-plan/obcs/credit-card-authorization-confirmation.md`
-- Tracking List: `prodops/current-state/tracking-list.md`
-- Reliability risks: `prodops/assessment/reliability-plan/risks.md`
+---
 
-## BDD Updated
+# Notes
 
-Yes. Added scenarios for hosted card entry, tokenized card payment,
-authorization, risk analysis, capture refusal, confirmation and refund boundary.
+Experiments are intentionally small.
 
-## Reliability Impact
+When a new question arises, create a new experiment instead of expanding an existing one.
 
-Hosted card entry minimizes sensitive-data handling and can reuse the current
-provider charge flow. Tokenized payment introduces timeout, token ownership,
-risk-analysis, refusal and idempotency requirements. Direct raw card capture
-remains outside the recommended first slice.
-
-## Result
-
-Choose hosted Asaas card entry as the first Downstream candidate. Keep tokenized
-card payment in Upstream until product, security and antifraud approve the
-contract and reliability rules.
-
-## Learning
-
-The current API can plausibly support a hosted credit card slice because
-`CreateInvoiceDto` already accepts `CREDIT_CARD`, `AsaasService.createCharge`
-already posts to `/v3/payments`, and the response contract already carries
-`paymentUrl`. Tokenized card payment requires DTO and provider request changes
-because the current service does not forward `creditCardToken` or `remoteIp`.
-
-## Should move downstream?
-
-Partially.
-
-Move hosted card entry to Downstream after PM and Tech Lead accept the OBC and
-BDD. Do not move tokenized card payment yet.
-
-## Next step
-
-Add hosted credit card payment to `prodops/downstream/iteration-backlog.md`
-only after approving:
-
-- OBC draft;
-- BDD scenarios;
-- payment URL UX in Checkout;
-- webhook card event handling scope;
-- refund boundary for confirmed card payments.
+The objective is to keep every experiment focused on reducing a single uncertainty.

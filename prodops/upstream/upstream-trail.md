@@ -1,236 +1,152 @@
 # Upstream Trail
 
-Append upstream exploration entries here.
+## Purpose
 
-```markdown
+The Upstream Trail records the execution history of exploratory engineering activities.
+
+Unlike experiment documents, which capture detailed findings, the Upstream Trail provides a chronological history of what happened.
+
+Its purpose is to help future contributors understand the evolution of ideas and decisions without reading every experiment.
+
+---
+
+# Entry Template
+
 ## YYYY-MM-DD HH:MM
 
 ### Experiment
 
-### Business Goal
+Reference:
 
-### Hypothesis
+`prodops/upstream/experiments/001-credit-card-lifecycle.md`
 
-### Code Produced
+### Activity
 
-### Validation Workbench Updated
+Describe what happened.
 
-### Contracts Updated
+Examples:
 
-### BDD Updated
+- Started experiment
+- Updated prototype
+- Implemented proof of concept
+- Updated Validation Workbench
+- Reviewed provider documentation
+- Updated Reliability Plan
+- Finished experiment
 
-### Reliability Impact
+### Summary
 
-### Result
+One or two paragraphs summarizing the work performed.
 
-### Learning
+### Artifacts Updated
 
-### Should move downstream?
+List only the artifacts updated during this activity.
 
-### Next step
-```
+Example:
 
-## 2026-07-02 14:14
+- Validation Workbench
+- Reliability Plan
+- Tracking List
+- OBC
+- BDD Feature
 
-### Experiment
+### Decision
 
-Validate the feasibility of integrating Payments API with Asaas for the
-complete credit card lifecycle: create charge, confirm payment, and cancel or
-remove payment.
+Choose one:
 
-### Business Goal
+- Continue experiment
+- Start another experiment
+- Ready for Assessment
+- Discard experiment
 
-Understand whether credit card payments can be added to the Payments gateway
-without committing the capability to Downstream.
+### Notes
 
-### Hypothesis
+Additional observations, blockers or follow-up actions.
 
-Payments API can expose a unified payment interface while Asaas handles credit
-card operations transparently behind the provider boundary.
+---
 
-### Code Produced
+# History
 
-No code was produced in this experiment.
+> Append new entries below.
+> Never rewrite previous entries.
 
-### Validation Workbench Updated
-
-No.
-
-### Contracts Updated
-
-No.
-
-### BDD Updated
-
-No.
-
-### Reliability Impact
-
-Identified future risks around card timeout, duplicate capture attempts, risk
-analysis delay, PCI/security boundary, webhook queue loss, and refund versus
-deletion semantics.
-
-### Result
-
-Feasible, but not ready for Downstream implementation. The current architecture
-can support a credit card path, but the product must first choose between hosted
-Asaas card entry, tokenized card payment, or direct transparent checkout with
-raw card data. The direct card capture path adds security, timeout,
-authorization-refusal, risk-analysis, and idempotency requirements that are not
-yet specified.
-
-### Learning
-
-Credit card is not only another `billingType`. It introduces additional provider
-states and events, including authorization, risk analysis, capture refusal,
-confirmation, receipt, deletion, and refund. Simple deletion remains valid for
-unpaid/open charges, but confirmed card payments require a refund/reversal
-boundary rather than the existing cancel path.
-
-### Should move downstream?
-
-Needs another experiment before Downstream.
-
-### Next step
-
-Run a focused upstream experiment comparing hosted card entry vs tokenized card
-payment for Magazine Siará checkout, then draft OBC, BDD scenarios, DTO fields,
-observability events, and Reliability Plan risks.
-
-## 2026-07-02 14:53
+## 2026-07-02 16:08
 
 ### Experiment
 
-Redefine Upstream as a complete exploratory engineering path and rename the
-local functional validation frontend to Validation Workbench.
+Reference:
 
-### Business Goal
+`prodops/upstream/experiments/004-feature-flag-readiness.md`
 
-Make it clear that capabilities can produce executable evidence, contracts, BDDs
-and functional validations before they are committed to Downstream delivery.
+### Activity
 
-### Hypothesis
+Started experiment after reviewing Current State, Tracking List, Reliability
+Plan, Premortem, Iteration Plan and existing Upstream experiments.
 
-Separating learning commitment from delivery commitment lets agents explore
-faster while preserving the full ProdOps governance for Downstream work.
+### Summary
 
-### Code Produced
+The highest-priority uncertainty is the Checkout Feature Flag readiness for the
+new Payments gateway. The approved release depends on enabling this route, but
+the flag remains documented as blocked by a Checkout bug and lacks rollback
+evidence for orders already started in Payments.
 
-No product capability code was produced. The local validation frontend was
-renamed to `validation-workbench/`, with package metadata and references
-updated.
+Existing experiments cover credit card uncertainty and do not cover this
+release-blocking dependency, so a new Upstream experiment was created.
 
-### Validation Workbench Updated
+### Artifacts Updated
 
-Yes. The workspace now treats `validation-workbench/` as an Upstream functional
-validation environment for OBCs, BDDs, integrations, UX and contracts.
+- `prodops/upstream/experiments/004-feature-flag-readiness.md`
+- `prodops/upstream/experiments.md`
+- `prodops/current-state/tracking-list.md`
+- `prodops/assessment/reliability-plan/risks.md`
+- `prodops/upstream/learnings.md`
 
-### Contracts Updated
+### Decision
 
-No OpenAPI or AsyncAPI contracts were changed.
+Continue experiment.
 
-### BDD Updated
+### Notes
 
-No BDD feature was changed.
+Next step is to collect Checkout evidence: exact Feature Flag bug, owner, fix
+status, targeting rules, auditability, rollout/pause/rollback criteria,
+telemetry by order and in-flight order handling after rollback.
 
-### Reliability Impact
-
-The documentation now states that Upstream experiments may update the
-Reliability Plan, Event Storming and Tracking List when they produce validated
-evidence. Downstream still requires OBC, BDD, Reliability Plan and Iteration
-Backlog before delivery execution.
-
-### Result
-
-ProdOps documentation, the Upstream skill, the Upstream trail template and the
-Validation Workbench references now reflect Upstream as exploratory engineering
-instead of documentation-only experimentation.
-
-### Learning
-
-The previous generic name hid the real purpose of the local frontend. Treating
-it as the Validation Workbench gives agents a clear place to validate functional
-behavior before deciding whether a capability should move to Downstream.
-
-### Should move downstream?
-
-No. This is a process and workspace architecture update, not a business
-capability. Future capabilities explored in Upstream must explicitly justify
-whether they are ready for Downstream.
-
-### Next step
-
-Use `validation-workbench/` for future Upstream functional validation and mark
-all Upstream code as disposable until a successful experiment is promoted into
-the Downstream flow.
-
-## 2026-07-02 15:00
+## 2026-07-02 16:40
 
 ### Experiment
 
-Compare hosted Asaas card entry with tokenized card payment for Magazine Siará
-checkout.
+References:
 
-### Business Goal
+- `prodops/upstream/experiments/001-credit-card-lifecycle.md`
+- `prodops/upstream/experiments/002-sandbox-funding.md`
+- `prodops/upstream/experiments/003-hosted-vs-tokenized.md`
+- `prodops/upstream/experiments/004-feature-flag-readiness.md`
 
-Choose the safest first credit card slice before committing the capability to
-Downstream delivery.
+### Activity
 
-### Hypothesis
+Updated BDD Features to reflect the existing Upstream experiments.
 
-Hosted card entry can be promoted first because it reuses the current invoice
-creation shape and keeps sensitive card data outside Payments API. Tokenized
-card payment is viable later, but requires explicit DTO, provider, timeout,
-security and webhook-state decisions.
+### Summary
 
-### Code Produced
+The credit card BDD now includes hosted confirmation, financial receipt,
+tokenized-card constraints, risk-analysis events, sandbox/simulation evidence
+and the decision to keep direct raw card capture out of the first Downstream
+slice.
 
-Updated `validation-workbench/` to support Upstream exploration of hosted vs
-tokenized card payloads and Asaas card-specific webhook events. No production
-credit card processing path was implemented.
+A new Checkout Feature Flag readiness BDD was added to represent the EXP-004
+learning as executable acceptance criteria for rollout, pause, rollback,
+auditability, in-flight orders and promotion blocking.
 
-### Validation Workbench Updated
+### Artifacts Updated
 
-Yes. Added hosted/tokenized card mode fields, tokenized payload fields
-`creditCardToken` and `remoteIp`, and webhook event options for authorization,
-risk analysis, capture refusal, deletion and refund.
+- `prodops/current-state/features/credit-card-payment.feature`
+- `prodops/current-state/features/checkout-gateway-feature-flag.feature`
 
-### Contracts Updated
+### Decision
 
-Drafted `prodops/assessment/reliability-plan/obcs/credit-card-authorization-confirmation.md`
-and updated Reliability Plan risks and Tracking List.
+Continue experiment.
 
-### BDD Updated
+### Notes
 
-Yes. Added `prodops/current-state/features/credit-card-payment.feature`.
-
-### Reliability Impact
-
-Hosted entry reduces PCI exposure and can reuse the existing provider charge
-boundary. Tokenized payment adds required decisions for token ownership,
-`remoteIp`, 60-second provider timeout, authorization, risk analysis, capture
-refusal, idempotency and refund boundary.
-
-### Result
-
-Hosted Asaas card entry is the recommended first Downstream candidate.
-Tokenized card payment remains in Upstream until product, security and
-antifraud approve the contract and reliability rules.
-
-### Learning
-
-The existing API already accepts `billingType: CREDIT_CARD` and can create a
-generic Asaas charge, but it does not forward tokenized card fields to Asaas.
-That makes hosted card entry a smaller first slice and tokenized payment a
-separate capability.
-
-### Should move downstream?
-
-Partially. Move hosted card entry only after PM and Tech Lead accept the OBC,
-BDD, Checkout payment URL UX, webhook event scope and refund boundary. Do not
-move tokenized card payment yet.
-
-### Next Step
-
-Review the drafted OBC and BDD, then add only the hosted card entry slice to
-`prodops/downstream/iteration-backlog.md` if approved.
+These features are BDD inputs for future TDD/Downstream work. They do not
+promote the capabilities by themselves.
