@@ -22,3 +22,12 @@ lerna-debug.log*
 # temp directory
 .temp
 .tmp
+
+.aws-sam
+.lambda_build_temp
+
+.terraform
+.terraform.lock.hcl
+terraform.tfvars
+terraform.tfstate.backup
+terraform.tfstate

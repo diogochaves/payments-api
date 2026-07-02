@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export PORT="${PORT:-3011}"
+export INVOICE_REPOSITORY="${INVOICE_REPOSITORY:-memory}"
+export DYNAMO_MOCK="${DYNAMO_MOCK:-true}"
+export ENABLED_PAYMENT_PROVIDERS="${ENABLED_PAYMENT_PROVIDERS:-ASAAS}"
+export DEFAULT_PAYMENT_PROVIDER="${DEFAULT_PAYMENT_PROVIDER:-ASAAS}"
+export ASAAS_MOCK="${ASAAS_MOCK:-true}"
+
+npm run start

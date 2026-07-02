@@ -1,0 +1,109 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag. Example: v0.1.0'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build, test and publish release
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: api
+
+    env:
+      NODE_ENV: test
+      INVOICE_REPOSITORY: memory
+      ENABLED_PAYMENT_PROVIDERS: ASAAS
+      DEFAULT_PAYMENT_PROVIDER: ASAAS
+      ASAAS_MOCK: 'true'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve release tag
+        id: release_tag
+        working-directory: .
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            tag="${{ inputs.tag }}"
+          else
+            tag="${GITHUB_REF_NAME}"
+          fi
+
+          if ! printf '%s' "$tag" | grep -Eq '^v[0-9]+\\.[0-9]+\\.[0-9]+([-.][0-9A-Za-z.-]+)?$'; then
+            echo "Invalid tag: $tag"
+            echo "Use semantic version format like v0.1.0"
+            exit 1
+          fi
+
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: api/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Acceptance tests
+        run: |
+          npx jest \
+            --config ./test/jest-e2e.json \
+            test/create-invoice.acceptance.e2e-spec.ts \
+            --runInBand \
+            --json \
+            --outputFile ./acceptance-report.json
+
+      - name: Package application
+        run: |
+          mkdir -p release
+          tar -czf "release/payments-api-${{ steps.release_tag.outputs.tag }}.tar.gz" \
+            dist \
+            package.json \
+            package-lock.json \
+            nest-cli.json \
+            tsconfig*.json
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: payments-api-${{ steps.release_tag.outputs.tag }}
+          path: |
+            api/release/payments-api-${{ steps.release_tag.outputs.tag }}.tar.gz
+            api/acceptance-report.json
+          if-no-files-found: error
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.release_tag.outputs.tag }}
+          name: Payments API ${{ steps.release_tag.outputs.tag }}
+          generate_release_notes: true
+          make_latest: true
+          files: |
+            api/release/payments-api-${{ steps.release_tag.outputs.tag }}.tar.gz
+            api/acceptance-report.json

@@ -1,0 +1,156 @@
+services:
+  ###########################################################
+  # 🗄️ POSTGRES (Kong + Keycloak + Apicurio)
+  ###########################################################
+  kong-database:
+    image: postgres:16
+    platform: linux/amd64 # troque para sua arquitetura, se necessário
+    container_name: kong-database
+    environment:
+      POSTGRES_USER: kong
+      POSTGRES_PASSWORD: kong
+    ports:
+      - "5432:5432"
+    volumes:
+      - kong-db-data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "kong"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - spire
+
+  ###########################################################
+  # 🔑 KEYCLOAK (OIDC Provider)
+  ###########################################################
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    container_name: keycloak
+    depends_on:
+      kong-database:
+        condition: service_healthy
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://kong-database:5432/keycloak
+      KC_DB_USERNAME: kong
+      KC_DB_PASSWORD: kong
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: keycloak
+    command: start-dev
+    ports:
+      - "8080:8080"
+    networks:
+      - spire
+
+  ###########################################################
+  # 🛡️ OPA – Open Policy Agent
+  ###########################################################
+  opa:
+    image: openpolicyagent/opa:latest
+    container_name: opa
+    command: >
+      run --server --addr=0.0.0.0:8181 --set=decision_logs.console=true
+    volumes:
+      - ./opa/policies:/policies
+    ports:
+      - "8181:8181"
+    networks:
+      - spire
+
+  ###########################################################
+  # 🟦 KONG Gateway
+  ###########################################################
+  kong-migrations:
+    image: kong:3.8
+    container_name: kong-migrations
+    depends_on:
+      kong-database:
+        condition: service_healthy
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: kong
+      KONG_PG_DATABASE: kong
+    command: kong migrations bootstrap
+    networks:
+      - spire
+
+  kong:
+    image: kong-oidcify
+    container_name: kong
+    depends_on:
+      kong-database:
+        condition: service_healthy
+      kong-migrations:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_started
+      opa:
+        condition: service_started
+    networks:
+      - spire
+
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: kong
+      KONG_PG_DATABASE: kong
+
+      # Logging
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+
+      # Admin + Portal
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001, 0.0.0.0:8444 ssl
+      KONG_MANAGER: on
+      KONG_MANAGER_LISTEN: 0.0.0.0:8002
+      KONG_PORTAL: on
+      KONG_PORTAL_GUI_HOST: 0.0.0.0:8003
+
+      # Plugins extras
+      #KONG_PLUGINS: bundled,oidc,opa
+      KONG_PLUGINS: bundled,oidcify,kong-opafy
+
+      # Integração OPA (plugin OPA do Kong)
+      #KONG_OPA_URL: http://opa:8181/v1/data/http/authz/allow
+
+    ports:
+      - "8000:8000" # Proxy
+      - "8001:8001" # Admin
+      - "8002:8002" # Manager
+      - "8003:8003" # Dev Portal
+    command: kong docker-start
+
+  ###########################################################
+  # 🟣 APICURIO REGISTRY
+  ###########################################################
+  apicurio-registry:
+    image: apicurio/apicurio-registry-sql:latest-snapshot
+    container_name: apicurio-registry
+    depends_on:
+      kong-database:
+        condition: service_healthy
+    environment:
+      REGISTRY_DATASOURCE_URL: jdbc:postgresql://kong-database:5432/apicurio_registry
+      REGISTRY_DATASOURCE_USERNAME: kong
+      REGISTRY_DATASOURCE_PASSWORD: kong
+      apicurio.rest.mutability.artifact-version-content.enabled: "true"
+      apicurio.rest.mutability.artifact-content.enabled: "true"
+    ports:
+      - "8085:8080"
+    networks:
+      - spire
+
+volumes:
+  kong-db-data:
+
+networks:
+  spire:
+    external: true
