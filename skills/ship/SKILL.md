@@ -11,8 +11,8 @@ Use this skill to prepare completed work for delivery.
 
 - `AGENTS.md`
 - `prodops/assessment/reliability-plan/`
-- `prodops/diligence/release-trail.md`
-- `prodops/diligence/quality-gates.md`
+- `prodops/downstream/release-trail.md`
+- `prodops/downstream/quality-gates.md`
 - Current branch diff and validation evidence
 
 ## Flow

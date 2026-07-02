@@ -13,7 +13,7 @@ ProdOps context.
 - `AGENTS.md`
 - `prodops/current-state/`
 - `prodops/assessment/`
-- `prodops/diligence/release-trail.md`
+- `prodops/downstream/release-trail.md`
 
 ## Flow
 

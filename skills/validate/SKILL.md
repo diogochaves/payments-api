@@ -13,7 +13,7 @@ Use this skill to prove release readiness with evidence.
 - Relevant OBCs under `prodops/`
 - Relevant BDD Features in `prodops/current-state/features/`
 - `prodops/assessment/reliability-plan/`
-- `prodops/diligence/quality-gates.md`
+- `prodops/downstream/quality-gates.md`
 
 ## Flow
 

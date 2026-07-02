@@ -8,7 +8,9 @@ Codex-specific behavior:
 - Use `.codex/skills/` only for Codex-specific adapters or local tooling.
 - Keep Codex instructions short and tool-specific; product context belongs in
   `prodops/`.
+- Use `skills/upstream/` for exploration and `skills/downstream/` for governed
+  release delivery.
 - Before implementation work, read `prodops/current-state/` and
   `prodops/assessment/reliability-plan/`.
 - After meaningful work, append evidence to
-  `prodops/diligence/release-trail.md`.
+  `prodops/downstream/release-trail.md`.

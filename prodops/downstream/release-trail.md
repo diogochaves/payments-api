@@ -54,7 +54,7 @@ Updated the repository home in `README.md` to present payments-api as the ProdOp
 
 - Tests created or updated: none
 - Validation executed: checked referenced README paths exist
-- Validation executed: `git diff --check -- README.md prodops/diligence/release-trail.md`
+- Validation executed: `git diff --check -- README.md prodops/downstream/release-trail.md`
 
 ### Artifacts Updated
 
@@ -125,7 +125,7 @@ Not applicable; no product behavior changed.
 
 - Created root `AGENTS.md` flow: Current State -> Assessment -> Reliability Plan -> BDD Feature -> Skill -> Code -> Release Trail.
 - Added generic skills under `skills/`.
-- Moved ProdOps artifacts to canonical paths under `prodops/current-state/`, `prodops/assessment/`, `prodops/diligence/`, and `prodops/operation/`.
+- Moved ProdOps artifacts to canonical paths under `prodops/current-state/`, `prodops/assessment/`, `prodops/downstream/`, and `prodops/operation/`.
 - Updated old ProdOps path references.
 - Validation executed: expected structure presence check.
 - Validation executed: old path/name reference search.
@@ -134,3 +134,33 @@ Not applicable; no product behavior changed.
 ### Next steps
 
 Keep future product context in `prodops/` and keep skills limited to execution procedure.
+
+## 2026-07-02 13:42
+
+### What changed?
+
+Split the ProdOps workspace into Upstream and Downstream paths. Moved governed delivery evidence from `prodops/diligence/` to `prodops/downstream/`, added the Upstream exploration workspace, added `skills/upstream/` and `skills/downstream/`, and added templates for both paths.
+
+### Why?
+
+To separate lightweight exploration from governed delivery while preserving the full ProdOps delivery flow for committed release work.
+
+### Related OBC
+
+Not applicable; repository organization change.
+
+### Related BDD
+
+Not applicable; no product behavior changed.
+
+### Evidence
+
+- Moved Release Trail, Quality Gates, and Done Criteria into `prodops/downstream/`.
+- Added `prodops/upstream/` for experiments, spikes, prototypes, learnings, and upstream trail.
+- Added `prodops/downstream/delivery-flow.md` and a pointer backlog.
+- Added `skills/upstream/SKILL.md` and `skills/downstream/SKILL.md`.
+- Updated agent and Copilot prompts to route work through Upstream or Downstream.
+
+### Next steps
+
+Use Upstream for reversible exploration and Downstream for approved delivery governed by the full ProdOps flow.

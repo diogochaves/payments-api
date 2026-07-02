@@ -57,7 +57,7 @@ O repositório materializa vários elementos do Framework ProdOps:
 | SLOs / OpenSLO | SLOs iniciais existem em formato documental no Product Deck e Service Deck. Não há arquivo OpenSLO dedicado. |
 | Runbooks | Há seções de runbook nos decks e no premortem, mas ainda não há runbooks operacionais dedicados em arquivos separados. |
 | Postmortem / Premortem | Existe um premortem em [prodops/assessment/premortem.md](prodops/assessment/premortem.md). Não há postmortems versionados no momento. |
-| Decision Trail / Release Trail | O Release Trail está em [prodops/diligence/release-trail.md](prodops/diligence/release-trail.md). Não há Decision Trail separado. |
+| Decision Trail / Release Trail | O Release Trail está em [prodops/downstream/release-trail.md](prodops/downstream/release-trail.md). Não há Decision Trail separado. |
 | GitOps / CI/CD / Delivery Flow | O workflow de release está em [.github/workflows/release.yml](.github/workflows/release.yml). Ele instala dependências, faz build, executa testes de aceitação e publica artefatos de release. |
 | Local testing | O sandbox local está documentado pelos scripts em [api/scripts](api/scripts), pela skill local em [.codex/skills/payments-api-local-testing](.codex/skills/payments-api-local-testing) e pelo frontend em [test](test). Algumas referências locais ainda citam o endpoint legado `/payments`; o fluxo atual do código fonte está concentrado em invoices. |
 | Testes automatizados | A suíte de aceitação principal está em [api/test/create-invoice.acceptance.e2e-spec.ts](api/test/create-invoice.acceptance.e2e-spec.ts). |
@@ -79,7 +79,7 @@ O repositório materializa vários elementos do Framework ProdOps:
 | Riscos do Premortem | [prodops/assessment/reliability-plan/risks.md](prodops/assessment/reliability-plan/risks.md) | Consolida riscos identificados no premortem. |
 | Oportunidades do Premortem | [prodops/assessment/reliability-plan/opportunities.md](prodops/assessment/reliability-plan/opportunities.md) | Consolida oportunidades de melhoria e evolução. |
 | Tracking List da release | [prodops/assessment/reliability-plan/iteration-backlog.md](prodops/assessment/reliability-plan/iteration-backlog.md) | Registra demandas associadas a observabilidade, negócio, operação e confiabilidade. |
-| Release Trail | [prodops/diligence/release-trail.md](prodops/diligence/release-trail.md) | Registra entregas e evidências de execução. |
+| Release Trail | [prodops/downstream/release-trail.md](prodops/downstream/release-trail.md) | Registra entregas e evidências de execução. |
 
 ## Mapa do Repositório
 
@@ -325,7 +325,7 @@ Uma trilha recomendada para alunos:
 6. Execute `npm run test:acceptance` em [api](api) para observar a cobertura comportamental.
 7. Leia o ODD em [api/odd/create_invoice.yaml](api/odd/create_invoice.yaml) e procure os eventos observáveis no código.
 8. Avalie riscos e confiabilidade no [premortem](prodops/assessment/premortem.md) e no [Reliability Plan](prodops/assessment/reliability-plan/README.md).
-9. Consulte o [Release Trail](prodops/diligence/release-trail.md) para entender como mudanças ficam registradas.
+9. Consulte o [Release Trail](prodops/downstream/release-trail.md) para entender como mudanças ficam registradas.
 10. Proponha evoluções usando os métodos ProdOps: novo OBC, OpenAPI, OpenSLO, runbook, dashboard, teste de contrato ou melhoria de confiabilidade.
 
 ## Status do Projeto

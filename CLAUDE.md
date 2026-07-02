@@ -9,6 +9,8 @@ Claude-specific behavior:
   decisions that belong in `prodops/`.
 - When a task affects product behavior, read the relevant ProdOps artifacts
   before editing code.
+- Route exploratory work through `prodops/upstream/` and committed delivery work
+  through `prodops/downstream/`.
 - Do not store duplicated business context in Claude-only files. Add or update
   the appropriate file under `prodops/` instead.
 - Use `skills/` for execution mode guidance and `prodops/` for product context.

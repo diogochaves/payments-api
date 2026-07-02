@@ -27,7 +27,7 @@ Read before editing:
 6. Run targeted validation first, then broader validation if shared behavior is
    affected.
 7. Update only impacted ProdOps artifacts.
-8. Append evidence to `prodops/diligence/release-trail.md`.
+8. Append evidence to `prodops/downstream/release-trail.md`.
 
 ## Guardrails
 

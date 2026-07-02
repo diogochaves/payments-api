@@ -1,6 +1,8 @@
 # Update Release Trail
 
-Append a concise entry to `prodops/diligence/release-trail.md`.
+Append a concise Downstream entry to `prodops/downstream/release-trail.md`.
+
+For exploration work, use `prodops/upstream/upstream-trail.md` instead.
 
 Use this format:
 
