@@ -9,7 +9,7 @@ Use these standards to keep prompt iterations and code changes aligned with this
 - Backend runtime targets Node.js 22 in CI.
 - HTTP server entrypoint: `api/src/main.ts`.
 - Lambda/serverless entrypoint: `api/src/lambda.ts`.
-- Local frontend tester lives in `test/`.
+- Local Validation Workbench lives in `validation-workbench/`.
 - Frontend framework: Vite 6, React 19, TypeScript, `lucide-react`.
 - Tests use Jest, `ts-jest`, and Supertest.
 - Formatting/linting use Prettier and ESLint flat config in `api/eslint.config.mjs`.
@@ -28,7 +28,7 @@ Use these standards to keep prompt iterations and code changes aligned with this
 ## Payment Domain Rules
 
 - Prefer `/invoices` for the current payment flow.
-- Keep `/payments` compatible because the test frontend can still exercise it.
+- Keep `/payments` compatible because the Validation Workbench can still exercise it.
 - `CreateInvoiceDto` is the source of truth for invoice payload shape.
 - `CreatePaymentDto` is the source of truth for legacy payment-link payload shape.
 - Supported providers are the `PaymentProvider` union: `ASAAS` and `ITAU`.
@@ -62,9 +62,9 @@ Use these standards to keep prompt iterations and code changes aligned with this
 - Sandbox should set `ASAAS_MOCK=true`, `DYNAMO_MOCK=true`, `INVOICE_REPOSITORY=memory`, `ENABLED_PAYMENT_PROVIDERS=ASAAS`, and `DEFAULT_PAYMENT_PROVIDER=ASAAS`.
 - Browser validation requires CORS preflight for `Content-Type`, `Idempotency-Key`, `X-Correlation-Id`, and `X-Tenant-Id` when using invoice cancellation.
 
-## Frontend Tester Pattern
+## Validation Workbench Pattern
 
-- Keep the tester under `test/`; do not move it into `api/`.
+- Keep the Validation Workbench under `validation-workbench/`; do not move it into `api/`.
 - Keep payload generation derived from cart state.
 - Keep a JSON editor path so testers can adjust payloads before sending.
 - Invoice mode posts to `/invoices` and sends idempotency/correlation headers.
@@ -75,7 +75,7 @@ Use these standards to keep prompt iterations and code changes aligned with this
 
 - Backend build: `cd api && npm run build`.
 - Backend acceptance test: `cd api && npm run test:acceptance`.
-- Frontend build: `cd test && npm run build`.
+- Frontend build: `cd validation-workbench && npm run build`.
 - Local payload smoke test: `.codex/skills/payments-api-local-testing/scripts/validate-local-payloads.sh`.
 - CI release workflow builds `api`, runs acceptance tests with memory repository and Asaas mock, packages `dist` and metadata into a release artifact.
 

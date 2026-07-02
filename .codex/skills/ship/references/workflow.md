@@ -22,7 +22,7 @@ For this payments-api repository:
 ```sh
 cd api && npm run build
 cd api && npm run test:acceptance
-cd test && npm run build
+cd validation-workbench && npm run build
 ```
 
 Also run focused tests for modified modules when available.

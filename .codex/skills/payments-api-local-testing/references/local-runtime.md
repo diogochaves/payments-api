@@ -9,10 +9,10 @@ cd api
 ./scripts/start-sandbox-api.sh
 ```
 
-Run the frontend tester from the test directory:
+Run the Validation Workbench:
 
 ```sh
-cd test
+cd validation-workbench
 npm run dev
 ```
 
@@ -40,7 +40,7 @@ npm run build
 Build frontend:
 
 ```sh
-cd test
+cd validation-workbench
 npm run build
 ```
 

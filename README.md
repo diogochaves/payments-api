@@ -2,7 +2,7 @@
 
 Payments API é um projeto de referência da [ProdOps University](https://prodops.university/). Ele demonstra, em um único repositório, como código, contratos, especificações, observabilidade, confiabilidade, operação e artefatos de produto podem se conectar na evolução de um produto digital.
 
-Este repositório não deve ser lido apenas como uma API de pagamentos. Ele é um laboratório educacional funcional: a aplicação pode ser executada localmente, possui backend, frontend de teste, contratos, cenários BDD, infraestrutura local e artefatos ProdOps, mas seu objetivo principal é demonstrar a aplicação prática do Framework ProdOps ao longo da jornada de produto.
+Este repositório não deve ser lido apenas como uma API de pagamentos. Ele é um laboratório educacional funcional: a aplicação pode ser executada localmente, possui backend, Validation Workbench, contratos, cenários BDD, infraestrutura local e artefatos ProdOps, mas seu objetivo principal é demonstrar a aplicação prática do Framework ProdOps ao longo da jornada de produto.
 
 O projeto é conceitual e educacional. Ele não representa, por si só, uma solução pronta para produção; representa um ambiente de estudo para alunos entenderem como decisões de produto, confiabilidade, especificação e operação aparecem em um produto real.
 
@@ -59,7 +59,7 @@ O repositório materializa vários elementos do Framework ProdOps:
 | Postmortem / Premortem | Existe um premortem em [prodops/assessment/premortem.md](prodops/assessment/premortem.md). Não há postmortems versionados no momento. |
 | Decision Trail / Release Trail | O Release Trail está em [prodops/downstream/release-trail.md](prodops/downstream/release-trail.md). Não há Decision Trail separado. |
 | GitOps / CI/CD / Delivery Flow | O workflow de release está em [.github/workflows/release.yml](.github/workflows/release.yml). Ele instala dependências, faz build, executa testes de aceitação e publica artefatos de release. |
-| Local testing | O sandbox local está documentado pelos scripts em [api/scripts](api/scripts), pela skill local em [.codex/skills/payments-api-local-testing](.codex/skills/payments-api-local-testing) e pelo frontend em [test](test). Algumas referências locais ainda citam o endpoint legado `/payments`; o fluxo atual do código fonte está concentrado em invoices. |
+| Validation Workbench | O sandbox local está documentado pelos scripts em [api/scripts](api/scripts), pela skill local em [.codex/skills/payments-api-local-testing](.codex/skills/payments-api-local-testing) e pelo [validation-workbench](validation-workbench), que pertence à via Upstream. Algumas referências locais ainda citam o endpoint legado `/payments`; o fluxo atual do código fonte está concentrado em invoices. |
 | Testes automatizados | A suíte de aceitação principal está em [api/test/create-invoice.acceptance.e2e-spec.ts](api/test/create-invoice.acceptance.e2e-spec.ts). |
 | Telemetria, logs, métricas e traces | O backend usa logs estruturados com `nestjs-pino` e eventos observáveis via `payments.observability`. Métricas, traces e dashboards completos são parte do roadmap educacional. |
 
@@ -96,7 +96,7 @@ O repositório materializa vários elementos do Framework ProdOps:
 | [api/infra](api/infra) | Templates AWS SAM para Lambda e DynamoDB. |
 | [api/infra/iac](api/infra/iac) | Infraestrutura local com Docker Compose, Kong, Keycloak e Terraform. |
 | [api/odd/create_invoice.yaml](api/odd/create_invoice.yaml) | Artefato de Observability Driven Design para criação de invoice. |
-| [test](test) | Frontend Vite/React para montar carrinho, gerar payloads, criar/cancelar invoice e simular webhooks. |
+| [validation-workbench](validation-workbench) | Bancada funcional Upstream em Vite/React para montar carrinho, gerar payloads, criar/cancelar invoice, simular webhooks e validar fluxos antes de promoção para Downstream. |
 | [docs](docs) | Documentação complementar, features e materiais ProdOps anteriores. |
 | [prodops](prodops) | Camada principal de contexto ProdOps: estado atual, assessment, reliability plan e diligence. |
 | [.github/workflows/release.yml](.github/workflows/release.yml) | Pipeline de release no GitHub Actions. |
@@ -129,12 +129,12 @@ Padrões do sandbox:
 - `ENABLED_PAYMENT_PROVIDERS=ASAAS`
 - `DEFAULT_PAYMENT_PROVIDER=ASAAS`
 
-### Frontend de teste
+### Validation Workbench
 
 Em outro terminal:
 
 ```sh
-cd test
+cd validation-workbench
 npm ci
 npm run dev
 ```
@@ -149,7 +149,7 @@ npm run build
 ```
 
 ```sh
-cd test
+cd validation-workbench
 npm run build
 ```
 
@@ -321,7 +321,7 @@ Uma trilha recomendada para alunos:
 2. Leia a jornada Compra com Pix em [prodops/current-state/service-decks/compra-com-pix.md](prodops/current-state/service-decks/compra-com-pix.md).
 3. Explore os cenários BDD em [prodops/current-state/features](prodops/current-state/features).
 4. Compare os cenários com o código em [api/src/modules/invoices](api/src/modules/invoices).
-5. Rode o backend sandbox e o frontend de teste.
+5. Rode o backend sandbox e o Validation Workbench.
 6. Execute `npm run test:acceptance` em [api](api) para observar a cobertura comportamental.
 7. Leia o ODD em [api/odd/create_invoice.yaml](api/odd/create_invoice.yaml) e procure os eventos observáveis no código.
 8. Avalie riscos e confiabilidade no [premortem](prodops/assessment/premortem.md) e no [Reliability Plan](prodops/assessment/reliability-plan/README.md).

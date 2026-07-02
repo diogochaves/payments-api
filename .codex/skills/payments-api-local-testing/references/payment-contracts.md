@@ -74,7 +74,7 @@ Expected local response:
 
 ## Frontend Mapping
 
-The Vite tester in `test/src/App.tsx` derives both payloads from the same cart state:
+The Vite tester in `validation-workbench/src/App.tsx` derives both payloads from the same cart state:
 
 - Cart total maps to `amount`.
 - Item summary maps to `description`.

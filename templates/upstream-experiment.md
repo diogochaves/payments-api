@@ -2,9 +2,19 @@
 
 ## Experiment
 
+## Business Goal
+
 ## Hypothesis
 
-## What was tried
+## Code Produced
+
+## Validation Workbench Updated
+
+## Contracts Updated
+
+## BDD Updated
+
+## Reliability Impact
 
 ## Result
 
@@ -12,4 +22,4 @@
 
 ## Should move downstream?
 
-## Next step
+## Next Step

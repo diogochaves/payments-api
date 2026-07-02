@@ -6,7 +6,8 @@ business context.
 
 This repository supports two ProdOps work paths:
 
-- Upstream: exploration, experiments, spikes, prototypes, and fast refinement.
+- Upstream: exploratory engineering that can produce executable code,
+  prototypes, contracts, functional validation, and learning.
 - Downstream: governed delivery through the full ProdOps execution flow.
 
 ## Source Of Truth
@@ -24,6 +25,7 @@ Use Upstream when the task is to:
 
 - explore;
 - experiment;
+- implement quickly;
 - prototype;
 - investigate;
 - validate a hypothesis;
@@ -32,9 +34,34 @@ Use Upstream when the task is to:
 - investigate a technical solution;
 - understand impact before taking delivery commitment.
 
-Upstream is lightweight, fast, and reversible. It may alter experimental code,
-but it must avoid committing production architecture decisions unless they are
-later promoted through Downstream.
+Upstream is a complete exploratory engineering path. Its goal is to transform
+hypotheses into validated knowledge before a capability is promoted to
+Downstream.
+
+During Upstream, agents may:
+
+- implement code;
+- create endpoints;
+- create integrations;
+- update OpenAPI contracts;
+- update AsyncAPI contracts;
+- create or update BDD Features;
+- create automated tests when useful;
+- create functional validation interfaces;
+- update documentation;
+- evolve OBCs;
+- update the Reliability Plan;
+- update Event Storming;
+- update the Tracking List;
+- produce evidence for a delivery decision.
+
+Upstream has no delivery commitment. It has a learning commitment. Code
+produced in Upstream is disposable until promoted to Downstream, but successful
+code may be reused, refactored, or promoted during the Downstream flow.
+
+The `validation-workbench/` is part of Upstream. Use it to validate functional
+flows, OBC behavior, integrations, BDD scenarios, UX, and contracts before
+promotion to Downstream.
 
 Upstream does not need to follow the full flow:
 
@@ -42,8 +69,9 @@ Upstream does not need to follow the full flow:
 Hack -> Sync -> Finish -> Ship -> Validate -> Promote
 ```
 
-Upstream work should turn uncertainty into clearer demand, evidence, OBC input,
-BDD input, Reliability Plan input, or a Downstream candidate.
+Upstream work should turn uncertainty into clearer demand, executable evidence,
+OBC input, BDD input, Reliability Plan input, Event Storming updates, or a
+Downstream candidate.
 
 Record Upstream work in:
 
@@ -58,9 +86,19 @@ Use this format:
 
 ### Experiment
 
+### Business Goal
+
 ### Hypothesis
 
-### What was tried
+### Code Produced
+
+### Validation Workbench Updated
+
+### Contracts Updated
+
+### BDD Updated
+
+### Reliability Impact
 
 ### Result
 
@@ -86,10 +124,22 @@ Use Downstream when the task is to:
 - validate observability, metrics, or SLOs;
 - prepare standardized delivery.
 
+Every Downstream item must have:
+
+- OBC;
+- BDD;
+- Reliability Plan;
+- Iteration Backlog entry.
+
 Downstream follows the full governed flow:
 
 ```text
-Hack -> Sync -> Finish -> Ship -> Validate -> Promote
+Hack
+-> Sync
+-> Finish
+-> Ship
+-> Validate
+-> Promote
 ```
 
 Required Downstream sequence:

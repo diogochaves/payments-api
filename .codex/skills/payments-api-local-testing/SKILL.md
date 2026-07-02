@@ -1,6 +1,6 @@
 ---
 name: payments-api-local-testing
-description: Validate, debug, and modify this repository's payment sandbox without drifting from existing architecture. Use when Codex needs to run the payments-api backend and Vite test frontend, build or inspect payment payloads, validate POST /invoices or POST /payments, diagnose CORS/provider/storage failures, update prompts/skill metadata, or make changes that must follow the repo's NestJS, event, provider, storage, testing, and Vite patterns.
+description: Validate, debug, and modify this repository's payment sandbox without drifting from existing architecture. Use when Codex needs to run the payments-api backend and Vite Validation Workbench, build or inspect payment payloads, validate POST /invoices or POST /payments, diagnose CORS/provider/storage failures, update prompts/skill metadata, or make changes that must follow the repo's NestJS, event, provider, storage, testing, and Vite patterns.
 ---
 
 # Payments API Local Testing

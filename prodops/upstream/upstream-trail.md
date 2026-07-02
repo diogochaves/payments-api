@@ -7,9 +7,19 @@ Append upstream exploration entries here.
 
 ### Experiment
 
+### Business Goal
+
 ### Hypothesis
 
-### What was tried
+### Code Produced
+
+### Validation Workbench Updated
+
+### Contracts Updated
+
+### BDD Updated
+
+### Reliability Impact
 
 ### Result
 
@@ -28,20 +38,37 @@ Validate the feasibility of integrating Payments API with Asaas for the
 complete credit card lifecycle: create charge, confirm payment, and cancel or
 remove payment.
 
+### Business Goal
+
+Understand whether credit card payments can be added to the Payments gateway
+without committing the capability to Downstream.
+
 ### Hypothesis
 
 Payments API can expose a unified payment interface while Asaas handles credit
 card operations transparently behind the provider boundary.
 
-### What was tried
+### Code Produced
 
-- Reviewed official Asaas documentation for credit card charge creation,
-  paying an existing charge by card, payment deletion, payment webhooks, and
-  webhook delivery behavior.
-- Compared the documented Asaas operations with the current DTOs, Asaas adapter,
-  invoice service, cancellation flow, webhook flow, and BDD Features.
-- Checked whether the existing `billingType: CREDIT_CARD` support is enough for
-  a Downstream implementation.
+No code was produced in this experiment.
+
+### Validation Workbench Updated
+
+No.
+
+### Contracts Updated
+
+No.
+
+### BDD Updated
+
+No.
+
+### Reliability Impact
+
+Identified future risks around card timeout, duplicate capture attempts, risk
+analysis delay, PCI/security boundary, webhook queue loss, and refund versus
+deletion semantics.
 
 ### Result
 
@@ -69,3 +96,70 @@ Needs another experiment before Downstream.
 Run a focused upstream experiment comparing hosted card entry vs tokenized card
 payment for Magazine Siará checkout, then draft OBC, BDD scenarios, DTO fields,
 observability events, and Reliability Plan risks.
+
+## 2026-07-02 14:53
+
+### Experiment
+
+Redefine Upstream as a complete exploratory engineering path and rename the
+local functional validation frontend to Validation Workbench.
+
+### Business Goal
+
+Make it clear that capabilities can produce executable evidence, contracts, BDDs
+and functional validations before they are committed to Downstream delivery.
+
+### Hypothesis
+
+Separating learning commitment from delivery commitment lets agents explore
+faster while preserving the full ProdOps governance for Downstream work.
+
+### Code Produced
+
+No product capability code was produced. The local validation frontend was
+renamed to `validation-workbench/`, with package metadata and references
+updated.
+
+### Validation Workbench Updated
+
+Yes. The workspace now treats `validation-workbench/` as an Upstream functional
+validation environment for OBCs, BDDs, integrations, UX and contracts.
+
+### Contracts Updated
+
+No OpenAPI or AsyncAPI contracts were changed.
+
+### BDD Updated
+
+No BDD feature was changed.
+
+### Reliability Impact
+
+The documentation now states that Upstream experiments may update the
+Reliability Plan, Event Storming and Tracking List when they produce validated
+evidence. Downstream still requires OBC, BDD, Reliability Plan and Iteration
+Backlog before delivery execution.
+
+### Result
+
+ProdOps documentation, the Upstream skill, the Upstream trail template and the
+Validation Workbench references now reflect Upstream as exploratory engineering
+instead of documentation-only experimentation.
+
+### Learning
+
+The previous generic name hid the real purpose of the local frontend. Treating
+it as the Validation Workbench gives agents a clear place to validate functional
+behavior before deciding whether a capability should move to Downstream.
+
+### Should move downstream?
+
+No. This is a process and workspace architecture update, not a business
+capability. Future capabilities explored in Upstream must explicitly justify
+whether they are ready for Downstream.
+
+### Next step
+
+Use `validation-workbench/` for future Upstream functional validation and mark
+all Upstream code as disposable until a successful experiment is promoted into
+the Downstream flow.
