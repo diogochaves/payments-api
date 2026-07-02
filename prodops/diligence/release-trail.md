@@ -67,3 +67,38 @@ Updated the repository home in `README.md` to present payments-api as the ProdOp
 ### Notes
 
 README now calls out educational roadmap gaps explicitly: OpenAPI, OpenSLO, dedicated runbooks, Decision Trail, postmortems, dashboards and event contracts.
+
+## 2026-07-02 11:17
+
+### Summary
+
+Removed the tracked frontend `node_modules` tree from Git and updated the repository ignore rules so dependency folders are ignored at any directory depth.
+
+### Related
+
+- Reliability Plan: not applicable
+- OBC: not applicable
+- BDD Feature: not applicable
+
+### Code
+
+- `.gitignore`
+- `test/node_modules`
+
+### Tests
+
+- Tests created or updated: none, mechanical repository hygiene change
+- Validation executed: `git ls-files | rg '(^|/)node_modules(/|$)' || true`
+- Validation executed: `git check-ignore -v test/node_modules/.keep api/node_modules/.keep node_modules/.keep`
+
+### Artifacts Updated
+
+- Product Deck: not changed
+- Service Deck: not changed
+- Tracking List: not changed
+- Reliability Plan: not changed
+- OBC: not changed
+
+### Notes
+
+The local `test/node_modules` directory can remain on disk for the developer environment, but it is no longer tracked by Git.
