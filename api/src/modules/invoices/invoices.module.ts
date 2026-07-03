@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { InvoiceController } from './controllers/invoice.controller';
 import { AsaasWebhookController } from './controllers/asaas-webhook.controller';
+import { AsaasSandboxController } from './controllers/asaas-sandbox.controller';
 import { InvoiceService } from './services/invoice.service';
 import { DynamoService } from '../../infra/dynamo.service';
 import { AsaasService } from '../../infra/asaas.service';
@@ -39,7 +40,7 @@ import { AsaasWebhookQueueService } from './services/asaas-webhook-queue.service
  */
 @Module({
   imports: [EventEmitterModule],
-  controllers: [InvoiceController, AsaasWebhookController],
+  controllers: [InvoiceController, AsaasWebhookController, AsaasSandboxController],
   providers: [
     InvoiceService,
     DynamoService,

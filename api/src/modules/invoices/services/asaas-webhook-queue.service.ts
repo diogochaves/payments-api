@@ -1,5 +1,9 @@
 import { Injectable, ServiceUnavailableException } from '@nestjs/common';
-import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
+import {
+  GetQueueAttributesCommand,
+  SendMessageCommand,
+  SQSClient,
+} from '@aws-sdk/client-sqs';
 import { AsaasWebhookDto } from '../../../dto/asaas-webhook.dto';
 
 export interface QueuedAsaasWebhookMessage {
@@ -7,6 +11,21 @@ export interface QueuedAsaasWebhookMessage {
   payload: AsaasWebhookDto;
   receivedAt: string;
   correlationId: string;
+}
+
+export interface QueueSnapshot {
+  configured: boolean;
+  processingMode: string;
+  queueUrl?: string;
+  deadLetterQueueUrl?: string;
+  queue?: QueueCounters;
+  deadLetterQueue?: QueueCounters;
+}
+
+interface QueueCounters {
+  approximateNumberOfMessages: number;
+  approximateNumberOfMessagesNotVisible: number;
+  approximateNumberOfMessagesDelayed: number;
 }
 
 @Injectable()
@@ -59,5 +78,55 @@ export class AsaasWebhookQueueService {
         },
       }),
     );
+  }
+
+  async getSnapshot(): Promise<QueueSnapshot> {
+    const queueUrl = process.env.WEBHOOK_QUEUE_URL;
+    const deadLetterQueueUrl = process.env.WEBHOOK_DLQ_URL;
+
+    const snapshot: QueueSnapshot = {
+      configured: Boolean(queueUrl),
+      processingMode: process.env.WEBHOOK_PROCESSING_MODE ?? 'sync',
+      queueUrl,
+      deadLetterQueueUrl,
+    };
+
+    if (!queueUrl) {
+      return snapshot;
+    }
+
+    snapshot.queue = await this.getQueueCounters(queueUrl);
+
+    if (deadLetterQueueUrl) {
+      snapshot.deadLetterQueue =
+        await this.getQueueCounters(deadLetterQueueUrl);
+    }
+
+    return snapshot;
+  }
+
+  private async getQueueCounters(queueUrl: string): Promise<QueueCounters> {
+    const { Attributes } = await this.client.send(
+      new GetQueueAttributesCommand({
+        QueueUrl: queueUrl,
+        AttributeNames: [
+          'ApproximateNumberOfMessages',
+          'ApproximateNumberOfMessagesNotVisible',
+          'ApproximateNumberOfMessagesDelayed',
+        ],
+      }),
+    );
+
+    return {
+      approximateNumberOfMessages: Number(
+        Attributes?.ApproximateNumberOfMessages ?? 0,
+      ),
+      approximateNumberOfMessagesNotVisible: Number(
+        Attributes?.ApproximateNumberOfMessagesNotVisible ?? 0,
+      ),
+      approximateNumberOfMessagesDelayed: Number(
+        Attributes?.ApproximateNumberOfMessagesDelayed ?? 0,
+      ),
+    };
   }
 }

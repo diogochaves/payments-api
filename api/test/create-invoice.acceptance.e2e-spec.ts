@@ -40,6 +40,11 @@ class AsaasServiceStub {
     id: providerPaymentId,
     status: 'DELETED',
   }));
+
+  confirmSandboxPayment = jest.fn(async (providerPaymentId: string) => ({
+    id: providerPaymentId,
+    status: 'CONFIRMED',
+  }));
 }
 
 describe('Criar Invoice (acceptance)', () => {
@@ -68,9 +73,14 @@ describe('Criar Invoice (acceptance)', () => {
 
   beforeEach(async () => {
     process.env.INVOICE_REPOSITORY = 'memory';
+    process.env.DYNAMO_MOCK = 'true';
     process.env.ENABLED_PAYMENT_PROVIDERS = 'ASAAS';
     process.env.DEFAULT_PAYMENT_PROVIDER = 'ASAAS';
+    process.env.ASAAS_MOCK = 'true';
     process.env.ASAAS_WEBHOOK_TOKEN = 'webhook-secret';
+    process.env.WEBHOOK_PROCESSING_MODE = 'sync';
+    delete process.env.WEBHOOK_QUEUE_URL;
+    delete process.env.WEBHOOK_DLQ_URL;
 
     asaas = new AsaasServiceStub();
 
@@ -91,9 +101,15 @@ describe('Criar Invoice (acceptance)', () => {
     emitSpy.mockRestore();
     await app.close();
     delete process.env.INVOICE_REPOSITORY;
+    delete process.env.DYNAMO_MOCK;
     delete process.env.ENABLED_PAYMENT_PROVIDERS;
     delete process.env.DEFAULT_PAYMENT_PROVIDER;
+    delete process.env.ASAAS_MOCK;
+    delete process.env.ASAAS_URL;
     delete process.env.ASAAS_WEBHOOK_TOKEN;
+    delete process.env.WEBHOOK_PROCESSING_MODE;
+    delete process.env.WEBHOOK_QUEUE_URL;
+    delete process.env.WEBHOOK_DLQ_URL;
   });
 
   it('cria invoice com sucesso no Asaas usando cliente ja vinculado', async () => {
@@ -160,6 +176,24 @@ describe('Criar Invoice (acceptance)', () => {
       dueDate: '2026-06-20',
       billingType: 'PIX',
     });
+  });
+
+  it('mapeia cobranca ja confirmada na Sandbox da Asaas como conflito de negocio', async () => {
+    asaas.confirmSandboxPayment.mockRejectedValueOnce(
+      Object.assign(new Error('invalid_action: Cobrança já confirmada.'), {
+        status: 400,
+      }),
+    );
+    process.env.ASAAS_MOCK = 'false';
+    process.env.ASAAS_URL = 'https://api-sandbox.asaas.com/v3';
+
+    const response = await request(app.getHttpServer())
+      .post('/sandbox/asaas/payments/pay_already_confirmed/confirm')
+      .expect(409);
+
+    expect(response.body.message).toBe(
+      'invalid_action: Cobrança já confirmada.',
+    );
   });
 
   it('cria invoice de cartao hospedado usando o contrato generico do Asaas', async () => {
@@ -605,7 +639,7 @@ describe('Criar Invoice (acceptance)', () => {
             customer: 'cus_stub_customer-123',
           },
         })
-        .expect(201);
+        .expect(200);
 
       const cancelled = await repository.findInvoice(
         basePayload.tenantId,
@@ -654,7 +688,7 @@ describe('Criar Invoice (acceptance)', () => {
             confirmedDate: '2026-06-21',
           },
         })
-        .expect(201);
+        .expect(200);
 
       const invoice = await repository.findInvoice(
         basePayload.tenantId,
@@ -703,7 +737,7 @@ describe('Criar Invoice (acceptance)', () => {
             paymentDate: '2026-06-22',
           },
         })
-        .expect(201);
+        .expect(200);
 
       const invoice = await repository.findInvoice(
         basePayload.tenantId,
@@ -774,12 +808,12 @@ describe('Criar Invoice (acceptance)', () => {
         .post('/webhook/payments')
         .set('asaas-access-token', 'webhook-secret')
         .send(webhook)
-        .expect(201);
+        .expect(200);
       await request(app.getHttpServer())
         .post('/webhook/payments')
         .set('asaas-access-token', 'webhook-secret')
         .send(webhook)
-        .expect(201);
+        .expect(200);
 
       expect(
         emitSpy.mock.calls.filter(
@@ -815,7 +849,7 @@ describe('Criar Invoice (acceptance)', () => {
             externalReference: 'MS-100045',
           },
         })
-        .expect(201);
+        .expect(200);
 
       const invoice = await repository.findInvoice(
         basePayload.tenantId,
@@ -844,7 +878,7 @@ describe('Criar Invoice (acceptance)', () => {
             customer: 'cus_stub_customer-123',
           },
         })
-        .expect(201);
+        .expect(200);
 
       const invoice = await repository.findInvoice(
         basePayload.tenantId,
@@ -884,7 +918,7 @@ describe('Criar Invoice (acceptance)', () => {
             customer: 'cus_stub_customer-123',
           },
         })
-        .expect(201);
+        .expect(200);
 
       const invoice = await repository.findInvoice(
         basePayload.tenantId,
@@ -925,7 +959,7 @@ describe('Criar Invoice (acceptance)', () => {
             customer: 'cus_stub_customer-123',
           },
         })
-        .expect(201);
+        .expect(200);
 
       const invoice = await repository.findInvoice(
         basePayload.tenantId,
@@ -961,7 +995,7 @@ describe('Criar Invoice (acceptance)', () => {
             customer: 'cus_unknown',
           },
         })
-        .expect(201);
+        .expect(200);
 
       expect(
         observableEvent('pagamento.confirmacao.webhook.nao_correlacionado'),
@@ -1022,7 +1056,11 @@ describe('Confirmar Pagamento com Dynamo (acceptance)', () => {
     process.env.DYNAMO_MOCK = 'true';
     process.env.ENABLED_PAYMENT_PROVIDERS = 'ASAAS';
     process.env.DEFAULT_PAYMENT_PROVIDER = 'ASAAS';
+    process.env.ASAAS_MOCK = 'true';
     process.env.ASAAS_WEBHOOK_TOKEN = 'webhook-secret';
+    process.env.WEBHOOK_PROCESSING_MODE = 'sync';
+    delete process.env.WEBHOOK_QUEUE_URL;
+    delete process.env.WEBHOOK_DLQ_URL;
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -1042,7 +1080,11 @@ describe('Confirmar Pagamento com Dynamo (acceptance)', () => {
     delete process.env.DYNAMO_MOCK;
     delete process.env.ENABLED_PAYMENT_PROVIDERS;
     delete process.env.DEFAULT_PAYMENT_PROVIDER;
+    delete process.env.ASAAS_MOCK;
     delete process.env.ASAAS_WEBHOOK_TOKEN;
+    delete process.env.WEBHOOK_PROCESSING_MODE;
+    delete process.env.WEBHOOK_QUEUE_URL;
+    delete process.env.WEBHOOK_DLQ_URL;
   });
 
   it('confirma pagamento localizando invoice por providerPaymentId no Dynamo', async () => {
@@ -1065,7 +1107,7 @@ describe('Confirmar Pagamento com Dynamo (acceptance)', () => {
           confirmedDate: '2026-06-21',
         },
       })
-      .expect(201);
+      .expect(200);
 
     const invoice = await repository.findInvoice(
       basePayload.tenantId,
@@ -1102,7 +1144,7 @@ describe('Confirmar Pagamento com Dynamo (acceptance)', () => {
           confirmedDate: '2026-06-21',
         },
       })
-      .expect(201);
+      .expect(200);
 
     const invoice = await repository.findInvoice(
       basePayload.tenantId,

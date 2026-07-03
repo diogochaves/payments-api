@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Headers,
   HttpCode,
   HttpStatus,
@@ -16,6 +17,11 @@ export class AsaasWebhookController {
     private readonly invoiceService: InvoiceService,
     private readonly webhookQueue: AsaasWebhookQueueService,
   ) {}
+
+  @Get('queue')
+  async getQueueStatus() {
+    return this.webhookQueue.getSnapshot();
+  }
 
   @Post()
   @HttpCode(HttpStatus.OK)

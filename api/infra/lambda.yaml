@@ -125,6 +125,7 @@ Globals:
           - !Ref AWS::NoValue
         WEBHOOK_PROCESSING_MODE: !Ref WebhookProcessingMode
         WEBHOOK_QUEUE_URL: !Ref WebhookQueue
+        WEBHOOK_DLQ_URL: !Ref WebhookDeadLetterQueue
         AWS_SQS_ENDPOINT: !If
           - HasAwsDynamoDbEndpoint
           - !Ref AwsDynamoDbEndpoint
@@ -180,7 +181,9 @@ Resources:
                 Action:
                   - sqs:SendMessage
                   - sqs:GetQueueAttributes
-                Resource: !GetAtt WebhookQueue.Arn
+                Resource:
+                  - !GetAtt WebhookQueue.Arn
+                  - !GetAtt WebhookDeadLetterQueue.Arn
 
   WebhookWorkerRole:
     Type: AWS::IAM::Role

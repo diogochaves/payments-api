@@ -3,6 +3,7 @@ import {
   Ban,
   CheckCircle2,
   Copy,
+  ExternalLink,
   Loader2,
   Minus,
   Plus,
@@ -16,6 +17,7 @@ import {
 type BillingType = 'BOLETO' | 'PIX' | 'CREDIT_CARD' | 'UNDEFINED';
 type Provider = 'ASAAS' | 'ITAU';
 type CreditCardFlow = 'HOSTED_INVOICE' | 'SAVED_CARD' | 'NEW_CARD';
+type RuntimeMode = 'LOCAL_MOCK' | 'ASAAS_SANDBOX_REAL' | 'LOCALSTACK';
 type WebhookEvent =
   | 'PAYMENT_AWAITING_RISK_ANALYSIS'
   | 'PAYMENT_APPROVED_BY_RISK_ANALYSIS'
@@ -79,6 +81,21 @@ type InvoiceResponse = {
   externalReference: string;
 };
 
+type QueueCounters = {
+  approximateNumberOfMessages: number;
+  approximateNumberOfMessagesNotVisible: number;
+  approximateNumberOfMessagesDelayed: number;
+};
+
+type QueueSnapshot = {
+  configured: boolean;
+  processingMode: string;
+  queueUrl?: string;
+  deadLetterQueueUrl?: string;
+  queue?: QueueCounters;
+  deadLetterQueue?: QueueCounters;
+};
+
 const currencyFormatter = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
   currency: 'BRL',
@@ -136,7 +153,8 @@ const initialNewCard: NewCardForm = {
 
 function App() {
   const [apiUrl, setApiUrl] = useState('http://localhost:3011');
-  const [webhookToken, setWebhookToken] = useState('webhook-secret');
+  const [runtimeMode, setRuntimeMode] = useState<RuntimeMode>('LOCAL_MOCK');
+  const [webhookToken, setWebhookToken] = useState('payments-api-local-webhook-token-0001');
   const [tenantId, setTenantId] = useState('magazine-siara');
   const [orderId, setOrderId] = useState(makeOrderId);
   const [customer, setCustomer] = useState<CustomerForm>(initialCustomer);
@@ -156,11 +174,16 @@ function App() {
   const [result, setResult] = useState<SendResult | null>(null);
   const [lastInvoice, setLastInvoice] = useState<InvoiceResponse | null>(null);
   const [confirmationResult, setConfirmationResult] = useState<SendResult | null>(null);
+  const [sandboxConfirmationResult, setSandboxConfirmationResult] = useState<SendResult | null>(null);
   const [cancelResult, setCancelResult] = useState<SendResult | null>(null);
+  const [queueSnapshot, setQueueSnapshot] = useState<QueueSnapshot | null>(null);
+  const [queueResult, setQueueResult] = useState<SendResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [isConfirmingSandboxPayment, setIsConfirmingSandboxPayment] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [isLoadingQueue, setIsLoadingQueue] = useState(false);
 
   const amount = useMemo(
     () => items.reduce((total, item) => total + item.quantity * item.unitPrice, 0),
@@ -270,10 +293,31 @@ function App() {
     }
   }, [isPayloadDirty, payload]);
 
+  useEffect(() => {
+    if (billingType === 'CREDIT_CARD' && creditCardFlow !== 'HOSTED_INVOICE') {
+      setCreditCardFlow('HOSTED_INVOICE');
+      setIsPayloadDirty(false);
+    }
+  }, [billingType, creditCardFlow]);
+
   const endpoint = '/invoices';
   const idempotencyKey = `${orderId}:create`;
   const cancelIdempotencyKey = `${lastInvoice?.orderId ?? orderId}:cancel`;
   const isCreditCard = billingType === 'CREDIT_CARD';
+  const isRealAsaasSandbox = runtimeMode === 'ASAAS_SANDBOX_REAL';
+
+  const updateRuntimeMode = (mode: RuntimeMode) => {
+    setRuntimeMode(mode);
+
+    if (mode === 'ASAAS_SANDBOX_REAL') {
+      setProvider('ASAAS');
+      setWebhookToken((current) =>
+        current === 'webhook-secret'
+          ? 'payments-api-local-webhook-token-0001'
+          : current,
+      );
+    }
+  };
 
   const updateItem = <K extends keyof CartItem>(
     id: string,
@@ -341,6 +385,41 @@ function App() {
     await navigator.clipboard.writeText(payloadText);
   };
 
+  const loadQueueSnapshot = async (showResult = true) => {
+    setIsLoadingQueue(true);
+
+    if (showResult) {
+      setQueueResult(null);
+    }
+
+    try {
+      const response = await fetch(`${apiUrl.replace(/\/$/, '')}/webhook/payments/queue`);
+      const text = await response.text();
+      const body = text ? safeJsonParse(text) : null;
+
+      if (showResult) {
+        setQueueResult({ ok: response.ok, status: response.status, body });
+      }
+
+      if (response.ok && isQueueSnapshot(body)) {
+        setQueueSnapshot(body);
+      }
+    } catch (queueError) {
+      if (showResult) {
+        setQueueResult({
+          ok: false,
+          status: 0,
+          body:
+            queueError instanceof Error
+              ? queueError.message
+              : 'Falha ao consultar a fila.',
+        });
+      }
+    } finally {
+      setIsLoadingQueue(false);
+    }
+  };
+
   const sendPayment = async () => {
     setIsSending(true);
     setError(null);
@@ -364,10 +443,12 @@ function App() {
       const body = text ? safeJsonParse(text) : null;
       setResult({ ok: response.ok, status: response.status, body });
       setConfirmationResult(null);
+      setSandboxConfirmationResult(null);
       setCancelResult(null);
 
       if (response.ok && isInvoiceResponse(body)) {
         setLastInvoice(body);
+        void loadQueueSnapshot(false);
       }
     } catch (sendError) {
       setError(
@@ -405,6 +486,7 @@ function App() {
 
       if (response.ok && lastInvoice) {
         setLastInvoice({ ...lastInvoice, status: localStatusAfterWebhook(webhookEvent, lastInvoice.status) });
+        void loadQueueSnapshot(false);
       }
     } catch (confirmationError) {
       setError(
@@ -414,6 +496,48 @@ function App() {
       );
     } finally {
       setIsConfirming(false);
+    }
+  };
+
+  const confirmSandboxPayment = async () => {
+    if (!lastInvoice) {
+      return;
+    }
+
+    setIsConfirmingSandboxPayment(true);
+    setError(null);
+    setSandboxConfirmationResult(null);
+
+    try {
+      const response = await fetch(
+        `${apiUrl.replace(/\/$/, '')}/sandbox/asaas/payments/${lastInvoice.providerPaymentId}/confirm`,
+        {
+          method: 'POST',
+          headers: {
+            'X-Correlation-Id': `frontend-sandbox-confirm-${lastInvoice.orderId}`,
+          },
+        },
+      );
+
+      const text = await response.text();
+      const body = text ? safeJsonParse(text) : null;
+      setSandboxConfirmationResult({ ok: response.ok, status: response.status, body });
+
+      if (response.ok && lastInvoice) {
+        setLastInvoice({
+          ...lastInvoice,
+          status: isSandboxPaymentReceived(body) ? body.status : lastInvoice.status,
+        });
+        window.setTimeout(() => void loadQueueSnapshot(false), 1200);
+      }
+    } catch (confirmationError) {
+      setError(
+        confirmationError instanceof Error
+          ? confirmationError.message
+          : 'Falha ao confirmar pagamento na Sandbox da Asaas.',
+      );
+    } finally {
+      setIsConfirmingSandboxPayment(false);
     }
   };
 
@@ -465,6 +589,17 @@ function App() {
           <h1>Testador BDD de pagamentos</h1>
         </div>
 
+        <label className="api-field runtime-field">
+          <span>Runtime</span>
+          <select
+            value={runtimeMode}
+            onChange={(event) => updateRuntimeMode(event.target.value as RuntimeMode)}
+          >
+            <option value="LOCAL_MOCK">Local mock</option>
+            <option value="ASAAS_SANDBOX_REAL">Asaas Sandbox real</option>
+            <option value="LOCALSTACK">LocalStack</option>
+          </select>
+        </label>
         <label className="api-field">
           <span>API URL</span>
           <input
@@ -482,6 +617,20 @@ function App() {
           />
         </label>
       </section>
+
+      {isRealAsaasSandbox && (
+        <section className="operational-note">
+          <div>
+            <span>Asaas Sandbox real</span>
+            <strong>
+              Webhook configurado pelo script <code>start-asaas-sandbox-real.sh</code>
+            </strong>
+          </div>
+          <p>
+            Crie a invoice aqui, confirme o pagamento na interface Sandbox da Asaas e acompanhe o webhook nos logs da API.
+          </p>
+        </section>
+      )}
 
       <section className="workspace">
         <div className="panel cart-panel">
@@ -658,7 +807,16 @@ function App() {
               <span>Billing</span>
               <select
                 value={billingType}
-                onChange={(event) => setBillingType(event.target.value as BillingType)}
+                onChange={(event) => {
+                  const nextBillingType = event.target.value as BillingType;
+                  setBillingType(nextBillingType);
+
+                  if (nextBillingType === 'CREDIT_CARD') {
+                    setCreditCardFlow('HOSTED_INVOICE');
+                  }
+
+                  setIsPayloadDirty(false);
+                }}
               >
                 <option value="PIX">PIX</option>
                 <option value="BOLETO">BOLETO</option>
@@ -694,8 +852,8 @@ function App() {
                   }}
                 >
                   <option value="HOSTED_INVOICE">HOSTED_INVOICE</option>
-                  <option value="SAVED_CARD">SAVED_CARD</option>
-                  <option value="NEW_CARD">NEW_CARD</option>
+                  <option value="SAVED_CARD" disabled>SAVED_CARD</option>
+                  <option value="NEW_CARD" disabled>NEW_CARD</option>
                 </select>
               </label>
 
@@ -711,92 +869,10 @@ function App() {
                 />
               </label>
 
-              {creditCardFlow === 'SAVED_CARD' && (
-                <>
-                  <label className="wide-field">
-                    <span>Cartao salvo</span>
-                    <select
-                      value={selectedCardId}
-                      onChange={(event) => {
-                        setSelectedCardId(event.target.value);
-                        setIsPayloadDirty(false);
-                      }}
-                    >
-                      {savedCards.map((card) => (
-                        <option key={card.id} value={card.id}>
-                          {card.brand} final {card.last4} - {card.expiryMonth}/{card.expiryYear}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-
-                  <div className="saved-card-list wide-field">
-                    {savedCards.map((card) => (
-                      <button
-                        className={card.id === selectedCardId ? 'saved-card selected' : 'saved-card'}
-                        key={card.id}
-                        type="button"
-                        onClick={() => {
-                          setSelectedCardId(card.id);
-                          setIsPayloadDirty(false);
-                        }}
-                      >
-                        <strong>{card.brand}</strong>
-                        <span>final {card.last4}</span>
-                        <small>{card.expiryMonth}/{card.expiryYear}</small>
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-
-              {creditCardFlow === 'NEW_CARD' && (
-                <>
-                  <label>
-                    <span>Nome impresso</span>
-                    <input
-                      value={newCard.holderName}
-                      onChange={(event) => updateNewCard('holderName', event.target.value)}
-                    />
-                  </label>
-                  <label>
-                    <span>Numero</span>
-                    <input
-                      inputMode="numeric"
-                      value={newCard.number}
-                      onChange={(event) => updateNewCard('number', event.target.value)}
-                    />
-                  </label>
-                  <label>
-                    <span>Mes</span>
-                    <input
-                      inputMode="numeric"
-                      value={newCard.expiryMonth}
-                      onChange={(event) => updateNewCard('expiryMonth', event.target.value)}
-                    />
-                  </label>
-                  <label>
-                    <span>Ano</span>
-                    <input
-                      inputMode="numeric"
-                      value={newCard.expiryYear}
-                      onChange={(event) => updateNewCard('expiryYear', event.target.value)}
-                    />
-                  </label>
-                  <label>
-                    <span>CVV</span>
-                    <input
-                      inputMode="numeric"
-                      value={newCard.cvv}
-                      onChange={(event) => updateNewCard('cvv', event.target.value)}
-                    />
-                  </label>
-                  <button className="secondary-button card-register-button" type="button" onClick={registerNewCard}>
-                    <Plus size={17} />
-                    Cadastrar no Workbench
-                  </button>
-                </>
-              )}
+              <div className="headers-box wide-field">
+                <span>Contrato ativo</span>
+                <code>Cartao hospedado: sem creditCardToken, creditCard, cardReference ou remoteIp</code>
+              </div>
             </div>
           )}
 
@@ -849,6 +925,18 @@ function App() {
                 2,
               )}
             </pre>
+          )}
+
+          {lastInvoice?.paymentUrl && (
+            <a
+              className="payment-link"
+              href={lastInvoice.paymentUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <ExternalLink size={17} />
+              Abrir cobrança na Asaas
+            </a>
           )}
         </div>
 
@@ -948,6 +1036,10 @@ function App() {
               <strong>{lastInvoice?.providerPaymentId ?? '-'}</strong>
             </div>
             <div>
+              <span>Origem</span>
+              <strong>{isRealAsaasSandbox ? 'ASAAS_REAL' : 'SIMULACAO_LOCAL'}</strong>
+            </div>
+            <div>
               <span>External reference</span>
               <strong>{lastInvoice?.externalReference ?? orderId}</strong>
             </div>
@@ -984,15 +1076,132 @@ function App() {
             {JSON.stringify(confirmationPayload ?? { event: webhookEvent }, null, 2)}
           </pre>
 
+          {isRealAsaasSandbox && (
+            <div className="headers-box">
+              <span>Webhook real</span>
+              <code>Aguardando evento enviado pela Asaas para /webhook/payments</code>
+            </div>
+          )}
+
+          {isRealAsaasSandbox && (
+            <div className="sandbox-confirm-panel">
+              <div className="panel-header queue-header">
+                <div>
+                  <p className="eyebrow">Sandbox Asaas</p>
+                  <h2>Confirmar pagamento</h2>
+                </div>
+                <CheckCircle2 size={22} />
+              </div>
+
+              <div className="headers-box">
+                <span>POST</span>
+                <code>
+                  {lastInvoice
+                    ? `/sandbox/asaas/payments/${lastInvoice.providerPaymentId}/confirm`
+                    : '/sandbox/asaas/payments/:providerPaymentId/confirm'}
+                </code>
+              </div>
+
+              <div className="actions">
+                <button
+                  className="primary-button"
+                  type="button"
+                  onClick={confirmSandboxPayment}
+                  disabled={!lastInvoice || isConfirmingSandboxPayment}
+                >
+                  {isConfirmingSandboxPayment ? (
+                    <Loader2 className="spin" size={18} />
+                  ) : (
+                    <CheckCircle2 size={18} />
+                  )}
+                  Confirmar na Sandbox Asaas
+                </button>
+              </div>
+
+              {sandboxConfirmationResult && (
+                <pre className={sandboxConfirmationResult.ok ? 'response success' : 'response error'}>
+                  {JSON.stringify(
+                    {
+                      status: sandboxConfirmationResult.status,
+                      ok: sandboxConfirmationResult.ok,
+                      body: sandboxConfirmationResult.body,
+                    },
+                    null,
+                    2,
+                  )}
+                </pre>
+              )}
+            </div>
+          )}
+
+          <div className="queue-panel">
+            <div className="panel-header queue-header">
+              <div>
+                <p className="eyebrow">Fila de webhook</p>
+                <h2>{queueSnapshot?.configured ? 'SQS configurada' : 'Processamento direto'}</h2>
+              </div>
+              <button
+                className="icon-button"
+                type="button"
+                onClick={() => void loadQueueSnapshot()}
+                title="Atualizar fila"
+              >
+                {isLoadingQueue ? <Loader2 className="spin" size={17} /> : <RefreshCw size={17} />}
+              </button>
+            </div>
+
+            <div className="status-grid queue-grid">
+              <div>
+                <span>Modo</span>
+                <strong>{queueSnapshot?.processingMode ?? (isRealAsaasSandbox ? 'sync' : '-')}</strong>
+              </div>
+              <div>
+                <span>Recebidas</span>
+                <strong>{queueSnapshot?.queue?.approximateNumberOfMessages ?? 0}</strong>
+              </div>
+              <div>
+                <span>Em processamento</span>
+                <strong>{queueSnapshot?.queue?.approximateNumberOfMessagesNotVisible ?? 0}</strong>
+              </div>
+              <div>
+                <span>DLQ</span>
+                <strong className={queueSnapshot?.deadLetterQueue?.approximateNumberOfMessages ? 'status-danger' : ''}>
+                  {queueSnapshot?.deadLetterQueue?.approximateNumberOfMessages ?? 0}
+                </strong>
+              </div>
+            </div>
+
+            <div className="headers-box">
+              <span>Queue URL</span>
+              <code>{queueSnapshot?.queueUrl ?? 'WEBHOOK_QUEUE_URL não configurada'}</code>
+              <span>DLQ URL</span>
+              <code>{queueSnapshot?.deadLetterQueueUrl ?? 'WEBHOOK_DLQ_URL não configurada'}</code>
+            </div>
+
+            {queueResult && (
+              <pre className={queueResult.ok ? 'response success' : 'response error'}>
+                {JSON.stringify(
+                  {
+                    status: queueResult.status,
+                    ok: queueResult.ok,
+                    body: queueResult.body,
+                  },
+                  null,
+                  2,
+                )}
+              </pre>
+            )}
+          </div>
+
           <div className="actions">
             <button
               className="primary-button"
               type="button"
               onClick={confirmPayment}
-              disabled={!confirmationPayload || isConfirming}
+              disabled={!confirmationPayload || isConfirming || isRealAsaasSandbox}
             >
               {isConfirming ? <Loader2 className="spin" size={18} /> : <CheckCircle2 size={18} />}
-              Enviar webhook
+              {isRealAsaasSandbox ? 'Webhook via Asaas' : 'Enviar webhook'}
             </button>
           </div>
 
@@ -1096,6 +1305,29 @@ function isInvoiceResponse(body: unknown): body is InvoiceResponse {
     typeof invoice.providerPaymentId === 'string' &&
     typeof invoice.externalReference === 'string'
   );
+}
+
+function isQueueSnapshot(body: unknown): body is QueueSnapshot {
+  if (!body || typeof body !== 'object') {
+    return false;
+  }
+
+  const snapshot = body as Partial<QueueSnapshot>;
+
+  return (
+    typeof snapshot.configured === 'boolean' &&
+    typeof snapshot.processingMode === 'string'
+  );
+}
+
+function isSandboxPaymentReceived(body: unknown): body is { status: string } {
+  if (!body || typeof body !== 'object') {
+    return false;
+  }
+
+  const payment = body as { status?: unknown };
+
+  return typeof payment.status === 'string';
 }
 
 export default App;

@@ -105,23 +105,70 @@ O repositório materializa vários elementos do Framework ProdOps:
 
 ## Como Executar Localmente
 
+Esta é a rota recomendada para rodar o laboratório localmente. Existem quatro
+modos suportados:
+
+- **Sandbox rápido**: NestJS local, memória, Asaas mockado. Melhor para estudar
+  contratos e usar o Validation Workbench.
+- **Sandbox real da Asaas**: NestJS local chamando a API Sandbox real da Asaas
+  e recebendo webhooks por túnel público.
+- **NestJS + LocalStack/DynamoDB**: NestJS local, persistência real em DynamoDB
+  emulado no LocalStack. Melhor para depurar persistência.
+- **SAM + LocalStack serverless**: Lambda Function URL, DynamoDB, SQS, DLQ e
+  worker de webhook. Melhor para validar a arquitetura assíncrona.
+
 ### Pré-requisitos
 
-- Node.js compatível com o projeto. O CI usa Node.js 22.
+- Node.js 22 ou compatível.
 - npm.
-- Para o ambiente AWS local integrado: Docker ou runtime de containers, AWS CLI, AWS SAM CLI e Localstack.
+- Para o modo AWS local: Docker, AWS CLI, AWS SAM CLI e LocalStack.
+- Para webhook real da Asaas: `ngrok` ou `cloudflared`, a menos que você já
+  tenha uma URL pública.
+- `jq`, usado pelos scripts de simulação.
 
-### Backend em modo sandbox
-
-O modo mais simples para estudo local usa armazenamento em memória, mock do Asaas e porta `3011`.
+Verificações úteis:
 
 ```sh
-cd api
-npm ci
-./scripts/start-sandbox-api.sh
+node --version
+npm --version
+jq --version
 ```
 
-Padrões do sandbox:
+Para o modo AWS local:
+
+```sh
+docker --version
+aws --version
+sam --version
+```
+
+### Setup inicial
+
+A partir da raiz do repositório, instale as dependências do backend:
+
+```sh
+(cd api && npm ci && cp .env.example .env)
+```
+
+Instale as dependências do Validation Workbench:
+
+```sh
+(cd validation-workbench && npm ci)
+```
+
+O arquivo `api/.env` é local e não deve ser commitado. Os scripts abaixo
+sobrescrevem as variáveis necessárias para cada modo.
+
+### Modo 1: sandbox rápido
+
+Use este modo para estudar a API, rodar o Workbench e validar payloads sem
+subir infraestrutura AWS local.
+
+```sh
+(cd api && ./scripts/start-sandbox-api.sh)
+```
+
+Defaults do sandbox:
 
 - Backend: `http://localhost:3011`
 - `INVOICE_REPOSITORY=memory`
@@ -129,44 +176,33 @@ Padrões do sandbox:
 - `ASAAS_MOCK=true`
 - `ENABLED_PAYMENT_PROVIDERS=ASAAS`
 - `DEFAULT_PAYMENT_PROVIDER=ASAAS`
+- `WEBHOOK_PROCESSING_MODE=sync`
+- `DD_TRACE_ENABLED=false`
 
 ### Validation Workbench
 
 Em outro terminal:
 
 ```sh
-cd validation-workbench
-npm ci
-npm run dev
+(cd validation-workbench && npm run dev)
 ```
 
-O frontend fica em `http://localhost:5173/` e envia requisições para o backend local em `http://localhost:3011`.
+O frontend fica em `http://localhost:5173/` e envia requisições para o backend
+local em `http://localhost:3011`.
 
-### Builds
+### Endpoints locais principais
 
-```sh
-cd api
-npm run build
-```
+| Fluxo | Endpoint |
+| --- | --- |
+| Healthcheck | `GET /health` |
+| Criar invoice | `POST /invoices` |
+| Cancelar invoice | `DELETE /invoices/:invoiceId` |
+| Webhook Asaas | `POST /webhook/payments` |
 
-```sh
-cd validation-workbench
-npm run build
-```
+O webhook local espera o header `asaas-access-token` quando
+`ASAAS_WEBHOOK_TOKEN` estiver configurado.
 
-### Testes automatizados
-
-```sh
-cd api
-npm run test
-```
-
-```sh
-cd api
-npm run test:acceptance
-```
-
-### Validação local de payloads
+### Validar payloads no sandbox
 
 Com o backend sandbox em execução:
 
@@ -174,89 +210,198 @@ Com o backend sandbox em execução:
 skills/payments-api-local-testing/scripts/validate-local-payloads.sh
 ```
 
-Para informar uma URL diferente:
+Para informar outra URL:
 
 ```sh
 API_URL=http://localhost:3011 skills/payments-api-local-testing/scripts/validate-local-payloads.sh
 ```
 
-Observação: esse script existe no repositório e também cobre o endpoint legado `/payments`. Na versão atual do código fonte, os controllers ativos estão concentrados em `/invoices`, `/invoices/:invoiceId` e `/webhook/payments`; se a branch não expuser `/payments`, use o script como referência de payloads ou ajuste o smoke test antes de usá-lo como critério de aceite.
+Observação: esse script também cobre referências históricas do sandbox. Na
+versão atual do código fonte, os controllers ativos ficam concentrados em
+`/invoices`, `/invoices/:invoiceId` e `/webhook/payments`.
 
-### Contratos HTTP principais
+### Builds
 
-| Fluxo | Endpoint | Referência |
-| --- | --- | --- |
-| Criar invoice | `POST /invoices` | [api/src/modules/invoices/controllers/invoice.controller.ts](api/src/modules/invoices/controllers/invoice.controller.ts) |
-| Cancelar invoice | `DELETE /invoices/:invoiceId` | [api/src/modules/invoices/controllers/invoice.controller.ts](api/src/modules/invoices/controllers/invoice.controller.ts) |
-| Webhook Asaas | `POST /webhook/payments` | [api/src/modules/invoices/controllers/asaas-webhook.controller.ts](api/src/modules/invoices/controllers/asaas-webhook.controller.ts) |
+```sh
+(cd api && npm run build)
+```
 
-O contrato local dos payloads de apoio está descrito em [skills/payments-api-local-testing/references/payment-contracts.md](skills/payments-api-local-testing/references/payment-contracts.md), incluindo referências históricas do sandbox.
+```sh
+(cd validation-workbench && npm run build)
+```
+
+O build gerado do Workbench em `validation-workbench/dist/` é ignorado pelo Git.
+
+### Testes automatizados
+
+```sh
+(cd api && npm run test)
+```
+
+```sh
+(cd api && npm run test:acceptance)
+```
+
+### Modo 2: sandbox real da Asaas
+
+Use este modo quando quiser chamar a API Sandbox real da Asaas, em vez do mock
+local, validando também o recebimento assíncrono por SQS local. Ele exige uma
+API Key de Sandbox, Docker/LocalStack, AWS CLI, `jq` e uma URL pública para a
+Asaas entregar webhooks.
+
+Configure `api/.env`:
+
+```env
+ASAAS_MOCK=false
+ASAAS_TOKEN='$aact_hmlg_sua_chave_sandbox'
+ASAAS_URL=https://api-sandbox.asaas.com/v3
+ASAAS_WEBHOOK_TOKEN=payments-api-local-webhook-token-0001
+ASAAS_WEBHOOK_EMAIL=seu-email-de-alerta@example.com
+```
+
+Suba a API com o script dedicado:
+
+```sh
+(cd api && ./scripts/start-asaas-sandbox-real.sh)
+```
+
+O script:
+
+- carrega `api/.env`;
+- valida que `ASAAS_TOKEN` foi configurado;
+- instala dependências se `api/node_modules` não existir;
+- força `ASAAS_MOCK=false`;
+- sobe ou reutiliza LocalStack;
+- cria/atualiza as tabelas DynamoDB locais;
+- cria/atualiza `payments-webhook-queue` e `payments-webhook-dlq`;
+- força `WEBHOOK_PROCESSING_MODE=async`;
+- exporta `WEBHOOK_QUEUE_URL`, `WEBHOOK_DLQ_URL` e `AWS_SQS_ENDPOINT`;
+- sobe um worker local que consome SQS e reutiliza o handler
+  `src/webhook-worker.ts`;
+- tenta abrir um túnel público com `cloudflared` ou `ngrok`, se algum deles
+  estiver instalado;
+- cadastra ou atualiza o webhook na Asaas Sandbox usando a URL pública criada;
+- imprime a URL pública do webhook.
+
+O script usa esta URL para configurar a Asaas Sandbox:
+
+```text
+https://<tunnel-publico>/webhook/payments
+```
+
+Configure na Asaas os eventos de pagamento necessários, pelo menos:
+
+- `PAYMENT_CONFIRMED`
+- `PAYMENT_RECEIVED`
+- `PAYMENT_CREDIT_CARD_CAPTURE_REFUSED`
+- `PAYMENT_REFUNDED`
+- `PAYMENT_DELETED`
+
+Depois, em outro terminal, crie uma invoice real na Sandbox:
+
+```sh
+(cd api && ./scripts/create-invoice-sandbox.sh)
+```
+
+O retorno deve trazer `providerPaymentId` e dados vindos da Asaas. A criação da
+cobrança deixa o pagamento `PENDING`; para gerar o webhook de confirmação na
+Sandbox, simule a confirmação:
+
+```sh
+(cd api && CONFIRM_SANDBOX_PAYMENT=true ./scripts/create-invoice-sandbox.sh)
+```
+
+Para validar cartão no mesmo fluxo:
+
+```sh
+(cd api && BILLING_TYPE=CREDIT_CARD CONFIRM_SANDBOX_PAYMENT=true ./scripts/create-invoice-sandbox.sh)
+```
+
+A confirmação usa o endpoint Sandbox da Asaas
+`POST /v3/sandbox/payment/{id}/confirm`, que gera o evento entregue no webhook.
+A Asaas não chama `localhost`, por isso o túnel público é necessário para
+validar webhooks reais.
+
+O Validation Workbench também expõe esse passo no runtime `Asaas Sandbox real`.
+Depois de criar a invoice, use o botão `Confirmar na Sandbox Asaas`; o frontend
+chama a Payments API local em
+`POST /sandbox/asaas/payments/:providerPaymentId/confirm`, e a API local chama
+a Asaas usando o `ASAAS_TOKEN` do backend. O token da Asaas não é enviado ao
+browser.
+
+Variáveis úteis do script:
+
+| Variável | Uso |
+| --- | --- |
+| `TUNNEL_PROVIDER=auto` | Usa `cloudflared` se existir, senão `ngrok`. |
+| `TUNNEL_PROVIDER=ngrok` | Força ngrok. |
+| `TUNNEL_PROVIDER=cloudflared` | Força cloudflared. |
+| `TUNNEL_PROVIDER=none` | Não abre túnel; use quando já tiver URL pública. |
+| `PUBLIC_WEBHOOK_BASE_URL=https://...` | Informa uma URL pública já existente. |
+| `ASAAS_CONFIGURE_WEBHOOK=true` | Cria/atualiza o webhook na Asaas. É o padrão. |
+| `ASAAS_CONFIGURE_WEBHOOK=false` | Não chama a API de Webhooks da Asaas. |
+| `ASAAS_WEBHOOK_NAME=Payments API Local Sandbox` | Nome usado para localizar o webhook existente. |
+| `ASAAS_WEBHOOK_ID=...` | Atualiza diretamente um webhook específico. |
+| `ASAAS_WEBHOOK_EMAIL=...` | Email de alerta de falha do webhook na Asaas. |
+| `ASAAS_WEBHOOK_EVENTS=PAYMENT_CONFIRMED,...` | Lista CSV de eventos monitorados. |
+| `USE_LOCALSTACK_WEBHOOK_QUEUE=true` | Sobe o modelo completo com SQS/DLQ/worker local. É o padrão. |
+| `USE_LOCALSTACK_WEBHOOK_QUEUE=false` | Volta ao modo simples, sem fila, com webhook processado de forma síncrona. |
+| `ASAAS_SANDBOX_STORAGE=dynamo` | Usa DynamoDB/LocalStack. É o padrão quando a fila local está ligada. |
+| `ASAAS_SANDBOX_STORAGE=memory` | Usa repositório em memória. Útil apenas no modo simples sem fila. |
+| `LOCALSTACK_ENDPOINT=http://localhost.localstack.cloud:4566` | Endpoint usado para DynamoDB e SQS locais. |
+| `WEBHOOK_QUEUE_NAME=payments-webhook-queue` | Nome da fila principal no LocalStack. |
+| `WEBHOOK_DLQ_NAME=payments-webhook-dlq` | Nome da DLQ no LocalStack. |
 
 ## Ambiente AWS Local
 
-Esta seção preserva o guia técnico para rodar recursos AWS com SAM, CloudFormation e Localstack. O repositório não depende do Serverless Framework nem de `serverless-offline`; para desenvolvimento HTTP local, use o sandbox NestJS em `./scripts/start-sandbox-api.sh`.
+O repositório não depende do Serverless Framework nem de `serverless-offline`.
+O deploy local integrado usa AWS SAM, CloudFormation e LocalStack.
 
-### Ferramentas esperadas
-
-```sh
-sam --version
-aws --version
-docker ps | grep localstack
-```
-
-Exemplo de configuração local da AWS CLI:
-
-```sh
-aws configure
-# AWS Access Key ID: test
-# AWS Secret Access Key: test
-# Default region name: us-east-1
-# Default output format: json
-```
-
-### Subir Localstack
+### Subir LocalStack
 
 ```sh
 docker run -d \
   --name localstack \
-  --rm -it \
+  --rm \
   -p 127.0.0.1:4566:4566 \
   -p 127.0.0.1:4510-4559:4510-4559 \
   -v /var/run/docker.sock:/var/run/docker.sock \
   localstack/localstack
 ```
 
-### Criar bucket local para deploy
+Configure credenciais locais da AWS CLI:
 
 ```sh
-aws s3 mb s3://payments-gateway-prod --endpoint-url=http://localhost.localstack.cloud:4566
+export AWS_ACCESS_KEY_ID=test
+export AWS_SECRET_ACCESS_KEY=test
+export AWS_DEFAULT_REGION=us-east-1
+export AWS_PAGER=""
 ```
 
-Listar o bucket:
+Use o endpoint local:
 
 ```sh
-aws s3 ls --endpoint-url=http://localhost.localstack.cloud:4566
+aws --endpoint-url=http://localhost.localstack.cloud:4566 s3 ls
 ```
 
-### Criar DynamoDB local
+### Modo 3: NestJS local com DynamoDB no LocalStack
+
+Use este modo quando quiser validar persistência no DynamoDB emulado, mas ainda
+rodando o NestJS como processo local.
+
+Crie as tabelas DynamoDB:
 
 ```sh
-cd api
-chmod +x ./scripts/deploy-dynamodb-local.sh
-./scripts/deploy-dynamodb-local.sh
+(cd api && ./scripts/deploy-dynamodb-local.sh)
 ```
 
-### Rodar API local usando DynamoDB no LocalStack
-
-Use este modo quando quiser validar persistência e webhook sem cair no
-repositório em memória, mas sem emular Lambda/SQS:
+Suba a API:
 
 ```sh
-cd api
-./scripts/start-localstack-api.sh
+(cd api && ./scripts/start-localstack-api.sh)
 ```
 
-Esse script sobe o NestJS em `http://localhost:3011` com:
+Esse modo usa:
 
 - `INVOICE_REPOSITORY=dynamo`
 - `DYNAMO_MOCK=false`
@@ -265,38 +410,49 @@ Esse script sobe o NestJS em `http://localhost:3011` com:
 - `ASAAS_WEBHOOK_TOKEN=local-webhook-token`
 - `WEBHOOK_PROCESSING_MODE=sync`
 
-Para validar a arquitetura serverless completa com fila, use o deploy SAM local
-descrito abaixo.
+### Simular webhook com DynamoDB local
 
-### Build e deploy local da Lambda
-
-```sh
-cd api
-chmod +x ./scripts/build.sh
-./scripts/build.sh
-```
+Com a API do modo 2 rodando:
 
 ```sh
-cd api
-chmod +x ./scripts/deploy.sh
-./scripts/deploy.sh
+(cd api && ./scripts/simulate-asaas-webhook.sh)
 ```
 
-Como o Localstack pode exigir licença para API Gateway v2, o guia usa Function URL para expor a Lambda localmente:
+O script cria uma invoice, envia `PAYMENT_CONFIRMED` para
+`/webhook/payments` e consulta a tabela `PaymentsTable` no LocalStack.
+
+### Modo 4: SAM + LocalStack serverless
+
+Use este modo para validar a arquitetura mais próxima da AWS:
+
+- Lambda HTTP exposta por Function URL.
+- DynamoDB.
+- SQS `payments-webhook-queue`.
+- DLQ `payments-webhook-dlq`.
+- Worker Lambda consumindo webhooks de forma assíncrona.
+
+Faça build do NestJS e do template SAM:
 
 ```sh
-aws --endpoint-url=http://localhost.localstack.cloud:4566 \
-  lambda list-functions
+(cd api && ./scripts/build.sh)
 ```
+
+Faça o deploy local:
 
 ```sh
-aws --endpoint-url=http://localhost.localstack.cloud:4566 \
-  lambda create-function-url-config \
-  --function-name payments-api \
-  --auth-type NONE
+(cd api && ./scripts/deploy.sh)
 ```
 
-Para recuperar a URL novamente:
+O script cria o bucket local se necessário e faz deploy da stack
+`payments-gateway` com:
+
+- `WebhookProcessingMode=async`
+- `InvoiceRepository=dynamo`
+- `DynamoMock=false`
+- `AsaasMock=true`
+- `DatadogEnabled=false`
+
+Recupere a Function URL:
 
 ```sh
 aws --endpoint-url=http://localhost.localstack.cloud:4566 \
@@ -304,24 +460,17 @@ aws --endpoint-url=http://localhost.localstack.cloud:4566 \
   --function-name payments-api
 ```
 
-### Validar ciclo Function URL, SQS, worker, DynamoDB e webhook Asaas
-
-O fluxo serverless local provisiona a Lambda HTTP, a fila SQS de webhooks, a
-DLQ, o worker Lambda e as tabelas DynamoDB no LocalStack. A simulacao abaixo
-cria uma invoice real, envia `PAYMENT_CONFIRMED` para o receiver HTTP, espera o
-worker consumir a SQS e verifica a invoice confirmada no DynamoDB.
+Valide o fluxo completo:
 
 ```sh
-cd api
-chmod +x ./scripts/simulate-asaas-webhook.sh
-./scripts/simulate-asaas-webhook.sh
+(cd api && ./scripts/simulate-asaas-webhook.sh)
 ```
 
-Por padrao, o script tenta descobrir a Function URL do stack LocalStack
-`payments-gateway`. Se a Lambda local nao estiver implantada, ele usa
-`http://localhost:3011`, que e o endpoint do `start-localstack-api.sh`.
+Por padrão, o script tenta descobrir a `ApiFunctionUrl` do stack
+`payments-gateway`. Se a Lambda local não estiver implantada, ele usa
+`http://localhost:3011`, que é o endpoint do modo 2.
 
-### Apagar a stack local
+### Limpeza do LocalStack
 
 Listar stacks:
 
@@ -337,12 +486,12 @@ aws --endpoint-url=http://localhost.localstack.cloud:4566 \
   --stack-name payments-gateway
 ```
 
-Apagar log group:
+Apagar a stack DynamoDB isolada, se criada pelo modo 2:
 
 ```sh
-aws logs delete-log-group \
-  --log-group-name /aws/lambda/payments-api \
-  --endpoint-url http://localhost.localstack.cloud:4566
+aws --endpoint-url=http://localhost.localstack.cloud:4566 \
+  cloudformation delete-stack \
+  --stack-name payments-gateway-dynamodb
 ```
 
 ## Como Estudar Este Projeto

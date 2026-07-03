@@ -80,6 +80,11 @@ h2 {
   width: min(32vw, 420px);
 }
 
+.runtime-field {
+  max-width: 260px;
+  width: min(22vw, 260px);
+}
+
 label {
   display: grid;
   gap: 6px;
@@ -118,6 +123,39 @@ textarea:focus {
   grid-template-columns: minmax(560px, 1fr) minmax(420px, 0.82fr);
   margin: 0 auto;
   max-width: 1480px;
+}
+
+.operational-note {
+  align-items: center;
+  background: #eef8f4;
+  border: 1px solid #a8d8c7;
+  border-radius: 8px;
+  color: #123d31;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  margin: 0 auto 18px;
+  max-width: 1480px;
+  padding: 12px 16px;
+}
+
+.operational-note span {
+  color: #1b7f6b;
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 800;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.operational-note strong {
+  color: #123d31;
+  overflow-wrap: anywhere;
+}
+
+.operational-note p {
+  margin: 0;
+  max-width: 620px;
 }
 
 .panel {
@@ -377,6 +415,22 @@ textarea:focus {
   color: #26323a;
 }
 
+.payment-link {
+  align-items: center;
+  align-self: flex-start;
+  background: #eef8f4;
+  border: 1px solid #a8d8c7;
+  border-radius: 8px;
+  color: #123d31;
+  display: inline-flex;
+  font-weight: 800;
+  gap: 8px;
+  margin-top: 12px;
+  min-height: 42px;
+  padding: 9px 14px;
+  text-decoration: none;
+}
+
 .danger-button {
   background: #a43b3b;
   border: 1px solid #a43b3b;
@@ -464,6 +518,23 @@ textarea:focus {
   margin-top: 14px;
 }
 
+.queue-panel,
+.sandbox-confirm-panel {
+  background: #f8fafb;
+  border: 1px solid #dce2e7;
+  border-radius: 8px;
+  margin-top: 14px;
+  padding: 14px;
+}
+
+.queue-header {
+  margin-bottom: 12px;
+}
+
+.queue-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .response {
   border-radius: 8px;
   font-size: 0.86rem;
@@ -520,8 +591,14 @@ textarea:focus {
     flex-direction: column;
   }
 
-  .api-field {
+  .api-field,
+  .runtime-field {
     width: 100%;
+  }
+
+  .operational-note {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .panel {

@@ -116,6 +116,34 @@ export class AsaasService {
     }
   }
 
+  async confirmSandboxPayment(providerPaymentId: string) {
+    if (this.mockEnabled()) {
+      return {
+        id: providerPaymentId,
+        status: 'CONFIRMED',
+      };
+    }
+
+    try {
+      const { data } = await this.api.post(
+        `/sandbox/payment/${providerPaymentId}/confirm`,
+        {},
+      );
+      return data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const message = this.extractErrorMessage(error);
+        const providerError = new Error(message) as Error & {
+          status?: number;
+        };
+        providerError.status = error.response?.status;
+        throw providerError;
+      }
+
+      throw error;
+    }
+  }
+
   private baseUrl(): string {
     const url = process.env.ASAAS_URL ?? 'https://api-sandbox.asaas.com/v3';
     return url.endsWith('/v3') ? url : `${url.replace(/\/$/, '')}/v3`;

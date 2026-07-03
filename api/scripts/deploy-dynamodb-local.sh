@@ -16,11 +16,21 @@ if aws cloudformation describe-stacks \
   --endpoint-url "$AWS_ENDPOINT_URL" >/dev/null 2>&1; then
 
   echo "🔁 Stack existe, atualizando..."
-  aws cloudformation update-stack \
+  UPDATE_OUTPUT="$(mktemp)"
+  if ! aws cloudformation update-stack \
     --stack-name "$STACK_NAME" \
     --template-body "file://$TEMPLATE" \
     --capabilities CAPABILITY_NAMED_IAM \
-    --endpoint-url "$AWS_ENDPOINT_URL"
+    --endpoint-url "$AWS_ENDPOINT_URL" >"${UPDATE_OUTPUT}" 2>&1; then
+    if grep -q "No updates are to be performed" "${UPDATE_OUTPUT}"; then
+      echo "✅ Stack já está atualizada"
+    else
+      cat "${UPDATE_OUTPUT}" >&2
+      rm -f "${UPDATE_OUTPUT}"
+      exit 1
+    fi
+  fi
+  rm -f "${UPDATE_OUTPUT}"
 
 else
   echo "🆕 Stack não existe, criando..."
