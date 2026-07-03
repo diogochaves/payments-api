@@ -293,6 +293,45 @@ textarea:focus {
   padding: 12px;
 }
 
+.wide-field {
+  grid-column: 1 / -1;
+}
+
+.saved-card-list {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.saved-card {
+  align-items: start;
+  background: #ffffff;
+  border: 1px solid #cfd6dc;
+  border-radius: 8px;
+  color: #172026;
+  display: grid;
+  gap: 2px;
+  min-height: 76px;
+  padding: 12px;
+  text-align: left;
+}
+
+.saved-card.selected {
+  border-color: #1b7f6b;
+  box-shadow: 0 0 0 3px rgba(27, 127, 107, 0.14);
+}
+
+.saved-card span,
+.saved-card small {
+  color: #5b6770;
+  font-weight: 700;
+}
+
+.card-register-button {
+  align-self: end;
+  justify-content: center;
+}
+
 .payload-editor {
   background: #101820;
   border-color: #101820;
@@ -493,6 +532,7 @@ textarea:focus {
   .form-grid,
   .invoice-options,
   .card-experiment-grid,
+  .saved-card-list,
   .status-grid {
     grid-template-columns: 1fr;
   }

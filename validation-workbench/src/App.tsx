@@ -15,7 +15,7 @@ import {
 
 type BillingType = 'BOLETO' | 'PIX' | 'CREDIT_CARD' | 'UNDEFINED';
 type Provider = 'ASAAS' | 'ITAU';
-type CreditCardFlow = 'HOSTED_INVOICE' | 'TOKENIZED';
+type CreditCardFlow = 'HOSTED_INVOICE' | 'SAVED_CARD' | 'NEW_CARD';
 type WebhookEvent =
   | 'PAYMENT_AWAITING_RISK_ANALYSIS'
   | 'PAYMENT_APPROVED_BY_RISK_ANALYSIS'
@@ -41,6 +41,24 @@ type CustomerForm = {
   email: string;
   document: string;
   mobilePhone: string;
+};
+
+type SavedCard = {
+  id: string;
+  holderName: string;
+  brand: string;
+  last4: string;
+  expiryMonth: string;
+  expiryYear: string;
+  token: string;
+};
+
+type NewCardForm = {
+  holderName: string;
+  number: string;
+  expiryMonth: string;
+  expiryYear: string;
+  cvv: string;
 };
 
 type SendResult = {
@@ -87,6 +105,35 @@ const initialCustomer: CustomerForm = {
   mobilePhone: '11987654321',
 };
 
+const initialSavedCards: SavedCard[] = [
+  {
+    id: 'card-sandbox-visa-001',
+    holderName: 'Cliente Sandbox Magazine Siara',
+    brand: 'VISA',
+    last4: '1111',
+    expiryMonth: '12',
+    expiryYear: '2030',
+    token: 'card_token_sandbox_visa_001',
+  },
+  {
+    id: 'card-sandbox-master-002',
+    holderName: 'Cliente Sandbox Magazine Siara',
+    brand: 'MASTERCARD',
+    last4: '4444',
+    expiryMonth: '08',
+    expiryYear: '2029',
+    token: 'card_token_sandbox_master_002',
+  },
+];
+
+const initialNewCard: NewCardForm = {
+  holderName: 'Cliente Sandbox Magazine Siara',
+  number: '4111111111111111',
+  expiryMonth: '12',
+  expiryYear: '2030',
+  cvv: '123',
+};
+
 function App() {
   const [apiUrl, setApiUrl] = useState('http://localhost:3011');
   const [webhookToken, setWebhookToken] = useState('webhook-secret');
@@ -98,7 +145,9 @@ function App() {
   const [dueDate, setDueDate] = useState(() => futureDate(7));
   const [billingType, setBillingType] = useState<BillingType>('PIX');
   const [creditCardFlow, setCreditCardFlow] = useState<CreditCardFlow>('HOSTED_INVOICE');
-  const [creditCardToken, setCreditCardToken] = useState('card_token_sandbox');
+  const [savedCards, setSavedCards] = useState<SavedCard[]>(initialSavedCards);
+  const [selectedCardId, setSelectedCardId] = useState(initialSavedCards[0]?.id ?? '');
+  const [newCard, setNewCard] = useState<NewCardForm>(initialNewCard);
   const [remoteIp, setRemoteIp] = useState('127.0.0.1');
   const [provider, setProvider] = useState<Provider>('ASAAS');
   const [webhookEvent, setWebhookEvent] = useState<WebhookEvent>('PAYMENT_CONFIRMED');
@@ -126,6 +175,41 @@ function App() {
   }, [items, orderId]);
 
   const payload = useMemo(() => {
+    const selectedCard = savedCards.find((card) => card.id === selectedCardId);
+    const cardPayload =
+      billingType !== 'CREDIT_CARD'
+        ? {}
+        : creditCardFlow === 'SAVED_CARD' && selectedCard
+          ? {
+              creditCardToken: selectedCard.token,
+              remoteIp,
+              cardReference: {
+                cardId: selectedCard.id,
+                brand: selectedCard.brand,
+                last4: selectedCard.last4,
+                expiryMonth: selectedCard.expiryMonth,
+                expiryYear: selectedCard.expiryYear,
+              },
+            }
+          : creditCardFlow === 'NEW_CARD'
+            ? {
+                creditCard: {
+                  holderName: newCard.holderName,
+                  number: newCard.number,
+                  expiryMonth: newCard.expiryMonth,
+                  expiryYear: newCard.expiryYear,
+                  ccv: newCard.cvv,
+                },
+                creditCardHolderInfo: {
+                  name: customer.name,
+                  email: customer.email,
+                  cpfCnpj: customer.document,
+                  phone: customer.mobilePhone,
+                },
+                remoteIp,
+              }
+            : {};
+
     return {
       tenantId,
       orderId,
@@ -142,25 +226,22 @@ function App() {
       billingType,
       provider,
       description,
-      ...(billingType === 'CREDIT_CARD' && creditCardFlow === 'TOKENIZED'
-        ? {
-            creditCardToken,
-            remoteIp,
-          }
-        : {}),
+      ...cardPayload,
     };
   }, [
     amount,
     billingType,
     creditCardFlow,
-    creditCardToken,
     currency,
     customer,
     description,
     dueDate,
+    newCard,
     orderId,
     provider,
     remoteIp,
+    savedCards,
+    selectedCardId,
     tenantId,
   ]);
 
@@ -220,6 +301,33 @@ function App() {
 
   const removeItem = (id: string) => {
     setItems((current) => current.filter((item) => item.id !== id));
+    setIsPayloadDirty(false);
+  };
+
+  const updateNewCard = <K extends keyof NewCardForm>(
+    field: K,
+    value: NewCardForm[K],
+  ) => {
+    setNewCard((current) => ({ ...current, [field]: value }));
+    setIsPayloadDirty(false);
+  };
+
+  const registerNewCard = () => {
+    const digits = newCard.number.replace(/\D/g, '');
+    const last4 = digits.slice(-4).padStart(4, '0');
+    const savedCard: SavedCard = {
+      id: `card-workbench-${Date.now()}`,
+      holderName: newCard.holderName,
+      brand: inferCardBrand(digits),
+      last4,
+      expiryMonth: newCard.expiryMonth,
+      expiryYear: newCard.expiryYear,
+      token: `card_token_workbench_${last4}_${Date.now()}`,
+    };
+
+    setSavedCards((current) => [...current, savedCard]);
+    setSelectedCardId(savedCard.id);
+    setCreditCardFlow('SAVED_CARD');
     setIsPayloadDirty(false);
   };
 
@@ -586,20 +694,9 @@ function App() {
                   }}
                 >
                   <option value="HOSTED_INVOICE">HOSTED_INVOICE</option>
-                  <option value="TOKENIZED">TOKENIZED</option>
+                  <option value="SAVED_CARD">SAVED_CARD</option>
+                  <option value="NEW_CARD">NEW_CARD</option>
                 </select>
-              </label>
-
-              <label>
-                <span>Credit card token</span>
-                <input
-                  value={creditCardToken}
-                  onChange={(event) => {
-                    setCreditCardToken(event.target.value);
-                    setIsPayloadDirty(false);
-                  }}
-                  disabled={creditCardFlow !== 'TOKENIZED'}
-                />
               </label>
 
               <label>
@@ -610,9 +707,96 @@ function App() {
                     setRemoteIp(event.target.value);
                     setIsPayloadDirty(false);
                   }}
-                  disabled={creditCardFlow !== 'TOKENIZED'}
+                  disabled={creditCardFlow === 'HOSTED_INVOICE'}
                 />
               </label>
+
+              {creditCardFlow === 'SAVED_CARD' && (
+                <>
+                  <label className="wide-field">
+                    <span>Cartao salvo</span>
+                    <select
+                      value={selectedCardId}
+                      onChange={(event) => {
+                        setSelectedCardId(event.target.value);
+                        setIsPayloadDirty(false);
+                      }}
+                    >
+                      {savedCards.map((card) => (
+                        <option key={card.id} value={card.id}>
+                          {card.brand} final {card.last4} - {card.expiryMonth}/{card.expiryYear}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <div className="saved-card-list wide-field">
+                    {savedCards.map((card) => (
+                      <button
+                        className={card.id === selectedCardId ? 'saved-card selected' : 'saved-card'}
+                        key={card.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedCardId(card.id);
+                          setIsPayloadDirty(false);
+                        }}
+                      >
+                        <strong>{card.brand}</strong>
+                        <span>final {card.last4}</span>
+                        <small>{card.expiryMonth}/{card.expiryYear}</small>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {creditCardFlow === 'NEW_CARD' && (
+                <>
+                  <label>
+                    <span>Nome impresso</span>
+                    <input
+                      value={newCard.holderName}
+                      onChange={(event) => updateNewCard('holderName', event.target.value)}
+                    />
+                  </label>
+                  <label>
+                    <span>Numero</span>
+                    <input
+                      inputMode="numeric"
+                      value={newCard.number}
+                      onChange={(event) => updateNewCard('number', event.target.value)}
+                    />
+                  </label>
+                  <label>
+                    <span>Mes</span>
+                    <input
+                      inputMode="numeric"
+                      value={newCard.expiryMonth}
+                      onChange={(event) => updateNewCard('expiryMonth', event.target.value)}
+                    />
+                  </label>
+                  <label>
+                    <span>Ano</span>
+                    <input
+                      inputMode="numeric"
+                      value={newCard.expiryYear}
+                      onChange={(event) => updateNewCard('expiryYear', event.target.value)}
+                    />
+                  </label>
+                  <label>
+                    <span>CVV</span>
+                    <input
+                      inputMode="numeric"
+                      value={newCard.cvv}
+                      onChange={(event) => updateNewCard('cvv', event.target.value)}
+                    />
+                  </label>
+                  <button className="secondary-button card-register-button" type="button" onClick={registerNewCard}>
+                    <Plus size={17} />
+                    Cadastrar no Workbench
+                  </button>
+                </>
+              )}
             </div>
           )}
 
@@ -881,6 +1065,22 @@ function localStatusAfterWebhook(event: WebhookEvent, currentStatus: string) {
   }
 
   return currentStatus;
+}
+
+function inferCardBrand(digits: string) {
+  if (digits.startsWith('4')) {
+    return 'VISA';
+  }
+
+  if (/^5[1-5]/.test(digits) || /^2[2-7]/.test(digits)) {
+    return 'MASTERCARD';
+  }
+
+  if (/^3[47]/.test(digits)) {
+    return 'AMEX';
+  }
+
+  return 'UNKNOWN';
 }
 
 function isInvoiceResponse(body: unknown): body is InvoiceResponse {

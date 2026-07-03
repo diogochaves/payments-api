@@ -1,13 +1,11 @@
 # Payments API Agent Operating Guide
 
-ProdOps is the single source of product context for this repository. Agents must
-use the ProdOps artifacts as the decision base and must not invent missing
+ProdOps is the single source of product context for this repository. Agents must use the ProdOps artifacts as the decision base and must not invent missing
 business context.
 
 This repository supports two ProdOps work paths:
 
-- Upstream: exploratory engineering that can produce executable code,
-  prototypes, contracts, functional validation, and learning.
+- Upstream: exploratory engineering that can produce executable code, prototypes, contracts, functional validation, and learning.
 - Downstream: governed delivery through the full ProdOps execution flow.
 
 ## Source Of Truth
@@ -34,9 +32,7 @@ Use Upstream when the task is to:
 - investigate a technical solution;
 - understand impact before taking delivery commitment.
 
-Upstream is a complete exploratory engineering path. Its goal is to transform
-hypotheses into validated knowledge before a capability is promoted to
-Downstream.
+Upstream is a complete exploratory engineering path. Its goal is to transform hypotheses into validated knowledge before a capability is promoted to Downstream.
 
 During Upstream, agents may:
 
@@ -55,13 +51,9 @@ During Upstream, agents may:
 - update the Tracking List;
 - produce evidence for a delivery decision.
 
-Upstream has no delivery commitment. It has a learning commitment. Code
-produced in Upstream is disposable until promoted to Downstream, but successful
-code may be reused, refactored, or promoted during the Downstream flow.
+Upstream has no delivery commitment. It has a learning commitment. Code produced in Upstream is disposable until promoted to Downstream, but successful code may be reused, refactored, or promoted during the Downstream flow.
 
-The `validation-workbench/` is part of Upstream. Use it to validate functional
-flows, OBC behavior, integrations, BDD scenarios, UX, and contracts before
-promotion to Downstream.
+The `validation-workbench/` is part of Upstream. Use it to validate functional flows, OBC behavior,integrations, BDD scenarios, UX, and contracts before promotion to Downstream.
 
 Upstream does not need to follow the full flow:
 
@@ -69,47 +61,32 @@ Upstream does not need to follow the full flow:
 Hack -> Sync -> Finish -> Ship -> Validate -> Promote
 ```
 
-Upstream work should turn uncertainty into clearer demand, executable evidence,
-OBC input, BDD input, Reliability Plan input, Event Storming updates, or a
-Downstream candidate.
+Upstream work should turn uncertainty into clearer demand, executable evidence, OBC input, BDD input, Reliability Plan input, Event Storming updates, or a Downstream candidate.
 
-Record Upstream work in:
+Record Upstream work in the trail owned by the active experiment:
 
 ```text
-prodops/upstream/upstream-trail.md
+prodops/upstream/experiments/<id>-<slug>/upstream-trail.md
 ```
 
-Use this format:
+Use this format for the experiment trail:
 
-```markdown
-## YYYY-MM-DD HH:MM
-
-### Experiment
-
-### Business Goal
-
-### Hypothesis
-
-### Code Produced
-
-### Validation Workbench Updated
-
-### Contracts Updated
-
-### BDD Updated
-
-### Reliability Impact
-
-### Result
-
-### Learning
-
-### Should move downstream?
-
-### Next step
+```text
+templates/upstream-trail.md
 ```
 
-Do not overwrite previous entries.
+New Upstream experiments must use a directory:
+
+```text
+prodops/upstream/experiments/<id>-<slug>/experiment.md
+prodops/upstream/experiments/<id>-<slug>/upstream-trail.md
+prodops/upstream/experiments/<id>-<slug>/evidence/
+```
+
+Keep `prodops/upstream/experiments.md` as the index of experiments. Keep
+`prodops/upstream/upstream-trail.md` only as a global chronological index for
+cross-experiment milestones, migrations, promotions, or repository-wide
+Upstream process changes. Do not overwrite previous entries.
 
 ## Downstream Path
 
@@ -162,17 +139,13 @@ AGENTS.md
 
 Before changing production code or committed product artifacts:
 
-1. Read `prodops/current-state/`, including `product-deck.md`,
-   `service-decks/`, `tracking-list.md`, `icebox-backlog.md`, and
-   `features/*.feature`.
-2. Read `prodops/assessment/`, especially
-   `prodops/assessment/reliability-plan/`.
+1. Read `prodops/current-state/`, including `product-deck.md`, `service-decks/`, `tracking-list.md`, and `icebox-backlog.md`. Read committed BDD Features in `prodops/current-state/features/` and exploratory features in `prodops/upstream/features/`.
+2. Read `prodops/assessment/`, especially `prodops/assessment/reliability-plan/`.
 3. Treat the Reliability Plan as the release execution contract.
 4. Use BDD Features as the input for TDD whenever behavior changes.
 5. Select the appropriate execution skill from `skills/`.
 6. Update only artifacts that are actually impacted.
-7. Register every relevant Downstream execution in
-   `prodops/downstream/release-trail.md`.
+7. Register every relevant Downstream execution in `prodops/downstream/release-trail.md`.
 
 ## Execution Skills
 
@@ -185,19 +158,14 @@ Before changing production code or committed product artifacts:
 - `skills/validate/`: validation with evidence, metrics, and SLOs.
 - `skills/promote/`: approval and release closure.
 
-Skills describe how to execute work. They must point to ProdOps artifacts for
-product context instead of copying business knowledge into the skill.
+Skills describe how to execute work. They must point to ProdOps artifacts for product context instead of copying business knowledge into the skill.
 
 ## Context Rules
 
-- Never invent absent context, requirements, risks, OBCs, SLOs, or acceptance
-  criteria.
-- If a business decision is missing, record the gap and ask for clarification or
-  leave an explicit follow-up.
-- Prefer existing BDD, ODD, OBC, Reliability Plan, and Product Deck language
-  over new terminology.
-- Preserve existing code architecture unless the relevant ProdOps artifact asks
-  for a contract or capability change.
+- Never invent absent context, requirements, risks, OBCs, SLOs, or acceptance criteria.
+- If a business decision is missing, record the gap and ask for clarification or leave an explicit follow-up.
+- Prefer existing BDD, ODD, OBC, Reliability Plan, and Product Deck language over new terminology.
+- Preserve existing code architecture unless the relevant ProdOps artifact asks for a contract or capability change.
 - Keep Upstream findings reversible until Downstream accepts the work.
 
 ## Downstream Release Trail
@@ -210,20 +178,8 @@ prodops/downstream/release-trail.md
 
 Use this format:
 
-```markdown
-## YYYY-MM-DD HH:MM
-
-### What changed?
-
-### Why?
-
-### Related OBC
-
-### Related BDD
-
-### Evidence
-
-### Next steps
+```text
+templates/downstream-release-entry.md
 ```
 
 Do not overwrite previous entries.

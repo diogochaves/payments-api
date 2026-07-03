@@ -7,7 +7,10 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: TransactionsTable
-      BillingMode: PAY_PER_REQUEST
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
 
       AttributeDefinitions:
         - AttributeName: PK
@@ -34,12 +37,18 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
 
   TenantsTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: TenantsTable
-      BillingMode: PAY_PER_REQUEST
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       AttributeDefinitions:
         - AttributeName: PK
           AttributeType: S
@@ -55,7 +64,10 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: ProvidersTable
-      BillingMode: PAY_PER_REQUEST
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       AttributeDefinitions:
         - AttributeName: PK
           AttributeType: S
@@ -71,7 +83,10 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: CustomersTable
-      BillingMode: PAY_PER_REQUEST
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       AttributeDefinitions:
         - AttributeName: PK
           AttributeType: S
@@ -87,7 +102,10 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: PaymentsTable
-      BillingMode: PAY_PER_REQUEST
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       AttributeDefinitions:
         - AttributeName: PK
           AttributeType: S
@@ -115,6 +133,9 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
         - IndexName: PaymentStatusIndex
           KeySchema:
             - AttributeName: GSI2PK
@@ -123,6 +144,9 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
 
 Outputs:
   PaymentsTableName:

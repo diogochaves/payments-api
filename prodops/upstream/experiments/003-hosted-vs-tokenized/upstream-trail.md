@@ -1,0 +1,87 @@
+# Upstream Trail - EXP-003
+
+## Experiment
+
+Reference:
+
+`prodops/upstream/experiments/003-hosted-vs-tokenized/experiment.md`
+
+---
+
+# History
+
+> Append new entries below.
+> Never rewrite previous entries.
+
+## 2026-07-02 16:40
+
+### Activity
+
+Updated BDD Features to reflect the existing Upstream experiments.
+
+### Summary
+
+The credit card BDD now includes hosted confirmation, financial receipt,
+tokenized-card constraints, risk-analysis events, sandbox/simulation evidence
+and the decision to keep direct raw card capture out of the first Downstream
+slice.
+
+This entry was migrated from the global trail and also relates to EXP-001,
+EXP-002 and the missing EXP-004 reference.
+
+### Artifacts Updated
+
+- `prodops/upstream/features/credit-card-payment.feature`
+- `prodops/upstream/features/checkout-gateway-feature-flag.feature`
+
+### Evidence
+
+- Migrated from `prodops/upstream/upstream-trail.md`.
+
+### Decision
+
+Continue experiment.
+
+### Notes
+
+These features are BDD inputs for future TDD/Downstream work. They do not
+promote the capabilities by themselves.
+
+## 2026-07-02 17:10
+
+### Activity
+
+Updated Payments API code according to the executable scope of the credit card
+experiments.
+
+### Summary
+
+The API now makes the first credit-card slice explicit: `CREDIT_CARD` is treated
+as hosted card entry and rejects tokenized or direct card data fields in
+`POST /invoices`. This prevents the tokenized/direct-card experiments from
+silently becoming unsupported production behavior.
+
+Webhook handling now records card-specific Asaas events such as authorization,
+risk analysis and capture refusal as observable card events. Authorization and
+risk-analysis events do not publish `payment.confirmed`; capture refusal and
+risk reproval mark the invoice as failed when the payment has not already been
+confirmed or received.
+
+### Artifacts Updated
+
+- `api/src/modules/invoices/dto/create-invoice.dto.ts`
+- `api/src/modules/invoices/services/invoice.service.ts`
+- `api/test/create-invoice.acceptance.e2e-spec.ts`
+
+### Evidence
+
+- `npm run test:acceptance` in `api/` passed with 26 tests.
+- Migrated from `prodops/upstream/upstream-trail.md`.
+
+### Decision
+
+Ready for Assessment.
+
+### Notes
+
+This entry also relates to EXP-001.

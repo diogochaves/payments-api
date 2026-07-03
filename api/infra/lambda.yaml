@@ -2,21 +2,276 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: NestJS running on AWS Lambda
 
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: dev
+    AllowedPattern: '^[a-zA-Z0-9-]+$'
+  DatadogEnabled:
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+  DatadogSite:
+    Type: String
+    Default: datadoghq.com
+  DatadogApiKey:
+    Type: String
+    Default: ''
+    NoEcho: true
+    Description: Datadog API key injected by the deployment pipeline when DatadogEnabled=true.
+  DatadogExtensionLayerArn:
+    Type: String
+    Default: ''
+    Description: Datadog Lambda Extension layer ARN for the target AWS region/runtime.
+  DatadogVersion:
+    Type: String
+    Default: 0.0.1
+  InvoiceRepository:
+    Type: String
+    Default: dynamo
+    AllowedValues:
+      - dynamo
+      - memory
+  DynamoMock:
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+  AwsDynamoDbEndpoint:
+    Type: String
+    Default: ''
+    Description: Optional DynamoDB endpoint. Use LocalStack endpoint for local Lambda deploys.
+  EnabledPaymentProviders:
+    Type: String
+    Default: ASAAS
+  DefaultPaymentProvider:
+    Type: String
+    Default: ASAAS
+  AsaasMock:
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+  AsaasUrl:
+    Type: String
+    Default: https://api-sandbox.asaas.com
+  AsaasToken:
+    Type: String
+    Default: ''
+    NoEcho: true
+  AsaasWebhookToken:
+    Type: String
+    Default: ''
+    NoEcho: true
+  WebhookProcessingMode:
+    Type: String
+    Default: async
+    AllowedValues:
+      - async
+      - sync
+
+Conditions:
+  IsDatadogEnabled: !Equals [!Ref DatadogEnabled, 'true']
+  HasDatadogApiKey: !Not [!Equals [!Ref DatadogApiKey, '']]
+  HasDatadogExtensionLayer: !Not [!Equals [!Ref DatadogExtensionLayerArn, '']]
+  HasAwsDynamoDbEndpoint: !Not [!Equals [!Ref AwsDynamoDbEndpoint, '']]
+  HasAsaasToken: !Not [!Equals [!Ref AsaasToken, '']]
+  HasAsaasWebhookToken: !Not [!Equals [!Ref AsaasWebhookToken, '']]
+  UseDatadogExtension: !And
+    - !Condition IsDatadogEnabled
+    - !Condition HasDatadogExtensionLayer
+
 Globals:
   Function:
-    Runtime: nodejs18.x
+    Runtime: nodejs22.x
     MemorySize: 512
     Timeout: 15
+    Environment:
+      Variables:
+        NODE_ENV: !Ref EnvironmentName
+        OBSERVABILITY_ENV: !Ref EnvironmentName
+        DD_SERVICE: payments-api
+        DD_ENV: !Ref EnvironmentName
+        DD_VERSION: !Ref DatadogVersion
+        DD_SITE: !Ref DatadogSite
+        DD_TRACE_ENABLED: !Ref DatadogEnabled
+        DD_LOGS_INJECTION: !Ref DatadogEnabled
+        DD_RUNTIME_METRICS_ENABLED: !Ref DatadogEnabled
+        DD_API_KEY: !If
+          - HasDatadogApiKey
+          - !Ref DatadogApiKey
+          - !Ref AWS::NoValue
+        INVOICE_REPOSITORY: !Ref InvoiceRepository
+        DYNAMO_MOCK: !Ref DynamoMock
+        AWS_DYNAMODB_ENDPOINT: !If
+          - HasAwsDynamoDbEndpoint
+          - !Ref AwsDynamoDbEndpoint
+          - !Ref AWS::NoValue
+        ENABLED_PAYMENT_PROVIDERS: !Ref EnabledPaymentProviders
+        DEFAULT_PAYMENT_PROVIDER: !Ref DefaultPaymentProvider
+        ASAAS_MOCK: !Ref AsaasMock
+        ASAAS_URL: !Ref AsaasUrl
+        ASAAS_TOKEN: !If
+          - HasAsaasToken
+          - !Ref AsaasToken
+          - !Ref AWS::NoValue
+        ASAAS_WEBHOOK_TOKEN: !If
+          - HasAsaasWebhookToken
+          - !Ref AsaasWebhookToken
+          - !Ref AWS::NoValue
+        WEBHOOK_PROCESSING_MODE: !Ref WebhookProcessingMode
+        WEBHOOK_QUEUE_URL: !Ref WebhookQueue
+        AWS_SQS_ENDPOINT: !If
+          - HasAwsDynamoDbEndpoint
+          - !Ref AwsDynamoDbEndpoint
+          - !Ref AWS::NoValue
 
 Resources:
+  WebhookDeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: payments-webhook-dlq
+      MessageRetentionPeriod: 1209600
+
+  WebhookQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: payments-webhook-queue
+      VisibilityTimeout: 60
+      MessageRetentionPeriod: 1209600
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt WebhookDeadLetterQueue.Arn
+        maxReceiveCount: 5
+
+  ApiFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: PaymentsDynamoAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:Query
+                  - dynamodb:UpdateItem
+                Resource:
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/PaymentsTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/PaymentsTable/index/*
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/TransactionsTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/TransactionsTable/index/*
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/CustomersTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/TenantsTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/ProvidersTable
+              - Effect: Allow
+                Action:
+                  - sqs:SendMessage
+                  - sqs:GetQueueAttributes
+                Resource: !GetAtt WebhookQueue.Arn
+
+  WebhookWorkerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: PaymentsWebhookWorkerAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
+                  - sqs:ChangeMessageVisibility
+                Resource: !GetAtt WebhookQueue.Arn
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:Query
+                  - dynamodb:UpdateItem
+                Resource:
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/PaymentsTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/PaymentsTable/index/*
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/TransactionsTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/TransactionsTable/index/*
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/CustomersTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/TenantsTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/ProvidersTable
+
   ApiFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: dist/
       Handler: lambda.handler
+      Role: !GetAtt ApiFunctionRole.Arn
+      Layers: !If
+        - UseDatadogExtension
+        - - !Ref DatadogExtensionLayerArn
+        - !Ref AWS::NoValue
+      FunctionUrlConfig:
+        AuthType: NONE
+        Cors:
+          AllowCredentials: false
+          AllowHeaders:
+            - Content-Type
+            - Idempotency-Key
+            - X-Correlation-Id
+            - X-Tenant-Id
+            - asaas-access-token
+          AllowMethods:
+            - GET
+            - POST
+            - DELETE
+          AllowOrigins:
+            - '*'
+          ExposeHeaders:
+            - X-Correlation-Id
+
+  WebhookWorkerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/
+      Handler: webhook-worker.handler
+      Role: !GetAtt WebhookWorkerRole.Arn
+      Timeout: 30
+      Layers: !If
+        - UseDatadogExtension
+        - - !Ref DatadogExtensionLayerArn
+        - !Ref AWS::NoValue
       Events:
-        HttpApiEvent:
-          Type: HttpApi
+        WebhookQueueEvent:
+          Type: SQS
           Properties:
-            Path: /{proxy+}
-            Method: ANY
+            Queue: !GetAtt WebhookQueue.Arn
+            BatchSize: 5
+            FunctionResponseTypes:
+              - ReportBatchItemFailures
+
+Outputs:
+  ApiFunctionUrl:
+    Value: !GetAtt ApiFunctionUrl.FunctionUrl
+  WebhookQueueUrl:
+    Value: !Ref WebhookQueue
+  WebhookDeadLetterQueueUrl:
+    Value: !Ref WebhookDeadLetterQueue

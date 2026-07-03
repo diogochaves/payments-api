@@ -198,6 +198,25 @@ describe('Criar Invoice (acceptance)', () => {
     });
   });
 
+  it('rejeita payload de cartao tokenizado enquanto o primeiro slice e hospedado', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/invoices')
+      .set('Idempotency-Key', 'MS-100045:credit-card-tokenized')
+      .set('X-Correlation-Id', 'corr-credit-card-tokenized')
+      .send({
+        ...basePayload,
+        billingType: 'CREDIT_CARD',
+        creditCardToken: 'card_token_sandbox',
+        remoteIp: '127.0.0.1',
+      })
+      .expect(400);
+
+    expect(response.body.message).toContain(
+      'Hosted credit card flow does not accept card data fields',
+    );
+    expect(asaas.createCharge).not.toHaveBeenCalled();
+  });
+
   it('cria cliente Asaas antes da invoice quando nao houver vinculo', async () => {
     await request(app.getHttpServer())
       .post('/invoices')
@@ -841,6 +860,92 @@ describe('Criar Invoice (acceptance)', () => {
         'payment.confirmed',
         expect.anything(),
       );
+    });
+
+    it('registra PAYMENT_AUTHORIZED de cartao sem liberar pedido', async () => {
+      const created = await request(app.getHttpServer())
+        .post('/invoices')
+        .set('Idempotency-Key', 'MS-100045:credit-card-hosted')
+        .send({
+          ...basePayload,
+          billingType: 'CREDIT_CARD',
+        })
+        .expect(201);
+
+      await request(app.getHttpServer())
+        .post('/webhook/payments')
+        .set('asaas-access-token', 'webhook-secret')
+        .send({
+          event: 'PAYMENT_AUTHORIZED',
+          payment: {
+            id: created.body.providerPaymentId,
+            status: 'AUTHORIZED',
+            value: 159.9,
+            customer: 'cus_stub_customer-123',
+          },
+        })
+        .expect(201);
+
+      const invoice = await repository.findInvoice(
+        basePayload.tenantId,
+        created.body.invoiceId,
+      );
+      expect(invoice?.status).toBe('OPEN');
+      expect(emitSpy).not.toHaveBeenCalledWith(
+        'payment.confirmed',
+        expect.anything(),
+      );
+      expect(
+        observableEvent('pagamento.cartao.webhook.pagamento.autorizado'),
+      ).toMatchObject({
+        providerStatus: 'AUTHORIZED',
+        cardEvent: true,
+      });
+    });
+
+    it('marca captura recusada de cartao como falha sem liberar pedido', async () => {
+      const created = await request(app.getHttpServer())
+        .post('/invoices')
+        .set('Idempotency-Key', 'MS-100045:credit-card-refused')
+        .send({
+          ...basePayload,
+          billingType: 'CREDIT_CARD',
+        })
+        .expect(201);
+
+      await request(app.getHttpServer())
+        .post('/webhook/payments')
+        .set('asaas-access-token', 'webhook-secret')
+        .send({
+          event: 'PAYMENT_CREDIT_CARD_CAPTURE_REFUSED',
+          payment: {
+            id: created.body.providerPaymentId,
+            status: 'REFUSED',
+            value: 159.9,
+            customer: 'cus_stub_customer-123',
+          },
+        })
+        .expect(201);
+
+      const invoice = await repository.findInvoice(
+        basePayload.tenantId,
+        created.body.invoiceId,
+      );
+      expect(invoice?.status).toBe('FAILED');
+      expect(invoice?.failureReason).toBe(
+        'PAYMENT_CREDIT_CARD_CAPTURE_REFUSED',
+      );
+      expect(emitSpy).not.toHaveBeenCalledWith(
+        'payment.confirmed',
+        expect.anything(),
+      );
+      expect(
+        observableEvent('pagamento.cartao.webhook.captura_recusada'),
+      ).toMatchObject({
+        providerStatus: 'REFUSED',
+        cardEvent: true,
+        terminalFailure: true,
+      });
     });
 
     it('emite evento observavel quando webhook nao encontra invoice correlacionada', async () => {

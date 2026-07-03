@@ -11,7 +11,7 @@ Use this skill to prove release readiness with evidence.
 
 - `AGENTS.md`
 - Relevant OBCs under `prodops/`
-- Relevant BDD Features in `prodops/current-state/features/`
+- Relevant BDD Features in `prodops/current-state/features/` (committed) or `prodops/upstream/features/` (exploratory)
 - `prodops/assessment/reliability-plan/`
 - `prodops/downstream/quality-gates.md`
 

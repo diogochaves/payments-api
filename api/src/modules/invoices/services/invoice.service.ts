@@ -426,8 +426,11 @@ export class InvoiceService {
   async processProviderWebhook(
     payload: AsaasWebhookDto,
     accessToken?: string,
+    options: { skipTokenValidation?: boolean } = {},
   ): Promise<InvoiceResponseDto | undefined> {
-    this.validateWebhookToken(accessToken);
+    if (!options.skipTokenValidation) {
+      this.validateProviderWebhookToken(accessToken);
+    }
 
     const eventKey = this.providerEventKey(payload);
     const isNewEvent = await this.repository.saveRawProviderEvent(
@@ -448,6 +451,38 @@ export class InvoiceService {
               `webhook-${payload.payment.id}`,
             )
           : undefined;
+      case 'PAYMENT_AUTHORIZED':
+        return this.recordCardProviderEvent(
+          payload,
+          'AUTHORIZED',
+          'pagamento.cartao.webhook.pagamento.autorizado',
+        );
+      case 'PAYMENT_AWAITING_RISK_ANALYSIS':
+        return this.recordCardProviderEvent(
+          payload,
+          'AWAITING_RISK_ANALYSIS',
+          'pagamento.cartao.webhook.analise_risco.aguardando',
+        );
+      case 'PAYMENT_APPROVED_BY_RISK_ANALYSIS':
+        return this.recordCardProviderEvent(
+          payload,
+          'APPROVED_BY_RISK_ANALYSIS',
+          'pagamento.cartao.webhook.analise_risco.aprovada',
+        );
+      case 'PAYMENT_REPROVED_BY_RISK_ANALYSIS':
+        return this.recordCardProviderEvent(
+          payload,
+          'REPROVED_BY_RISK_ANALYSIS',
+          'pagamento.cartao.webhook.analise_risco.reprovada',
+          true,
+        );
+      case 'PAYMENT_CREDIT_CARD_CAPTURE_REFUSED':
+        return this.recordCardProviderEvent(
+          payload,
+          'REFUSED',
+          'pagamento.cartao.webhook.captura_recusada',
+          true,
+        );
       case 'PAYMENT_CONFIRMED':
         return this.confirmProviderPayment(payload);
       case 'PAYMENT_RECEIVED':
@@ -557,6 +592,51 @@ export class InvoiceService {
     });
 
     return this.toResponse(invoice);
+  }
+
+  private async recordCardProviderEvent(
+    payload: AsaasWebhookDto,
+    providerStatus: string,
+    eventKey: string,
+    terminalFailure = false,
+  ): Promise<InvoiceResponseDto | undefined> {
+    const invoice = await this.findWebhookInvoice(payload);
+
+    if (!invoice) {
+      this.emitUncorrelatedWebhook(payload, providerStatus);
+      return undefined;
+    }
+
+    const providerAttrs = this.webhookProviderAttrs(invoice, payload);
+    const shouldFail =
+      terminalFailure &&
+      invoice.status !== 'CONFIRMED' &&
+      invoice.status !== 'RECEIVED';
+    const shouldUpdate = shouldFail || Object.keys(providerAttrs).length > 0;
+    const updatedInvoice = shouldUpdate
+      ? await this.repository.updateInvoice(
+          invoice,
+          shouldFail ? 'FAILED' : invoice.status,
+          {
+            ...providerAttrs,
+            ...(shouldFail ? { failureReason: payload.event } : {}),
+          },
+        )
+      : invoice;
+
+    this.emitObservable(eventKey, {
+      invoice: updatedInvoice,
+      correlationId: `webhook-${updatedInvoice.providerPaymentId}`,
+      stage: 'webhook_cartao',
+      flow: 'confirmacao',
+      step: 4,
+      providerStatus,
+      cardEvent: true,
+      terminalFailure,
+      eventType: payload.event,
+    });
+
+    return this.toResponse(updatedInvoice);
   }
 
   private async ensureProviderCustomer(
@@ -740,9 +820,31 @@ export class InvoiceService {
       throw new BadRequestException(`Invalid billingType ${dto.billingType}`);
     }
 
+    const unsupportedCardFields = this.unsupportedCardFields(dto);
+
+    if (unsupportedCardFields.length > 0) {
+      throw new BadRequestException(
+        `Hosted credit card flow does not accept card data fields: ${unsupportedCardFields.join(', ')}`,
+      );
+    }
+
     if (Number.isNaN(Date.parse(dto.dueDate))) {
       throw new BadRequestException('dueDate must be a valid date');
     }
+  }
+
+  private unsupportedCardFields(dto: CreateInvoiceDto): string[] {
+    const rawDto = dto as CreateInvoiceDto & Record<string, unknown>;
+    const fields = [
+      'creditCard',
+      'creditCardHolderInfo',
+      'creditCardToken',
+      'authorizeOnly',
+      'installments',
+      'remoteIp',
+    ];
+
+    return fields.filter((field) => rawDto[field] !== undefined);
   }
 
   private validateCancelInvoice(
@@ -771,7 +873,7 @@ export class InvoiceService {
     }
   }
 
-  private validateWebhookToken(accessToken?: string): void {
+  validateProviderWebhookToken(accessToken?: string): void {
     const expectedToken = process.env.ASAAS_WEBHOOK_TOKEN;
 
     if (expectedToken && accessToken !== expectedToken) {

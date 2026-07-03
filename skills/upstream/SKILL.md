@@ -37,6 +37,7 @@ Before starting, read:
 - `prodops/upstream/README.md`
 - `prodops/upstream/experiments.md`
 - `templates/upstream-experiment.md`
+- `templates/upstream-trail.md`
 
 ## Repository Scope Gate
 
@@ -80,7 +81,7 @@ Every Upstream experiment must:
 6. Stop when the hypothesis is answered.
 7. Avoid expanding into unrelated or out-of-repository capabilities.
 8. Update impacted ProdOps artifacts.
-9. Register progress in `prodops/upstream/upstream-trail.md`.
+9. Register progress in the active experiment trail at `prodops/upstream/experiments/<id>-<slug>/upstream-trail.md`.
 10. Register reusable findings in `prodops/upstream/learnings.md`.
 11. Finish with a recommendation.
 
@@ -111,12 +112,14 @@ Possible targets:
 - `prodops/current-state/product-deck.md`
 - `prodops/current-state/service-decks/`
 - `prodops/current-state/tracking-list.md`
-- `prodops/current-state/features/`
+- `prodops/upstream/features/` (for uncommitted capability features)
+- `prodops/upstream/obcs/` (for draft OBCs from upstream experiments)
 - `prodops/assessment/event-storming/`
 - `prodops/assessment/reliability-plan/`
-- `prodops/assessment/reliability-plan/obcs/`
+- `prodops/assessment/reliability-plan/obcs/` (for committed OBCs)
 - `prodops/upstream/learnings.md`
-- `prodops/upstream/upstream-trail.md`
+- `prodops/upstream/experiments/<id>-<slug>/upstream-trail.md`
+- `prodops/upstream/upstream-trail.md` only for global milestones, promotions, migrations, or repository-wide Upstream process changes
 
 Do not update unrelated artifacts.
 

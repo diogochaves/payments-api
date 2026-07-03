@@ -10,7 +10,7 @@ Each experiment should answer one primary question.
 
 Do not duplicate experiment content here.
 
-Reference the experiment file instead.
+Reference the experiment directory instead.
 
 ---
 
@@ -46,9 +46,12 @@ Downstream
 
 | ID | Capability | Status | Recommendation | Next Step |
 |----|------------|--------|----------------|-----------|
-| 001 | Credit Card Lifecycle | 🟡 In Progress | Another Experiment | 002 |
+| 001 | Credit Card Lifecycle | 🟡 In Progress | Hosted subset to Assessment; saved/new card need decisions | Decide token storage and PCI boundary |
 | 002 | Sandbox Funding | 🟡 In Progress | Wait for External Dependency | Collect Asaas Sandbox evidence |
 | 003 | Hosted vs Tokenized | 🟡 In Progress | Move Downstream | Prepare hosted card Downstream intake |
+| 004 | Checkout Gateway Feature Flag Readiness | 🟡 In Progress | Wait for External Dependency | Collect Checkout Feature Flag evidence |
+| 005 | Datadog Native AWS Instrumentation | ✅ Completed | Move Downstream after AWS pipeline parameters are confirmed | Validate SAM deploy with Datadog Extension layer and Secrets Manager secret |
+| 006 | Upstream Trail per Experiment | ✅ Completed | Keep as Upstream operating standard | Use directory layout for new experiments |
 
 ---
 
@@ -100,12 +103,13 @@ Current capability under investigation:
 
 Current experiment:
 
-**003 - Hosted vs Tokenized Credit Card**
+**001 - Credit Card Payment Lifecycle with Asaas**
 
 Next planned experiments:
 
 - Continue 002 with Asaas Sandbox evidence
 - Prepare Downstream intake for hosted card payment after Product and Tech Lead approval
+- Run focused saved-card token storage experiment after Security/Architecture input
 
 ---
 
@@ -125,3 +129,15 @@ Experiments are intentionally small.
 When a new question arises, create a new experiment instead of expanding an existing one.
 
 The objective is to keep every experiment focused on reducing a single uncertainty.
+
+New experiments must use this structure:
+
+```text
+prodops/upstream/experiments/NNN-short-slug/
+  experiment.md
+  upstream-trail.md
+  evidence/
+```
+
+Flat files directly under `prodops/upstream/experiments/*.md` are legacy
+artifacts. Keep them readable, but do not create new experiments in that shape.

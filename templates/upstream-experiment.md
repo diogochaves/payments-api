@@ -1,5 +1,21 @@
 # Upstream Experiment
 
+Canonical location:
+
+```text
+prodops/upstream/experiments/NNN-short-slug/experiment.md
+```
+
+Each experiment must also have:
+
+```text
+prodops/upstream/experiments/NNN-short-slug/upstream-trail.md
+prodops/upstream/experiments/NNN-short-slug/evidence/
+```
+
+Do not create new flat experiment files directly under
+`prodops/upstream/experiments/`.
+
 ## Status
 
 - [ ] Planned

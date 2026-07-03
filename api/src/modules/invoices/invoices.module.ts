@@ -7,6 +7,7 @@ import { DynamoService } from '../../infra/dynamo.service';
 import { AsaasService } from '../../infra/asaas.service';
 import { InvoiceRepository } from './services/invoice-repository.service';
 import { ProviderRouterService } from './services/provider-router.service';
+import { AsaasWebhookQueueService } from './services/asaas-webhook-queue.service';
 
 /**
  * Invoices Module
@@ -45,7 +46,13 @@ import { ProviderRouterService } from './services/provider-router.service';
     AsaasService,
     InvoiceRepository,
     ProviderRouterService,
+    AsaasWebhookQueueService,
   ],
-  exports: [InvoiceService, InvoiceRepository, ProviderRouterService],
+  exports: [
+    InvoiceService,
+    InvoiceRepository,
+    ProviderRouterService,
+    AsaasWebhookQueueService,
+  ],
 })
 export class InvoicesModule {}

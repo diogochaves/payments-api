@@ -310,8 +310,7 @@ export class InvoiceRepository {
       'INVOICE',
     );
     const tenantId = typeof item?.tenantId === 'string' ? item.tenantId : '';
-    const invoiceId =
-      typeof item?.invoiceId === 'string' ? item.invoiceId : '';
+    const invoiceId = typeof item?.invoiceId === 'string' ? item.invoiceId : '';
 
     if (!tenantId || !invoiceId) {
       return undefined;

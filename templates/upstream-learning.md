@@ -33,7 +33,7 @@ Origin of this learning.
 
 Experiment(s):
 
-- `prodops/upstream/experiments/001-xxxx.md`
+- `prodops/upstream/experiments/NNN-short-slug/experiment.md`
 
 Additional references:
 

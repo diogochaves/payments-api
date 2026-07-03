@@ -8,7 +8,7 @@ Implemented in-repo Reliability Plan P0 hardening for payment confirmation: Dyna
 
 - Reliability Plan: `prodops/assessment/reliability-plan/README.md`
 - OBC: Confirmacao de pagamento confiavel para a jornada Checkout -> Payments
-- BDD Feature: `prodops/current-state/features/payment-confirmation.feature`
+- BDD Feature: `prodops/upstream/features/payment-confirmation.feature`
 
 ### Code
 
@@ -44,7 +44,7 @@ Updated the repository home in `README.md` to present payments-api as the ProdOp
 
 - Reliability Plan: `prodops/assessment/reliability-plan/README.md`
 - OBC: Product Deck and Service Deck OBC sections referenced in the README
-- BDD Feature: `prodops/current-state/features`
+- BDD Feature: `prodops/upstream/features`
 
 ### Code
 

@@ -48,6 +48,28 @@ Validated learning:
 - The capability is almost ready for Downstream as hosted card entry, but
   tokenized payment still needs product and security approval before delivery.
 
+## Saved Cards and Tokenization Boundary
+
+Saved-card support is a Payments-owned contract, not just a Checkout UI choice.
+
+Reusable learning:
+
+- Cart/Checkout should list and select cards through Payments-owned `cardId`
+  values. It should not receive or store the provider `creditCardToken`.
+- Payments may persist display-safe card metadata such as brand, last 4 digits,
+  expiry, owner, provider and status, but must not persist full card number, CVV
+  or raw `creditCard` payload.
+- Provider card token must be protected as secret material and suppressed from
+  logs, traces, analytics, error payloads and dead-letter messages.
+- New-card registration expands PCI/security scope even when raw card data is
+  only transient, because `creditCard` and `creditCardHolderInfo` cross the
+  Payments API boundary.
+- `remoteIp` belongs to the payer context and must be provided by
+  Cart/Checkout; using the Payments server IP weakens antifraud evidence.
+- Hosted card entry can still move first, but saved-card reuse and new-card
+  registration need Security, Architecture and Product decisions before
+  Downstream.
+
 ## Checkout Gateway Feature Flag Readiness
 
 The highest-priority uncertainty in the current product context is not a
@@ -65,3 +87,27 @@ Reusable learning:
 - The repository can prove Payments-side idempotency, correlation and webhook
   behavior, but cannot prove Checkout targeting or rollback without external
   evidence.
+
+## Datadog Native AWS Instrumentation
+
+Payments API can keep Datadog instrumentation without depending on the
+Serverless Framework.
+
+Reusable learning:
+
+- `dd-trace` and the existing observability module are application concerns;
+  they do not require `serverless-plugin-datadog`.
+- AWS deployment should attach Datadog Lambda Extension through SAM parameters,
+  with the API key injected by the deployment pipeline.
+- Local functional validation should use the NestJS sandbox with mocks and
+  memory storage; Lambda/Localstack validation is a separate infrastructure
+  path, not the default development loop.
+- The remaining deployment decision is external to the repo: pipeline owners
+  must provide the correct Datadog Extension layer ARN/version per AWS region.
+- Lambda Function URL is sufficient for this lab API and avoids API Gateway
+  cost.
+- DynamoDB provisioned capacity can keep the current table/index model under
+  the classic 25 RCU / 25 WCU Free Tier envelope by assigning 1 RCU and 1 WCU to
+  each table and GSI.
+- Removing CloudWatch Logs permissions avoids log ingestion/storage charges, at
+  the cost of losing AWS-side application logs for troubleshooting.

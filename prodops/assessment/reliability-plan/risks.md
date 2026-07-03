@@ -32,7 +32,7 @@ A Feature Flag que habilita o novo Gateway permanece desativada devido a um bug 
 
 ## Evidencia Upstream requerida
 
-O experimento `prodops/upstream/experiments/004-feature-flag-readiness.md`
+O experimento `prodops/upstream/experiments/004-feature-flag-readiness/experiment.md`
 classifica esta incerteza como P0 e requer evidencias de Checkout antes de
 promocao final:
 
@@ -116,6 +116,17 @@ Incidentes já ocorreram anteriormente e podem voltar a acontecer sem detecção
   completos nem SLOs aceitos.
 - Cancelar cobranca aberta por `DELETE /v3/payments` nao cobre estorno de
   pagamento confirmado; cartao confirmado exige fronteira de refund/reversal.
+- Listagem de cartoes salvos exige validacao forte de tenant, usuario e
+  ownership; erro nesse ponto pode expor cartao/token de outro cliente.
+- Token de cartao deve ser tratado como material sensivel: nao pode aparecer em
+  logs, traces, analytics, payloads de erro ou dead-letter queues.
+- `remoteIp` precisa representar o IP do pagador; usar IP do servidor Payments
+  reduz qualidade antifraude e pode divergir do modelo da Asaas.
+- Cadastro de novo cartao amplia a fronteira PCI porque `creditCard` e
+  `creditCardHolderInfo` passam pela Payments API mesmo que nao sejam
+  persistidos.
+- Estorno de cartao confirmado precisa de contrato proprio, idempotencia e
+  evidencia do provedor; nao deve ser tratado como cancelamento simples.
 
 ---
 

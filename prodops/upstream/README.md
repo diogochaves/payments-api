@@ -144,6 +144,38 @@ Examples:
 
 Experiments should be small and focused.
 
+## Experiment File Layout
+
+New experiments must use one directory per experiment:
+
+```text
+prodops/upstream/experiments/NNN-short-slug/
+  experiment.md
+  upstream-trail.md
+  evidence/
+```
+
+Use `experiment.md` for the stable hypothesis, scope, findings, recommendation
+and Decision Package.
+
+Use the experiment-local `upstream-trail.md` for chronological execution notes,
+validation evidence, artifact changes and decisions that happened during the
+experiment.
+
+Use `evidence/` only for supporting material that is too detailed for the
+experiment document, such as command outputs, screenshots, payload examples or
+provider responses.
+
+Flat experiment files under `prodops/upstream/experiments/*.md` are legacy
+artifacts. Do not create new flat experiment files. If a flat experiment file is
+restored from history or another branch, migrate it to the directory pattern
+before making further changes.
+
+The global `prodops/upstream/upstream-trail.md` is no longer the primary place
+for experiment execution history. Keep it as a high-level chronological index
+for cross-experiment milestones, migrations, promotions and repository-wide
+Upstream process changes.
+
 ---
 
 # Validation Workbench
