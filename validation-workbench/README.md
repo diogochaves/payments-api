@@ -61,12 +61,44 @@ cria SQS/DLQ e inicia um worker local por padrão; nesse caso o painel deve
 mostrar `WEBHOOK_QUEUE_URL`, `WEBHOOK_DLQ_URL` e os contadores aproximados. Em
 modo sync/memória ele mostra que a fila não está configurada.
 
+## Autenticação por API Token
+
+As rotas de negócio da Payments API exigem o header `X-Api-Token`. O Workbench
+possui um campo **API Token** na toolbar que é enviado automaticamente nas
+requisições de criação e cancelamento de invoice.
+
+Para uso local, o valor padrão é o token de desenvolvimento configurado no
+backend via `API_TOKEN_LOCAL`:
+
+```
+local-dev-token-insecure-do-not-use-in-prod
+```
+
+Esse valor está pré-preenchido no campo da toolbar. Se você modificar o
+`API_TOKEN_LOCAL` no `api/.env`, atualize o campo no Workbench para coincidir.
+
+**Rotas que exigem `X-Api-Token`:**
+- `POST /invoices` — criar invoice
+- `DELETE /invoices/:id` — cancelar invoice
+
+**Rotas que não exigem `X-Api-Token`** (autenticação própria ou pública):
+- `POST /webhook/payments` — usa `asaas-access-token`
+- `GET /webhook/payments/queue` — informacional, sem guard
+- `POST /sandbox/asaas/payments/:id/confirm` — backend-to-backend, sem guard
+
+Se o campo API Token estiver vazio ou com valor inválido, as requisições de
+invoice retornam `HTTP 401`. O painel de resposta mostra o erro.
+
 ## Fluxos
 
-- Criar invoice: `POST /invoices` usando o contrato de `CreateInvoiceDto`, `Idempotency-Key` e `X-Correlation-Id`.
-- Cancelar invoice: `DELETE /invoices/:invoiceId` usando `X-Tenant-Id`, `Idempotency-Key` e a invoice criada no primeiro passo.
-- Confirmar pagamento: `POST /webhook/payments` com eventos `PAYMENT_CONFIRMED`, `PAYMENT_RECEIVED` ou `PAYMENT_OVERDUE` usando a invoice criada e header `asaas-access-token`.
-- Visualizar fila: `GET /webhook/payments/queue` para inspecionar modo de
+- **Criar invoice**: `POST /invoices` com `CreateInvoiceDto`, `Idempotency-Key`,
+  `X-Correlation-Id` e `X-Api-Token`.
+- **Cancelar invoice**: `DELETE /invoices/:invoiceId` com `X-Tenant-Id`,
+  `Idempotency-Key`, `X-Correlation-Id` e `X-Api-Token`.
+- **Confirmar pagamento**: `POST /webhook/payments` com eventos
+  `PAYMENT_CONFIRMED`, `PAYMENT_RECEIVED` ou `PAYMENT_OVERDUE` usando a invoice
+  criada e header `asaas-access-token`.
+- **Visualizar fila**: `GET /webhook/payments/queue` para inspecionar modo de
   processamento, URL da fila, URL da DLQ e contadores aproximados.
 
 O JSON da invoice pode ser editado antes do envio. O botão `Sincronizar` recria

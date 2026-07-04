@@ -60,6 +60,12 @@ Payments existe para proteger conversao, GMV, confianca do cliente e capacidade 
 
 ## 6. Arquitetura do produto
 
+> Diagrama de componentes: [`prodops/assessment/architecture/overview.md`](../assessment/architecture/overview.md)
+>
+> O diagrama é a fonte canônica da estrutura do sistema. Atualizar sempre que
+> houver mudança estrutural (novo módulo, rota, dependência externa, tabela ou
+> tópico de evento). Ver regra completa em `AGENTS.md`.
+
 | Peca | Tipo | Dono | Criticidade | Observacao |
 | --- | --- | --- | --- | --- |
 | Checkout Web/App | Frontend/BFF | Checkout | Critica | Inicia tentativa de pagamento e apresenta resposta ao cliente. |

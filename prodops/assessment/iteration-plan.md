@@ -52,6 +52,8 @@ A decisao principal e reduzir o lote: entregar uma jornada menor, completa e com
 | Notificacao de status de pagamento | Fecha o ciclo de comunicacao com o cliente e reduz incerteza pos-pagamento. | Ecommerce, Notification Service, Payments. | Documentada como necessidade critica; integracao final nao aparece como funcionalidade completa neste repositorio. |
 | Cancelar invoice pendente | Evita que cobrancas indevidas continuem ativas. | Payments, provedor Asaas, regras de estado da invoice. | Documentada e implementada no codigo. |
 | Habilitar novo gateway para o Checkout | Permite que a Release gere valor real em producao. | Checkout, Feature Flag, Payments. | Documentada no premortem como preparada, mas bloqueada por bug localizado. |
+| Validação de acesso por token de API | Garante que apenas sistemas autorizados consumam a Payments API, com rastreabilidade por tenant e chave local para desenvolvimento. | Payments API, variáveis de ambiente, time de Checkout e integrações. | Implementado. OBC e BDD em `prodops/current-state/`. |
+| Configuração de webhook por token de API | Permite que consumidores recebam notificações automáticas de mudança de status de pagamento sem polling. | Payments API, token de API, DynamoDB WebhooksTable. | Novo item; OBC e BDD criados. |
 
 ## Iteration Plan recomendado
 
@@ -63,6 +65,8 @@ A decisao principal e reduzir o lote: entregar uma jornada menor, completa e com
 
 | Notificacao de status de pagamento | Entrou como MVP | A notificacao e essencial para a experiencia do cliente, mas deve ficar restrita aos status da jornada principal da Release. | Cliente recebe informacao de status para o pagamento da jornada priorizada. |
 | Criar invoice via Boleto | Dividida | Boleto tem valor, mas amplia variacoes de regra e comunicacao. Entra apenas como preparacao de contrato/escopo reduzido se nao competir com Pix, confirmacao e notificacao. | Mantem opcao de evolucao para Boleto sem comprometer a previsibilidade da Release. |
+| Validação de acesso por token de API | Entrou | Protege a Payments API de acessos não autorizados e habilita rastreabilidade por tenant desde o primeiro slice de produção. Chave local elimina fricção no ambiente de desenvolvimento. | Checkout e integrações passam a autenticar via token cadastrado; acesso local funciona sem dependência de secrets externos. |
+| Configuração de webhook por token de API | Entrou | Completa o contrato de integração: consumidores que usam o token de API precisam receber notificações de status sem polling. Dependência direta do token de API já entregue. | Checkout e integrações recebem `invoice.confirmed` e `invoice.cancelled` via HTTP POST com assinatura verificável. |
 | Cancelar invoice pendente | Adiada | Apesar de implementada, nao e essencial para validar a ativacao inicial do novo gateway no Checkout. Incluir como compromisso principal aumentaria superficie da Release. | Valor preservado para iteracao posterior com menor risco de dispersao. |
 | Integracao corporativa de incidentes/ITSM | Saiu | E relevante para operacao, mas nao e funcionalidade de negocio da iteracao. | Mantem foco no recorte funcional da Release. |
 | Gateway fallback/Itau | Saiu | O Product Deck cita intercambiabilidade, mas o escopo atual e Asaas. Incluir fallback agora ampliaria demais a Release. | Evita transformar a iteracao em programa de plataforma. |

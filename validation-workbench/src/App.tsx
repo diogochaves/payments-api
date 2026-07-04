@@ -154,6 +154,7 @@ const initialNewCard: NewCardForm = {
 function App() {
   const [apiUrl, setApiUrl] = useState('http://localhost:3011');
   const [runtimeMode, setRuntimeMode] = useState<RuntimeMode>('LOCAL_MOCK');
+  const [apiToken, setApiToken] = useState('local-dev-token-insecure-do-not-use-in-prod');
   const [webhookToken, setWebhookToken] = useState('payments-api-local-webhook-token-0001');
   const [tenantId, setTenantId] = useState('magazine-siara');
   const [orderId, setOrderId] = useState(makeOrderId);
@@ -431,6 +432,7 @@ function App() {
         'Content-Type': 'application/json',
         'Idempotency-Key': idempotencyKey,
         'X-Correlation-Id': `frontend-${orderId}`,
+        'X-Api-Token': apiToken,
       };
 
       const response = await fetch(`${apiUrl.replace(/\/$/, '')}${endpoint}`, {
@@ -559,6 +561,7 @@ function App() {
             'X-Tenant-Id': tenantId,
             'Idempotency-Key': cancelIdempotencyKey,
             'X-Correlation-Id': `frontend-cancel-${lastInvoice.orderId}`,
+            'X-Api-Token': apiToken,
           },
         },
       );
@@ -606,6 +609,14 @@ function App() {
             value={apiUrl}
             onChange={(event) => setApiUrl(event.target.value)}
             placeholder="http://localhost:3011"
+          />
+        </label>
+        <label className="api-field">
+          <span>API Token</span>
+          <input
+            value={apiToken}
+            onChange={(event) => setApiToken(event.target.value)}
+            placeholder="X-Api-Token"
           />
         </label>
         <label className="api-field">
@@ -909,6 +920,8 @@ function App() {
           <div className="headers-box">
             <span>POST {endpoint} | Idempotency-Key</span>
             <code>{idempotencyKey}</code>
+            <span>X-Api-Token</span>
+            <code>{apiToken || '(vazio — requisição será rejeitada com 401)'}</code>
           </div>
 
           {error && <pre className="response error">{error}</pre>}
@@ -976,6 +989,8 @@ function App() {
               <code>{tenantId}</code>
               <span>Idempotency-Key</span>
               <code>{cancelIdempotencyKey}</code>
+              <span>X-Api-Token</span>
+              <code>{apiToken || '(vazio — requisição será rejeitada com 401)'}</code>
             </div>
 
             <div className="actions">

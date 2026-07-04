@@ -47,7 +47,11 @@ module boundary.
    affected.
 9. Run lint for the affected package when a lint script exists.
 10. Update only impacted ProdOps artifacts.
-11. Append evidence to `prodops/downstream/release-trail.md`.
+11. If the change is structural (new module, route, external dependency, table,
+    or event topic), update `prodops/assessment/architecture/overview.md`:
+    - edit the Mermaid diagram to reflect the change;
+    - add a row to the History table with today's date and a one-line description.
+12. Append evidence to `prodops/downstream/release-trail.md`.
 
 ## Guardrails
 

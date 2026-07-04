@@ -362,6 +362,9 @@ export class InvoiceService {
     const eventPayload = {
       invoiceId: cancelledInvoice.invoiceId,
       orderId: cancelledInvoice.orderId,
+      tenantId: cancelledInvoice.tenantId,
+      amount: cancelledInvoice.amount,
+      currency: cancelledInvoice.currency,
       provider: cancelledInvoice.provider,
       providerPaymentId: cancelledInvoice.providerPaymentId,
       cancelledAt: cancelledInvoice.updatedAt,
@@ -516,6 +519,9 @@ export class InvoiceService {
     const eventPayload = {
       invoiceId: confirmedInvoice.invoiceId,
       orderId: confirmedInvoice.orderId,
+      tenantId: confirmedInvoice.tenantId,
+      amount: confirmedInvoice.amount,
+      currency: confirmedInvoice.currency,
       provider: confirmedInvoice.provider,
       providerPaymentId: confirmedInvoice.providerPaymentId,
       confirmedAt: payload.payment?.confirmedDate ?? confirmedInvoice.updatedAt,

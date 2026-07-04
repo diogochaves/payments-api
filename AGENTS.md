@@ -103,10 +103,14 @@ Use Downstream when the task is to:
 
 Every Downstream item must have:
 
-- OBC;
-- BDD;
-- Reliability Plan;
+- OBC — placed in `prodops/assessment/reliability-plan/obcs/`;
+- BDD Feature — placed in `prodops/current-state/features/`;
+- Reliability Plan entry;
 - Iteration Backlog entry.
+
+`prodops/upstream/features/` and `prodops/upstream/obcs/` are for exploratory
+capabilities tied to active experiments only. Do not create Downstream BDD
+Features or OBCs there, even as drafts.
 
 Downstream follows the full governed flow:
 
@@ -142,10 +146,36 @@ Before changing production code or committed product artifacts:
 1. Read `prodops/current-state/`, including `product-deck.md`, `service-decks/`, `tracking-list.md`, and `icebox-backlog.md`. Read committed BDD Features in `prodops/current-state/features/` and exploratory features in `prodops/upstream/features/`.
 2. Read `prodops/assessment/`, especially `prodops/assessment/reliability-plan/`.
 3. Treat the Reliability Plan as the release execution contract.
-4. Use BDD Features as the input for TDD whenever behavior changes.
-5. Select the appropriate execution skill from `skills/`.
-6. Update only artifacts that are actually impacted.
-7. Register every relevant Downstream execution in `prodops/downstream/release-trail.md`.
+4. Use BDD Features as the input for TDD whenever behavior changes. If the BDD Feature does not exist yet for a Downstream item, create it in `prodops/current-state/features/` before writing code.
+5. If the OBC does not exist yet for a Downstream item, create it in `prodops/assessment/reliability-plan/obcs/` before writing code.
+6. Select the appropriate execution skill from `skills/`.
+7. Update only artifacts that are actually impacted.
+8. **If the change is structural** — new module, route group, external dependency, database table, or event topic — update `prodops/assessment/architecture/overview.md` before closing the task. Add a row to the History table in that file.
+9. Register every relevant Downstream execution in `prodops/downstream/release-trail.md`.
+
+## Architecture Diagram
+
+The canonical architecture diagram lives at:
+
+```text
+prodops/assessment/architecture/overview.md
+```
+
+It is the single source of truth for the system's structural shape. The diagram
+is referenced by `prodops/current-state/product-deck.md` (section 6).
+
+**Structural changes** that require updating the diagram:
+
+- New or removed NestJS module
+- New or removed controller / route group
+- New or removed external dependency (gateway, broker, provider)
+- New or removed database table or GSI
+- New or removed event topic or queue
+- Authentication mechanism change on a route group
+
+**Not** structural: DTO field additions, bug fixes inside an existing service,
+new BDD scenarios without new infrastructure, internal refactors without contract
+change.
 
 ## Execution Skills
 

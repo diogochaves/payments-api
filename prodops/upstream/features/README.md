@@ -1,8 +1,23 @@
 # Features — Upstream
 
-Features BDD para capabilities ainda em exploração, sem comprometimento de Downstream.
+Features BDD para capabilities **ainda em exploração**, sem comprometimento de Downstream.
 
-Cada Feature aqui representa o comportamento esperado de uma capability que está sendo experimentada ou investigada. Features de capabilities comprometidas vivem em `prodops/current-state/features/`.
+Cada Feature aqui representa o comportamento esperado de uma capability que está sendo
+experimentada ou investigada. Ela **deve estar associada a um experimento ativo** em
+`prodops/upstream/experiments/`.
+
+## Regra de escopo
+
+Esta pasta aceita **apenas** features nascidas de experimentos Upstream (`EXP-XXX`).
+
+**Não crie features aqui para:**
+
+- capabilities adicionadas diretamente ao Iteration Backlog como Downstream;
+- capabilities sem experimento de origem associado.
+
+Nesse caso, crie a BDD Feature diretamente em `prodops/current-state/features/`.
+
+Features de capabilities comprometidas vivem em `prodops/current-state/features/`.
 
 ## Features exploratórias
 

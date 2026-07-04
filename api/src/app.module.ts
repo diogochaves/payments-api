@@ -5,6 +5,7 @@ import { LoggerModule } from 'nestjs-pino';
 import type { IncomingMessage } from 'http';
 import awsConfig from './config/aws.config';
 import { InvoicesModule } from './modules/invoices/invoices.module';
+import { WebhooksModule } from './modules/webhooks/webhooks.module';
 import { ObservabilityModule } from './observability/observability.module';
 import { ddTraceMixin } from './observability/datadog.tracer';
 
@@ -49,6 +50,7 @@ const usePinoTransport =
           paths: [
             'req.headers.authorization',
             'req.headers["asaas-access-token"]',
+            'req.headers["x-api-token"]',
             'req.body.cardNumber',
             'req.body.cvv',
             'req.body.cardToken',
@@ -72,6 +74,7 @@ const usePinoTransport =
       delimiter: '.',
     }),
     InvoicesModule,
+    WebhooksModule,
     ObservabilityModule,
   ],
   controllers: [],

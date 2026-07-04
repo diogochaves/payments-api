@@ -164,3 +164,88 @@ Not applicable; no product behavior changed.
 ### Next steps
 
 Use Upstream for reversible exploration and Downstream for approved delivery governed by the full ProdOps flow.
+
+## 2026-07-03 — Webhook Configuration per API Token
+
+### What changed?
+
+Implemented webhook configuration API, allowing API Token holders to register
+HTTPS callback URLs that receive `invoice.confirmed` and `invoice.cancelled`
+events. Each webhook has an auto-generated HMAC-SHA256 secret returned only at
+creation. Delivery is fire-and-forget; failure never blocks the payment flow.
+
+Canonical events `payment.confirmed` and `payment.cancelled` were enriched with
+`tenantId`, `amount`, and `currency` to give downstream consumers full context
+without a secondary lookup.
+
+### Why?
+
+Complete the integration contract: consumers using API Tokens need status
+notifications without polling. Webhook configuration is the natural complement to
+the API Token feature delivered earlier in this iteration.
+
+### Related OBC
+
+`prodops/assessment/reliability-plan/obcs/webhook-configuration.md`
+
+### Related BDD
+
+`prodops/current-state/features/webhook-configuration.feature`
+
+### Evidence
+
+- `WebhooksModule` created at `api/src/modules/webhooks/` with:
+  - `WebhookRepository` — DynamoDB-backed storage with `TenantWebhooksIndex` GSI.
+  - `WebhookService` — registration, listing, deactivation; URL validation (HTTPS or localhost).
+  - `WebhookDeliveryService` — listens to `payment.confirmed` / `payment.cancelled`; dispatches signed HTTP POST with 10s timeout; emits `webhook.delivery.sent` / `webhook.delivery.failed`.
+  - `WebhookConfigController` — `POST /webhooks`, `GET /webhooks`, `DELETE /webhooks/:webhookId`, all behind `ApiTokenGuard`.
+- `WebhooksTable` added to `api/infra/dynamodb.yaml` with `TenantWebhooksIndex` GSI.
+- `payment.confirmed` and `payment.cancelled` events enriched with `tenantId`, `amount`, `currency` in `invoice.service.ts`.
+- `WebhooksModule` registered in `AppModule`.
+- Build: `cd api && npm run build` — passed with no errors.
+
+### Next steps
+
+- Add acceptance tests: webhook registration, listing, delivery on confirmed event.
+- Add retry logic for failed deliveries (backoff + dead-letter queue).
+- Add `WEBHOOKS_TABLE` env var to `.env.example`.
+- Consider TTL for deactivated webhook records in DynamoDB.
+
+## 2026-07-03 — API Token Validation
+
+### What changed?
+
+Implemented API Token authentication for the Payments API. All business routes
+(`/invoices`) now require a valid `X-Api-Token` header. Webhook routes remain
+excluded (they use their own `asaas-access-token` validation). A local dev token
+is pre-registered via `API_TOKEN_LOCAL` env var, allowing localhost access without
+external secrets infrastructure.
+
+### Why?
+
+Enable controlled access to the Payments API by tenant, eliminate anonymous
+consumption by Checkout or integrations, and establish observable token validation
+events from day one of production traffic.
+
+### Related OBC
+
+`prodops/assessment/reliability-plan/obcs/api-token-validation.md`
+
+### Related BDD
+
+`prodops/current-state/features/api-token-validation.feature`
+
+### Evidence
+
+- `AuthModule` created at `api/src/modules/auth/` with `ApiTokenService` and `ApiTokenGuard`.
+- `ApiTokenGuard` applied to `InvoiceController` via `@UseGuards`.
+- `X-Api-Token` added to CORS allowed headers (`api/src/main.ts`).
+- `X-Api-Token` added to pino log redaction paths (`api/src/app.module.ts`).
+- `API_TOKEN_LOCAL` documented in `.env.example` and set in `.env` for local dev.
+- Build executed: `cd api && npm run build` — passed with no errors.
+
+### Next steps
+
+- Add acceptance test scenarios for 401 rejection and token validation.
+- Wire `API_TOKENS` env var with real Checkout token in staging before go-live.
+- Evaluate token store migration to DynamoDB or SSM Parameter Store for zero-deploy revocation.

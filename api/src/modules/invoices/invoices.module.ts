@@ -9,6 +9,7 @@ import { AsaasService } from '../../infra/asaas.service';
 import { InvoiceRepository } from './services/invoice-repository.service';
 import { ProviderRouterService } from './services/provider-router.service';
 import { AsaasWebhookQueueService } from './services/asaas-webhook-queue.service';
+import { AuthModule } from '../auth/auth.module';
 
 /**
  * Invoices Module
@@ -39,7 +40,7 @@ import { AsaasWebhookQueueService } from './services/asaas-webhook-queue.service
  *    - Protagonista: PAYMENT_PROCESSED
  */
 @Module({
-  imports: [EventEmitterModule],
+  imports: [EventEmitterModule, AuthModule],
   controllers: [InvoiceController, AsaasWebhookController, AsaasSandboxController],
   providers: [
     InvoiceService,

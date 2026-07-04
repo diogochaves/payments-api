@@ -21,6 +21,7 @@ async function bootstrap() {
       'Idempotency-Key',
       'X-Correlation-Id',
       'X-Tenant-Id',
+      'X-Api-Token',
       'asaas-access-token',
     ],
     exposedHeaders: ['X-Correlation-Id'],

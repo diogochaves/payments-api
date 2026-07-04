@@ -7,10 +7,13 @@ import {
   HttpStatus,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { ApiTokenGuard } from '../../auth/api-token.guard';
 import { InvoiceService } from '../services/invoice.service';
 import { CreateInvoiceDto } from '../dto/create-invoice.dto';
 
+@UseGuards(ApiTokenGuard)
 @Controller('invoices')
 export class InvoiceController {
   constructor(private invoiceService: InvoiceService) {}
