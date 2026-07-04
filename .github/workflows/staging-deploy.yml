@@ -221,6 +221,13 @@ jobs:
               "GitSha=${{ github.sha }}" \
               "GitBranch=${{ github.ref_name }}" \
             --parameter-overrides \
+              EnvironmentName=staging \
+              AsaasMock=false \
+              AsaasUrl=https://api-sandbox.asaas.com \
+              EnabledPaymentProviders=ASAAS \
+              DefaultPaymentProvider=ASAAS \
+              WebhookProcessingMode=async \
+              DatadogEnabled=false \
               AsaasToken="$STAGING_ASAAS_TOKEN" \
               AsaasWebhookToken="$STAGING_ASAAS_WEBHOOK_TOKEN" \
               ApiTokens="$STAGING_API_TOKENS"
