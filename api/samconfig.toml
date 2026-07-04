@@ -1,0 +1,73 @@
+version = 0.1
+
+# ── Staging ──────────────────────────────────────────────────────────────────
+# All parameters below reflect REAL infrastructure — no mocks, no LocalStack.
+# Secrets (AsaasToken, AsaasWebhookToken, ApiTokens) are injected at deploy
+# time by the CI pipeline and must never be stored in this file.
+#
+# Deploy manually:
+#   sam deploy --config-env staging \
+#     --parameter-overrides \
+#       AsaasToken="..." \
+#       AsaasWebhookToken="..." \
+#       ApiTokens='[{"token":"...","tokenId":"...","tenantId":"...","revoked":false}]'
+# ─────────────────────────────────────────────────────────────────────────────
+[staging.deploy.parameters]
+stack_name              = "payments-api-staging"
+region                  = "us-east-1"
+resolve_s3              = true
+s3_prefix               = "payments-api/staging"
+confirm_changeset       = false
+fail_on_empty_changeset = false
+capabilities            = "CAPABILITY_IAM CAPABILITY_NAMED_IAM"
+
+parameter_overrides = [
+  # Environment
+  "EnvironmentName=staging",
+
+  # Asaas — real sandbox API, no built-in mock provider
+  "AsaasMock=false",
+  "AsaasUrl=https://api-sandbox.asaas.com",
+  "EnabledPaymentProviders=ASAAS",
+  "DefaultPaymentProvider=ASAAS",
+
+  # Webhooks — real SQS async processing
+  "WebhookProcessingMode=async",
+
+  # Observability — Datadog disabled until a key is configured
+  "DatadogEnabled=false",
+
+  # ApiTokenLocal intentionally NOT set.
+  # The local dev token must NOT be accepted in staging — if it were set here,
+  # the insecure local token would grant access to the real staging database.
+]
+
+# ── Production ───────────────────────────────────────────────────────────────
+# Production uses the live Asaas API (not sandbox).
+# confirm_changeset=true requires a manual approval before applying changes.
+#
+# Deploy:
+#   sam deploy --config-env production \
+#     --parameter-overrides \
+#       AsaasToken="..." \
+#       AsaasWebhookToken="..." \
+#       ApiTokens='[...]'
+# ─────────────────────────────────────────────────────────────────────────────
+[production.deploy.parameters]
+stack_name              = "payments-api-production"
+region                  = "us-east-1"
+resolve_s3              = true
+s3_prefix               = "payments-api/production"
+confirm_changeset       = true
+fail_on_empty_changeset = false
+capabilities            = "CAPABILITY_IAM CAPABILITY_NAMED_IAM"
+
+parameter_overrides = [
+  "EnvironmentName=production",
+  "AsaasMock=false",
+  "AsaasUrl=https://api.asaas.com",
+  "EnabledPaymentProviders=ASAAS",
+  "DefaultPaymentProvider=ASAAS",
+  "WebhookProcessingMode=async",
+  "DatadogEnabled=false",
+]

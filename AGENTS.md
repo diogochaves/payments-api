@@ -153,6 +153,39 @@ Before changing production code or committed product artifacts:
 8. **If the change is structural** — new module, route group, external dependency, database table, or event topic — update `prodops/assessment/architecture/overview.md` before closing the task. Add a row to the History table in that file.
 9. Register every relevant Downstream execution in `prodops/downstream/release-trail.md`.
 
+## Event Storming (ODD Plan)
+
+The canonical event map lives at:
+
+```text
+prodops/assessment/event-storming/plan.json
+```
+
+Use `prodops/assessment/event-storming/plan-model.json` as the structural
+reference format. The `plan.json` is generated and updated — never edit the
+model file.
+
+**Event naming convention:** `{dominio}.{subdominio}.{touchpoint}.{fato}`
+(all lowercase, dot-separated). Every business event must have a companion
+`{event-key}_exception` variant for failure observability.
+
+**Update `plan.json` when any of the following changes:**
+
+- A new `eventEmitter.emit()` or `@OnEvent()` is added or removed
+- An existing domain event gains or loses fields that change its business meaning
+- A new flow (happy path or alternative path) is identified
+- An existing flow changes sequence or gains/loses steps
+
+**Do not update `plan.json` for:** internal refactors without event contract
+change, new DTO fields that don't affect event payloads, bugfixes that preserve
+existing event semantics.
+
+When updating, follow the band structure: for each new event add widgets to
+`{flow}_negative_kpis`, `{flow}_negative_trends`, `{flow}_positive_kpis`,
+`{flow}_positive_trends` bands and a `customEvents` entry (both success and
+exception variants). Add an `sloSuggestions` entry for events on the critical
+path.
+
 ## Architecture Diagram
 
 The canonical architecture diagram lives at:

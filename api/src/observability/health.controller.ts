@@ -16,8 +16,8 @@ export class HealthController {
         agentConfigured: Boolean(process.env.DD_AGENT_HOST),
       },
       storage: {
-        dynamo: process.env.DYNAMO_MOCK === 'true' ? 'mock' : 'dynamodb',
-        invoiceRepository: process.env.INVOICE_REPOSITORY ?? 'dynamodb',
+        dynamo: 'dynamodb',
+        endpoint: process.env.AWS_DYNAMODB_ENDPOINT ?? 'aws',
       },
       timestamp: new Date().toISOString(),
     };

@@ -1,18 +1,19 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: NestJS running on AWS Lambda
+Description: Payments API — NestJS on AWS Lambda
 
 Parameters:
   EnvironmentName:
     Type: String
     Default: dev
     AllowedPattern: '^[a-zA-Z0-9-]+$'
+    Description: Environment name used as prefix for all resource names.
+
+  # ── Observability ──────────────────────────────────────────────────────────
   DatadogEnabled:
     Type: String
     Default: 'false'
-    AllowedValues:
-      - 'true'
-      - 'false'
+    AllowedValues: ['true', 'false']
   DatadogSite:
     Type: String
     Default: datadoghq.com
@@ -20,30 +21,20 @@ Parameters:
     Type: String
     Default: ''
     NoEcho: true
-    Description: Datadog API key injected by the deployment pipeline when DatadogEnabled=true.
   DatadogExtensionLayerArn:
     Type: String
     Default: ''
-    Description: Datadog Lambda Extension layer ARN for the target AWS region/runtime.
   DatadogVersion:
     Type: String
     Default: 0.0.1
-  InvoiceRepository:
-    Type: String
-    Default: dynamo
-    AllowedValues:
-      - dynamo
-      - memory
-  DynamoMock:
-    Type: String
-    Default: 'false'
-    AllowedValues:
-      - 'true'
-      - 'false'
+
+  # ── Storage ────────────────────────────────────────────────────────────────
   AwsDynamoDbEndpoint:
     Type: String
     Default: ''
-    Description: Optional DynamoDB endpoint. Use LocalStack endpoint for local Lambda deploys.
+    Description: Optional DynamoDB endpoint override (LocalStack).
+
+  # ── Payment Providers ──────────────────────────────────────────────────────
   EnabledPaymentProviders:
     Type: String
     Default: ASAAS
@@ -53,9 +44,7 @@ Parameters:
   AsaasMock:
     Type: String
     Default: 'true'
-    AllowedValues:
-      - 'true'
-      - 'false'
+    AllowedValues: ['true', 'false']
   AsaasUrl:
     Type: String
     Default: https://api-sandbox.asaas.com
@@ -67,33 +56,56 @@ Parameters:
     Type: String
     Default: ''
     NoEcho: true
+
+  # ── Webhooks ───────────────────────────────────────────────────────────────
   WebhookProcessingMode:
     Type: String
     Default: async
-    AllowedValues:
-      - async
-      - sync
+    AllowedValues: [async, sync]
+
+  # ── API Tokens ─────────────────────────────────────────────────────────────
+  ApiTokens:
+    Type: String
+    Default: ''
+    NoEcho: true
+    Description: >
+      JSON array of API tokens. Format:
+      [{"token":"tok_x","tokenId":"checkout","tenantId":"my-tenant","revoked":false}]
+  ApiTokenLocal:
+    Type: String
+    Default: ''
+    NoEcho: true
+    Description: >
+      Single dev token for local/non-prod use only.
+      Leave empty in staging and production.
 
 Conditions:
-  IsDatadogEnabled: !Equals [!Ref DatadogEnabled, 'true']
-  HasDatadogApiKey: !Not [!Equals [!Ref DatadogApiKey, '']]
+  IsDatadogEnabled:         !Equals [!Ref DatadogEnabled, 'true']
+  HasDatadogApiKey:         !Not [!Equals [!Ref DatadogApiKey, '']]
   HasDatadogExtensionLayer: !Not [!Equals [!Ref DatadogExtensionLayerArn, '']]
-  HasAwsDynamoDbEndpoint: !Not [!Equals [!Ref AwsDynamoDbEndpoint, '']]
-  HasAsaasToken: !Not [!Equals [!Ref AsaasToken, '']]
-  HasAsaasWebhookToken: !Not [!Equals [!Ref AsaasWebhookToken, '']]
-  UseDatadogExtension: !And
-    - !Condition IsDatadogEnabled
-    - !Condition HasDatadogExtensionLayer
+  HasAwsDynamoDbEndpoint:   !Not [!Equals [!Ref AwsDynamoDbEndpoint, '']]
+  HasAsaasToken:            !Not [!Equals [!Ref AsaasToken, '']]
+  HasAsaasWebhookToken:     !Not [!Equals [!Ref AsaasWebhookToken, '']]
+  HasApiTokens:             !Not [!Equals [!Ref ApiTokens, '']]
+  HasApiTokenLocal:         !Not [!Equals [!Ref ApiTokenLocal, '']]
+  UseDatadogExtension:
+    !And [!Condition IsDatadogEnabled, !Condition HasDatadogExtensionLayer]
 
 Globals:
   Function:
     Runtime: nodejs22.x
     MemorySize: 512
     Timeout: 15
+    Tags:
+      Environment: !Ref EnvironmentName
+      Project: payments-api
+      ManagedBy: sam
     Environment:
       Variables:
         NODE_ENV: !Ref EnvironmentName
         OBSERVABILITY_ENV: !Ref EnvironmentName
+
+        # Observability
         DD_SERVICE: payments-api
         DD_ENV: !Ref EnvironmentName
         DD_VERSION: !Ref DatadogVersion
@@ -105,12 +117,26 @@ Globals:
           - HasDatadogApiKey
           - !Ref DatadogApiKey
           - !Ref AWS::NoValue
-        INVOICE_REPOSITORY: !Ref InvoiceRepository
-        DYNAMO_MOCK: !Ref DynamoMock
+
+        # Storage
         AWS_DYNAMODB_ENDPOINT: !If
           - HasAwsDynamoDbEndpoint
           - !Ref AwsDynamoDbEndpoint
           - !Ref AWS::NoValue
+        AWS_SQS_ENDPOINT: !If
+          - HasAwsDynamoDbEndpoint
+          - !Ref AwsDynamoDbEndpoint
+          - !Ref AWS::NoValue
+
+        # DynamoDB table names — prefixed by environment
+        PAYMENTS_TABLE:      !Sub "${EnvironmentName}-PaymentsTable"
+        TRANSACTIONS_TABLE:  !Sub "${EnvironmentName}-TransactionsTable"
+        CUSTOMERS_TABLE:     !Sub "${EnvironmentName}-CustomersTable"
+        TENANTS_TABLE:       !Sub "${EnvironmentName}-TenantsTable"
+        PROVIDERS_TABLE:     !Sub "${EnvironmentName}-ProvidersTable"
+        WEBHOOKS_TABLE:      !Sub "${EnvironmentName}-WebhooksTable"
+
+        # Payment providers
         ENABLED_PAYMENT_PROVIDERS: !Ref EnabledPaymentProviders
         DEFAULT_PAYMENT_PROVIDER: !Ref DefaultPaymentProvider
         ASAAS_MOCK: !Ref AsaasMock
@@ -123,34 +149,62 @@ Globals:
           - HasAsaasWebhookToken
           - !Ref AsaasWebhookToken
           - !Ref AWS::NoValue
+
+        # Webhooks
         WEBHOOK_PROCESSING_MODE: !Ref WebhookProcessingMode
         WEBHOOK_QUEUE_URL: !Ref WebhookQueue
         WEBHOOK_DLQ_URL: !Ref WebhookDeadLetterQueue
-        AWS_SQS_ENDPOINT: !If
-          - HasAwsDynamoDbEndpoint
-          - !Ref AwsDynamoDbEndpoint
+
+        # API Tokens
+        API_TOKENS: !If
+          - HasApiTokens
+          - !Ref ApiTokens
+          - !Ref AWS::NoValue
+        API_TOKEN_LOCAL: !If
+          - HasApiTokenLocal
+          - !Ref ApiTokenLocal
           - !Ref AWS::NoValue
 
 Resources:
+
+  # ── SQS ─────────────────────────────────────────────────────────────────────
+
   WebhookDeadLetterQueue:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: payments-webhook-dlq
+      QueueName: !Sub "${EnvironmentName}-payments-webhook-dlq"
       MessageRetentionPeriod: 1209600
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Project
+          Value: payments-api
+        - Key: ManagedBy
+          Value: sam
 
   WebhookQueue:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: payments-webhook-queue
+      QueueName: !Sub "${EnvironmentName}-payments-webhook-queue"
       VisibilityTimeout: 60
       MessageRetentionPeriod: 1209600
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt WebhookDeadLetterQueue.Arn
         maxReceiveCount: 5
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Project
+          Value: payments-api
+        - Key: ManagedBy
+          Value: sam
+
+  # ── IAM Roles ────────────────────────────────────────────────────────────────
 
   ApiFunctionRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: !Sub "${EnvironmentName}-payments-api-role"
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -158,6 +212,8 @@ Resources:
             Principal:
               Service: lambda.amazonaws.com
             Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
         - PolicyName: PaymentsDynamoAccess
           PolicyDocument:
@@ -170,13 +226,19 @@ Resources:
                   - dynamodb:Query
                   - dynamodb:UpdateItem
                 Resource:
-                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/PaymentsTable
-                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/PaymentsTable/index/*
-                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/TransactionsTable
-                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/TransactionsTable/index/*
-                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/CustomersTable
-                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/TenantsTable
-                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/ProvidersTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${EnvironmentName}-PaymentsTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${EnvironmentName}-PaymentsTable/index/*
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${EnvironmentName}-TransactionsTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${EnvironmentName}-TransactionsTable/index/*
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${EnvironmentName}-CustomersTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${EnvironmentName}-TenantsTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${EnvironmentName}-ProvidersTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${EnvironmentName}-WebhooksTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${EnvironmentName}-WebhooksTable/index/*
+        - PolicyName: PaymentsSqsAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
               - Effect: Allow
                 Action:
                   - sqs:SendMessage
@@ -188,6 +250,7 @@ Resources:
   WebhookWorkerRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: !Sub "${EnvironmentName}-payments-webhook-worker-role"
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -195,8 +258,10 @@ Resources:
             Principal:
               Service: lambda.amazonaws.com
             Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
-        - PolicyName: PaymentsWebhookWorkerAccess
+        - PolicyName: PaymentsWebhookWorkerSqsAccess
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -207,6 +272,10 @@ Resources:
                   - sqs:GetQueueAttributes
                   - sqs:ChangeMessageVisibility
                 Resource: !GetAtt WebhookQueue.Arn
+        - PolicyName: PaymentsWebhookWorkerDynamoAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
               - Effect: Allow
                 Action:
                   - dynamodb:GetItem
@@ -214,17 +283,50 @@ Resources:
                   - dynamodb:Query
                   - dynamodb:UpdateItem
                 Resource:
-                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/PaymentsTable
-                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/PaymentsTable/index/*
-                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/TransactionsTable
-                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/TransactionsTable/index/*
-                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/CustomersTable
-                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/TenantsTable
-                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/ProvidersTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${EnvironmentName}-PaymentsTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${EnvironmentName}-PaymentsTable/index/*
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${EnvironmentName}-TransactionsTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${EnvironmentName}-TransactionsTable/index/*
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${EnvironmentName}-CustomersTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${EnvironmentName}-TenantsTable
+                  - !Sub arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${EnvironmentName}-ProvidersTable
+
+  # ── CloudWatch Log Groups ────────────────────────────────────────────────────
+  # Explicit declarations enforce retention — without these Lambda creates log
+  # groups with infinite retention, which accumulates cost over time.
+
+  ApiFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${EnvironmentName}-payments-api"
+      RetentionInDays: 30
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Project
+          Value: payments-api
+        - Key: ManagedBy
+          Value: sam
+
+  WebhookWorkerFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${EnvironmentName}-payments-webhook-worker"
+      RetentionInDays: 30
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Project
+          Value: payments-api
+        - Key: ManagedBy
+          Value: sam
+
+  # ── Lambda Functions ─────────────────────────────────────────────────────────
 
   ApiFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub "${EnvironmentName}-payments-api"
       CodeUri: dist/
       Handler: lambda.handler
       Role: !GetAtt ApiFunctionRole.Arn
@@ -239,6 +341,7 @@ Resources:
           AllowHeaders:
             - Content-Type
             - Idempotency-Key
+            - X-Api-Token
             - X-Correlation-Id
             - X-Tenant-Id
             - asaas-access-token
@@ -254,6 +357,7 @@ Resources:
   WebhookWorkerFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub "${EnvironmentName}-payments-webhook-worker"
       CodeUri: dist/
       Handler: webhook-worker.handler
       Role: !GetAtt WebhookWorkerRole.Arn
@@ -273,8 +377,15 @@ Resources:
 
 Outputs:
   ApiFunctionUrl:
+    Description: Lambda Function URL for the Payments API
     Value: !GetAtt ApiFunctionUrl.FunctionUrl
+    Export:
+      Name: !Sub "${EnvironmentName}-PaymentsApiFunctionUrl"
   WebhookQueueUrl:
     Value: !Ref WebhookQueue
+    Export:
+      Name: !Sub "${EnvironmentName}-WebhookQueueUrl"
   WebhookDeadLetterQueueUrl:
     Value: !Ref WebhookDeadLetterQueue
+    Export:
+      Name: !Sub "${EnvironmentName}-WebhookDeadLetterQueueUrl"

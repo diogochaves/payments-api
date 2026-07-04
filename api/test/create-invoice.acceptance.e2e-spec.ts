@@ -11,6 +11,7 @@ import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 import { AsaasService } from '../src/infra/asaas.service';
 import { InvoiceRepository } from '../src/modules/invoices/services/invoice-repository.service';
+import { setupTestTables, truncateAllTables } from './dynamo-test-utils';
 
 class AsaasServiceStub {
   createCustomer = jest.fn(async (payload) => ({
@@ -53,6 +54,11 @@ describe('Criar Invoice (acceptance)', () => {
   let repository: InvoiceRepository;
   let emitSpy: jest.SpyInstance;
 
+  beforeAll(async () => {
+    process.env.AWS_DYNAMODB_ENDPOINT ??= 'http://localhost.localstack.cloud:4566';
+    await setupTestTables();
+  });
+
   const basePayload = {
     tenantId: 'magazine-siara',
     orderId: 'MS-100045',
@@ -72,8 +78,7 @@ describe('Criar Invoice (acceptance)', () => {
   };
 
   beforeEach(async () => {
-    process.env.INVOICE_REPOSITORY = 'memory';
-    process.env.DYNAMO_MOCK = 'true';
+    await truncateAllTables();
     process.env.ENABLED_PAYMENT_PROVIDERS = 'ASAAS';
     process.env.DEFAULT_PAYMENT_PROVIDER = 'ASAAS';
     process.env.ASAAS_MOCK = 'true';
@@ -100,8 +105,6 @@ describe('Criar Invoice (acceptance)', () => {
   afterEach(async () => {
     emitSpy.mockRestore();
     await app.close();
-    delete process.env.INVOICE_REPOSITORY;
-    delete process.env.DYNAMO_MOCK;
     delete process.env.ENABLED_PAYMENT_PROVIDERS;
     delete process.env.DEFAULT_PAYMENT_PROVIDER;
     delete process.env.ASAAS_MOCK;
@@ -1033,6 +1036,11 @@ describe('Confirmar Pagamento com Dynamo (acceptance)', () => {
   let app: INestApplication<App>;
   let repository: InvoiceRepository;
 
+  beforeAll(async () => {
+    process.env.AWS_DYNAMODB_ENDPOINT ??= 'http://localhost.localstack.cloud:4566';
+    await setupTestTables();
+  });
+
   const basePayload = {
     tenantId: 'magazine-siara',
     orderId: 'MS-200045',
@@ -1052,8 +1060,7 @@ describe('Confirmar Pagamento com Dynamo (acceptance)', () => {
   };
 
   beforeEach(async () => {
-    process.env.INVOICE_REPOSITORY = 'dynamo';
-    process.env.DYNAMO_MOCK = 'true';
+    await truncateAllTables();
     process.env.ENABLED_PAYMENT_PROVIDERS = 'ASAAS';
     process.env.DEFAULT_PAYMENT_PROVIDER = 'ASAAS';
     process.env.ASAAS_MOCK = 'true';
@@ -1076,8 +1083,6 @@ describe('Confirmar Pagamento com Dynamo (acceptance)', () => {
 
   afterEach(async () => {
     await app.close();
-    delete process.env.INVOICE_REPOSITORY;
-    delete process.env.DYNAMO_MOCK;
     delete process.env.ENABLED_PAYMENT_PROVIDERS;
     delete process.env.DEFAULT_PAYMENT_PROVIDER;
     delete process.env.ASAAS_MOCK;

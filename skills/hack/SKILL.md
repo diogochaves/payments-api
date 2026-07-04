@@ -47,7 +47,15 @@ module boundary.
    affected.
 9. Run lint for the affected package when a lint script exists.
 10. Update only impacted ProdOps artifacts.
-11. If the change is structural (new module, route, external dependency, table,
+11. If the change adds, removes, or renames a domain event (`eventEmitter.emit()`
+    or `@OnEvent()`), update `prodops/assessment/event-storming/plan.json`:
+    - add the new event to the relevant flow bands (negative_kpis, negative_trends,
+      positive_kpis, positive_trends);
+    - add both success and `_exception` variants to `customEvents`;
+    - add an `sloSuggestions` entry if the event is on the critical path;
+    - update `assumptions[last]` with the date and change summary.
+    Use `prodops/assessment/event-storming/plan-model.json` as the format reference.
+12. If the change is structural (new module, route, external dependency, table,
     or event topic), update `prodops/assessment/architecture/overview.md`:
     - edit the Mermaid diagram to reflect the change;
     - add a row to the History table with today's date and a one-line description.
