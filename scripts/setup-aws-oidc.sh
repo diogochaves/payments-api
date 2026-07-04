@@ -139,31 +139,13 @@ DEPLOY_POLICY=$(cat <<EOF
       ]
     },
     {
-      "Sid": "LambdaDeploy",
+      "Sid": "LambdaAll",
       "Effect": "Allow",
-      "Action": [
-        "lambda:CreateFunction",
-        "lambda:UpdateFunctionCode",
-        "lambda:UpdateFunctionConfiguration",
-        "lambda:GetFunction",
-        "lambda:GetFunctionConfiguration",
-        "lambda:DeleteFunction",
-        "lambda:AddPermission",
-        "lambda:RemovePermission",
-        "lambda:CreateFunctionUrlConfig",
-        "lambda:UpdateFunctionUrlConfig",
-        "lambda:DeleteFunctionUrlConfig",
-        "lambda:GetFunctionUrlConfig",
-        "lambda:CreateEventSourceMapping",
-        "lambda:UpdateEventSourceMapping",
-        "lambda:DeleteEventSourceMapping",
-        "lambda:GetEventSourceMapping",
-        "lambda:TagResource",
-        "lambda:ListTags",
-        "lambda:PublishVersion",
-        "lambda:ListFunctions"
-      ],
-      "Resource": "arn:aws:lambda:${AWS_REGION}:${ACCOUNT_ID}:function:*-payments-*"
+      "Action": "lambda:*",
+      "Resource": [
+        "arn:aws:lambda:${AWS_REGION}:${ACCOUNT_ID}:function:*-payments-*",
+        "arn:aws:lambda:${AWS_REGION}:${ACCOUNT_ID}:event-source-mapping:*"
+      ]
     },
     {
       "Sid": "IamRolesForLambda",

@@ -248,6 +248,7 @@ jobs:
           ASAAS_URL: https://api-sandbox.asaas.com
           WEBHOOK_URL: ${{ steps.get-url.outputs.api_url }}webhook/payments
         run: ./scripts/update-asaas-webhook.sh
+        continue-on-error: true
 
       - name: Deployment summary
         run: |
