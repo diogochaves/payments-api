@@ -125,7 +125,13 @@ DEPLOY_POLICY=$(cat <<EOF
         "s3:PutEncryptionConfiguration",
         "s3:GetEncryptionConfiguration",
         "s3:PutBucketVersioning",
-        "s3:GetBucketVersioning"
+        "s3:GetBucketVersioning",
+        "s3:PutBucketTagging",
+        "s3:GetBucketTagging",
+        "s3:TagResource",
+        "s3:UntagResource",
+        "s3:ListBucketVersions",
+        "s3:DeleteObjectVersion"
       ],
       "Resource": [
         "arn:aws:s3:::aws-sam-cli-managed-*",
