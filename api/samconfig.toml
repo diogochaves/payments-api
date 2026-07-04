@@ -20,6 +20,7 @@ s3_prefix               = "payments-api/staging"
 confirm_changeset       = false
 fail_on_empty_changeset = false
 capabilities            = "CAPABILITY_IAM CAPABILITY_NAMED_IAM"
+template_file           = "infra/lambda.yaml"
 
 parameter_overrides = [
   # Environment
@@ -61,6 +62,7 @@ s3_prefix               = "payments-api/production"
 confirm_changeset       = true
 fail_on_empty_changeset = false
 capabilities            = "CAPABILITY_IAM CAPABILITY_NAMED_IAM"
+template_file           = "infra/lambda.yaml"
 
 parameter_overrides = [
   "EnvironmentName=production",
