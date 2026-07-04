@@ -285,12 +285,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get API URL from deployed stack
-        id: get-url
-        run: |
-          # Re-authenticate for this job
-          echo "Waiting for AWS credentials..."
-
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:

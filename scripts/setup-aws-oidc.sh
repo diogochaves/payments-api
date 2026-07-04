@@ -46,7 +46,11 @@ else
 fi
 
 # ── 2. Create trust policy ────────────────────────────────────────────────────
-# Allow only the main branch of the target repo to assume the role.
+# Allows any workflow in the target repo to assume this role, including:
+#   - Jobs that use `environment: staging` (sub = repo:org/repo:environment:staging)
+#   - Jobs on any branch without an environment (sub = repo:org/repo:ref:refs/heads/*)
+# Using a wildcard here is intentional for a staging deploy role. Restrict to
+# specific branches or environments for production.
 TRUST_POLICY=$(cat <<EOF
 {
   "Version": "2012-10-17",
@@ -62,7 +66,7 @@ TRUST_POLICY=$(cat <<EOF
           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
         },
         "StringLike": {
-          "token.actions.githubusercontent.com:sub": "repo:${GITHUB_ORG}/${GITHUB_REPO}:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub": "repo:${GITHUB_ORG}/${GITHUB_REPO}:*"
         }
       }
     }
@@ -91,10 +95,13 @@ DEPLOY_POLICY=$(cat <<EOF
         "cloudformation:ExecuteChangeSet",
         "cloudformation:DeleteChangeSet",
         "cloudformation:GetTemplateSummary",
-        "cloudformation:ListStackResources"
+        "cloudformation:ListStackResources",
+        "cloudformation:ListStacks",
+        "cloudformation:ValidateTemplate"
       ],
       "Resource": [
-        "arn:aws:cloudformation:${AWS_REGION}:${ACCOUNT_ID}:stack/payments-api-*"
+        "arn:aws:cloudformation:${AWS_REGION}:${ACCOUNT_ID}:stack/payments-api-*",
+        "arn:aws:cloudformation:${AWS_REGION}:${ACCOUNT_ID}:stack/aws-sam-cli-managed-*"
       ]
     },
     {
@@ -110,11 +117,15 @@ DEPLOY_POLICY=$(cat <<EOF
         "s3:CreateBucket",
         "s3:PutObject",
         "s3:GetObject",
+        "s3:DeleteObject",
         "s3:ListBucket",
         "s3:GetBucketLocation",
         "s3:PutBucketPolicy",
+        "s3:GetBucketPolicy",
         "s3:PutEncryptionConfiguration",
-        "s3:PutBucketVersioning"
+        "s3:GetEncryptionConfiguration",
+        "s3:PutBucketVersioning",
+        "s3:GetBucketVersioning"
       ],
       "Resource": [
         "arn:aws:s3:::aws-sam-cli-managed-*",
@@ -143,7 +154,8 @@ DEPLOY_POLICY=$(cat <<EOF
         "lambda:GetEventSourceMapping",
         "lambda:TagResource",
         "lambda:ListTags",
-        "lambda:PublishVersion"
+        "lambda:PublishVersion",
+        "lambda:ListFunctions"
       ],
       "Resource": "arn:aws:lambda:${AWS_REGION}:${ACCOUNT_ID}:function:*-payments-*"
     },
@@ -161,7 +173,9 @@ DEPLOY_POLICY=$(cat <<EOF
         "iam:DeleteRolePolicy",
         "iam:GetRolePolicy",
         "iam:PassRole",
-        "iam:TagRole"
+        "iam:TagRole",
+        "iam:ListRolePolicies",
+        "iam:ListAttachedRolePolicies"
       ],
       "Resource": "arn:aws:iam::${ACCOUNT_ID}:role/*-payments-*"
     },
@@ -175,7 +189,8 @@ DEPLOY_POLICY=$(cat <<EOF
         "sqs:GetQueueAttributes",
         "sqs:GetQueueUrl",
         "sqs:ListQueues",
-        "sqs:TagQueue"
+        "sqs:TagQueue",
+        "sqs:ListQueueTags"
       ],
       "Resource": "arn:aws:sqs:${AWS_REGION}:${ACCOUNT_ID}:*-payments-*"
     },
@@ -191,9 +206,10 @@ DEPLOY_POLICY=$(cat <<EOF
         "dynamodb:DescribeTimeToLive",
         "dynamodb:ListTagsOfResource",
         "dynamodb:TagResource",
-        "dynamodb:UntagResource"
+        "dynamodb:UntagResource",
+        "dynamodb:ListTables"
       ],
-      "Resource": "arn:aws:dynamodb:${AWS_REGION}:${ACCOUNT_ID}:table/*"
+      "Resource": "arn:aws:dynamodb:${AWS_REGION}:${ACCOUNT_ID}:table/*-*Table"
     },
     {
       "Sid": "LogGroupsDeploy",
@@ -205,7 +221,9 @@ DEPLOY_POLICY=$(cat <<EOF
         "logs:PutRetentionPolicy",
         "logs:DeleteRetentionPolicy",
         "logs:ListTagsLogGroup",
-        "logs:TagLogGroup"
+        "logs:TagLogGroup",
+        "logs:ListTagsForResource",
+        "logs:TagResource"
       ],
       "Resource": "arn:aws:logs:${AWS_REGION}:${ACCOUNT_ID}:log-group:/aws/lambda/*-payments-*"
     }
@@ -243,4 +261,9 @@ echo "✓ Done. Copy this Role ARN into GitHub secret AWS_DEPLOY_ROLE_ARN:"
 echo ""
 echo "  ${ROLE_ARN}"
 echo ""
-echo "Then run: ./scripts/setup-github-secrets.sh <github-org>/<github-repo>"
+echo "Then run:"
+echo "  export AWS_DEPLOY_ROLE_ARN=\"${ROLE_ARN}\""
+echo "  export STAGING_ASAAS_TOKEN=\"<asaas-sandbox-api-key>\""
+echo "  export STAGING_ASAAS_WEBHOOK_TOKEN=\"<asaas-webhook-validation-token>\""
+echo "  export STAGING_API_TOKENS='[{\"token\":\"tok_x\",\"tokenId\":\"checkout\",\"tenantId\":\"my-tenant\",\"revoked\":false}]'"
+echo "  ./scripts/setup-github-secrets.sh <github-org>/<github-repo>"
