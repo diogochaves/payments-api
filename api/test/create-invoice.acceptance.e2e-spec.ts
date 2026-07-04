@@ -10,6 +10,7 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
 import { AsaasService } from '../src/infra/asaas.service';
+import { ApiTokenGuard } from '../src/modules/auth/api-token.guard';
 import { InvoiceRepository } from '../src/modules/invoices/services/invoice-repository.service';
 import { setupTestTables, truncateAllTables } from './dynamo-test-utils';
 
@@ -95,6 +96,8 @@ describe('Criar Invoice (acceptance)', () => {
     })
       .overrideProvider(AsaasService)
       .useValue(asaas)
+      .overrideGuard(ApiTokenGuard)
+      .useValue({ canActivate: () => true })
       .compile();
 
     app = moduleFixture.createNestApplication();
@@ -1076,6 +1079,8 @@ describe('Confirmar Pagamento com Dynamo (acceptance)', () => {
     })
       .overrideProvider(AsaasService)
       .useValue(new AsaasServiceStub())
+      .overrideGuard(ApiTokenGuard)
+      .useValue({ canActivate: () => true })
       .compile();
 
     app = moduleFixture.createNestApplication();
