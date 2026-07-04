@@ -27,7 +27,10 @@ export class WebhookRepository {
   constructor(private readonly dynamo: DynamoService) {}
 
   async save(record: WebhookRecord): Promise<void> {
-    await this.dynamo.putItem(TABLE, record as unknown as Parameters<DynamoService['putItem']>[1]);
+    await this.dynamo.putItem(
+      TABLE,
+      record as unknown as Parameters<DynamoService['putItem']>[1],
+    );
   }
 
   async findByTokenId(tokenId: string): Promise<WebhookRecord[]> {
@@ -37,10 +40,15 @@ export class WebhookRepository {
       'PK',
       `TOKEN#${tokenId}`,
     );
-    return items.filter((i) => (i as unknown as WebhookRecord).active) as unknown as WebhookRecord[];
+    return items.filter(
+      (i) => (i as unknown as WebhookRecord).active,
+    ) as unknown as WebhookRecord[];
   }
 
-  async findOne(tokenId: string, webhookId: string): Promise<WebhookRecord | undefined> {
+  async findOne(
+    tokenId: string,
+    webhookId: string,
+  ): Promise<WebhookRecord | undefined> {
     const item = await this.dynamo.getItem(
       TABLE,
       `TOKEN#${tokenId}`,
@@ -65,9 +73,14 @@ export class WebhookRepository {
   }
 
   async deactivate(tokenId: string, webhookId: string): Promise<void> {
-    await this.dynamo.updateItem(TABLE, `TOKEN#${tokenId}`, `WEBHOOK#${webhookId}`, {
-      active: false,
-      updatedAt: new Date().toISOString(),
-    });
+    await this.dynamo.updateItem(
+      TABLE,
+      `TOKEN#${tokenId}`,
+      `WEBHOOK#${webhookId}`,
+      {
+        active: false,
+        updatedAt: new Date().toISOString(),
+      },
+    );
   }
 }

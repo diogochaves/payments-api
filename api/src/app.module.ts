@@ -32,7 +32,7 @@ const usePinoTransport =
             '0.0.1',
           env: process.env.DD_ENV ?? process.env.NODE_ENV ?? 'development',
         },
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
         mixin: ddTraceMixin,
         genReqId: (req: IncomingMessage) =>
           (req.headers['x-correlation-id'] as string | undefined) ??

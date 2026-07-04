@@ -10,6 +10,11 @@ import { AuthModule } from '../auth/auth.module';
 @Module({
   imports: [EventEmitterModule, AuthModule],
   controllers: [WebhookConfigController],
-  providers: [WebhookService, WebhookRepository, WebhookDeliveryService, DynamoService],
+  providers: [
+    WebhookService,
+    WebhookRepository,
+    WebhookDeliveryService,
+    DynamoService,
+  ],
 })
 export class WebhooksModule {}

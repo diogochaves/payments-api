@@ -55,7 +55,8 @@ describe('Criar Invoice (acceptance)', () => {
   let emitSpy: jest.SpyInstance;
 
   beforeAll(async () => {
-    process.env.AWS_DYNAMODB_ENDPOINT ??= 'http://localhost.localstack.cloud:4566';
+    process.env.AWS_DYNAMODB_ENDPOINT ??=
+      'http://localhost.localstack.cloud:4566';
     await setupTestTables();
   });
 
@@ -1037,7 +1038,8 @@ describe('Confirmar Pagamento com Dynamo (acceptance)', () => {
   let repository: InvoiceRepository;
 
   beforeAll(async () => {
-    process.env.AWS_DYNAMODB_ENDPOINT ??= 'http://localhost.localstack.cloud:4566';
+    process.env.AWS_DYNAMODB_ENDPOINT ??=
+      'http://localhost.localstack.cloud:4566';
     await setupTestTables();
   });
 

@@ -8,7 +8,8 @@ import {
 } from '../types/invoice.types';
 
 const PAYMENTS_TABLE = process.env.PAYMENTS_TABLE ?? 'PaymentsTable';
-const TRANSACTIONS_TABLE = process.env.TRANSACTIONS_TABLE ?? 'TransactionsTable';
+const TRANSACTIONS_TABLE =
+  process.env.TRANSACTIONS_TABLE ?? 'TransactionsTable';
 const CUSTOMERS_TABLE = process.env.CUSTOMERS_TABLE ?? 'CustomersTable';
 
 @Injectable()

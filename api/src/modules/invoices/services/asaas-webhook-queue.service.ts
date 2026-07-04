@@ -48,7 +48,9 @@ export class AsaasWebhookQueueService {
     const queueUrl = process.env.WEBHOOK_QUEUE_URL;
 
     if (!queueUrl) {
-      throw new ServiceUnavailableException('WEBHOOK_QUEUE_URL is not configured');
+      throw new ServiceUnavailableException(
+        'WEBHOOK_QUEUE_URL is not configured',
+      );
     }
 
     const message: QueuedAsaasWebhookMessage = {

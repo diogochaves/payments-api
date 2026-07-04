@@ -1,4 +1,7 @@
-export type WebhookEventType = 'invoice.created' | 'invoice.confirmed' | 'invoice.cancelled';
+export type WebhookEventType =
+  | 'invoice.created'
+  | 'invoice.confirmed'
+  | 'invoice.cancelled';
 
 export class CreateWebhookDto {
   url: string;

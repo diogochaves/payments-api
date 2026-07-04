@@ -10,7 +10,8 @@ function makeClient() {
   return new DynamoDBClient({
     region: 'us-east-1',
     endpoint:
-      process.env.AWS_DYNAMODB_ENDPOINT ?? 'http://localhost.localstack.cloud:4566',
+      process.env.AWS_DYNAMODB_ENDPOINT ??
+      'http://localhost.localstack.cloud:4566',
     credentials: { accessKeyId: 'test', secretAccessKey: 'test' },
   });
 }

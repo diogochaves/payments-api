@@ -30,14 +30,18 @@ export class WebhookConfigController {
   ) {
     const tokenId = req['tokenId'] as string;
     const tenantId = req['tenantId'] as string;
-    return this.webhookService.register(tokenId, tenantId, dto, correlationId ?? 'unknown');
+    return this.webhookService.register(
+      tokenId,
+      tenantId,
+      dto,
+      correlationId ?? 'unknown',
+    );
   }
 
   @Get()
   async list(@Req() req: Request) {
     const tokenId = req['tokenId'] as string;
-    const tenantId = req['tenantId'] as string;
-    return this.webhookService.list(tokenId, tenantId);
+    return this.webhookService.list(tokenId);
   }
 
   @Delete(':webhookId')
@@ -49,7 +53,12 @@ export class WebhookConfigController {
   ) {
     const tokenId = req['tokenId'] as string;
     const tenantId = req['tenantId'] as string;
-    await this.webhookService.remove(tokenId, tenantId, webhookId, correlationId ?? 'unknown');
+    await this.webhookService.remove(
+      tokenId,
+      tenantId,
+      webhookId,
+      correlationId ?? 'unknown',
+    );
     return { removed: true, webhookId };
   }
 }

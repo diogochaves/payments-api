@@ -1,4 +1,8 @@
-import { Injectable, UnprocessableEntityException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  UnprocessableEntityException,
+  NotFoundException,
+} from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { randomBytes, randomUUID } from 'crypto';
 import type { CreateWebhookDto } from '../dto/create-webhook.dto';
@@ -24,7 +28,9 @@ export class WebhookService {
     this.validateUrl(dto.url);
 
     if (!dto.events || dto.events.length === 0) {
-      throw new UnprocessableEntityException('events must contain at least one value');
+      throw new UnprocessableEntityException(
+        'events must contain at least one value',
+      );
     }
 
     const count = await this.repository.countByTokenId(tokenId);
@@ -70,8 +76,9 @@ export class WebhookService {
     return { ...record, secret };
   }
 
-  async list(tokenId: string, tenantId: string): Promise<WebhookResponseDto[]> {
+  async list(tokenId: string): Promise<WebhookResponseDto[]> {
     const records = await this.repository.findByTokenId(tokenId);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return records.map(({ secret: _secret, ...rest }) => ({ ...rest }));
   }
 

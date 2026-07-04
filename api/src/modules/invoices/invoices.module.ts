@@ -41,7 +41,11 @@ import { AuthModule } from '../auth/auth.module';
  */
 @Module({
   imports: [EventEmitterModule, AuthModule],
-  controllers: [InvoiceController, AsaasWebhookController, AsaasSandboxController],
+  controllers: [
+    InvoiceController,
+    AsaasWebhookController,
+    AsaasSandboxController,
+  ],
   providers: [
     InvoiceService,
     DynamoService,

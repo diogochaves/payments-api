@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { createHmac, randomUUID } from 'crypto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { WebhookRepository } from './webhook-repository.service';
+import { WebhookRepository, WebhookRecord } from './webhook-repository.service';
 import type { WebhookEventType } from '../dto/create-webhook.dto';
 
 interface PaymentConfirmedEvent {
@@ -68,16 +68,22 @@ export class WebhookDeliveryService {
     tenantId: string,
     payload: Record<string, unknown>,
   ): Promise<void> {
-    let webhooks: Awaited<ReturnType<WebhookRepository['findActiveByTenantId']>>;
+    let webhooks: WebhookRecord[];
 
     try {
       webhooks = await this.repository.findActiveByTenantId(tenantId);
-    } catch (err) {
-      this.logger.error({ msg: 'webhook.delivery: failed to load webhooks', tenantId, err });
+    } catch (err: unknown) {
+      this.logger.error({
+        msg: 'webhook.delivery: failed to load webhooks',
+        tenantId,
+        err: err instanceof Error ? err.message : String(err),
+      });
       return;
     }
 
-    const eligible = webhooks.filter((wh) => wh.events.includes(eventType));
+    const eligible: WebhookRecord[] = webhooks.filter((wh) =>
+      wh.events.includes(eventType),
+    );
 
     for (const webhook of eligible) {
       const deliveryId = randomUUID();
@@ -94,7 +100,12 @@ export class WebhookDeliveryService {
       const start = Date.now();
 
       try {
-        const response = await this.postWithTimeout(webhook.url, body, signature, deliveryId);
+        const response = await this.postWithTimeout(
+          webhook.url,
+          body,
+          signature,
+          deliveryId,
+        );
         const durationMs = Date.now() - start;
 
         if (response.ok) {
