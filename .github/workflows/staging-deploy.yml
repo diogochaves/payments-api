@@ -145,17 +145,6 @@ jobs:
         working-directory: api
         run: npm run build
 
-      - name: Configure AWS credentials (OIDC — no long-lived keys)
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Setup SAM CLI
-        uses: aws-actions/setup-sam@v2
-        with:
-          use-installer: true
-
       # ── Validate required secrets are present ───────────────────────────────
       - name: Validate required secrets
         env:
@@ -177,6 +166,17 @@ jobs:
             exit 1
           fi
           echo "All required secrets are present."
+
+      - name: Configure AWS credentials (OIDC — no long-lived keys)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup SAM CLI
+        uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
 
       # ── DynamoDB Tables ──────────────────────────────────────────────────────
       # Deployed as a separate stack so tables survive Lambda stack re-deploys.
