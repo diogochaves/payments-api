@@ -327,7 +327,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub "${EnvironmentName}-payments-api"
-      CodeUri: dist/
+      CodeUri: ../dist/
       Handler: lambda.handler
       Role: !GetAtt ApiFunctionRole.Arn
       Layers: !If
@@ -358,7 +358,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !Sub "${EnvironmentName}-payments-webhook-worker"
-      CodeUri: dist/
+      CodeUri: ../dist/
       Handler: webhook-worker.handler
       Role: !GetAtt WebhookWorkerRole.Arn
       Timeout: 30
