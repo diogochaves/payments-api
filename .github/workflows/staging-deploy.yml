@@ -21,6 +21,7 @@ on:
   push:
     branches:
       - main
+      - chore/organize-agent-prodops-context
   workflow_dispatch:
 
 # Only one staging deploy at a time. Never cancel mid-deploy.
