@@ -179,6 +179,8 @@ jobs:
 
       # ── DynamoDB Tables ──────────────────────────────────────────────────────
       # Deployed as a separate stack so tables survive Lambda stack re-deploys.
+      # `aws cloudformation deploy` is synchronous — it waits for the stack to
+      # reach CREATE_COMPLETE or UPDATE_COMPLETE before returning. No extra wait.
       - name: Deploy DynamoDB tables
         run: |
           aws cloudformation deploy \
@@ -194,11 +196,6 @@ jobs:
               DeployedBy=github-actions \
               GitSha=${{ github.sha }} \
               GitBranch=${{ github.ref_name }}
-
-          # Wait until all table updates are complete before deploying Lambda
-          aws cloudformation wait stack-update-complete \
-            --region "${{ env.AWS_REGION }}" \
-            --stack-name "${{ env.DYNAMO_STACK }}" 2>/dev/null || true
 
       # ── Lambda Application ───────────────────────────────────────────────────
       # All parameters below use REAL infrastructure — no mocks, no LocalStack.
