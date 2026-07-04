@@ -151,13 +151,11 @@ jobs:
           ASAAS_TOKEN: ${{ secrets.STAGING_ASAAS_TOKEN }}
           ASAAS_WEBHOOK_TOKEN: ${{ secrets.STAGING_ASAAS_WEBHOOK_TOKEN }}
           API_TOKENS: ${{ secrets.STAGING_API_TOKENS }}
-          DEPLOY_ROLE: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
         run: |
           MISSING=()
           [[ -z "$ASAAS_TOKEN" ]]        && MISSING+=("STAGING_ASAAS_TOKEN")
           [[ -z "$ASAAS_WEBHOOK_TOKEN" ]] && MISSING+=("STAGING_ASAAS_WEBHOOK_TOKEN")
           [[ -z "$API_TOKENS" ]]          && MISSING+=("STAGING_API_TOKENS")
-          [[ -z "$DEPLOY_ROLE" ]]         && MISSING+=("AWS_DEPLOY_ROLE_ARN")
           if [[ ${#MISSING[@]} -gt 0 ]]; then
             echo "ERROR: The following required secrets are not set:"
             printf '  - %s\n' "${MISSING[@]}"
@@ -167,10 +165,11 @@ jobs:
           fi
           echo "All required secrets are present."
 
+      # Role ARN is a resource identifier, not a credential — hardcoded is safe.
       - name: Configure AWS credentials (OIDC — no long-lived keys)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          role-to-assume: arn:aws:iam::985057277127:role/payments-api-github-deploy
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Setup SAM CLI
@@ -288,7 +287,7 @@ jobs:
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          role-to-assume: arn:aws:iam::985057277127:role/payments-api-github-deploy
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Resolve API URL
