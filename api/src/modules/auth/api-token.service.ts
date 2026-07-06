@@ -1,4 +1,5 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { TokenRepository } from './token.repository';
 
 export interface ApiTokenEntry {
   tokenId: string;
@@ -7,56 +8,24 @@ export interface ApiTokenEntry {
 }
 
 @Injectable()
-export class ApiTokenService implements OnModuleInit {
+export class ApiTokenService {
   private readonly logger = new Logger(ApiTokenService.name);
-  private readonly tokens = new Map<string, ApiTokenEntry>();
 
-  onModuleInit() {
-    this.loadTokens();
-  }
+  constructor(private readonly tokenRepository: TokenRepository) {}
 
-  private loadTokens(): void {
-    const raw = process.env.API_TOKENS;
-    if (raw) {
-      try {
-        const entries = JSON.parse(raw) as Array<{
-          token: string;
-          tokenId: string;
-          tenantId: string;
-          revoked?: boolean;
-        }>;
-        for (const entry of entries) {
-          this.tokens.set(entry.token, {
-            tokenId: entry.tokenId,
-            tenantId: entry.tenantId,
-            revoked: entry.revoked ?? false,
-          });
-        }
-        this.logger.log(
-          `Loaded ${entries.length} API token(s) from API_TOKENS`,
-        );
-      } catch {
-        this.logger.error(
-          'Failed to parse API_TOKENS env var — no tokens loaded from config',
-        );
-      }
-    }
-
+  async validate(rawToken: string): Promise<ApiTokenEntry | null> {
     const localToken = process.env.API_TOKEN_LOCAL;
-    if (localToken) {
-      this.tokens.set(localToken, {
-        tokenId: 'local-dev',
-        tenantId: 'local',
-        revoked: false,
-      });
-      this.logger.log('Local dev token registered (tokenId: local-dev)');
+    if (localToken && rawToken === localToken) {
+      this.logger.log('Local dev token accepted (tokenId: local-dev)');
+      return { tokenId: 'local-dev', tenantId: 'local', revoked: false };
     }
-  }
 
-  validate(rawToken: string): ApiTokenEntry | null {
-    const entry = this.tokens.get(rawToken);
-    if (!entry) return null;
-    if (entry.revoked) return null;
-    return entry;
+    const record = await this.tokenRepository.validate(rawToken);
+    if (!record) return null;
+    return {
+      tokenId: record.tokenId,
+      tenantId: record.tenantId,
+      revoked: record.revoked,
+    };
   }
 }

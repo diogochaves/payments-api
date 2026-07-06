@@ -101,8 +101,11 @@ jobs:
         run: |
           npx jest \
             --config ./test/jest-e2e.json \
-            test/create-invoice.acceptance.e2e-spec.ts \
-            --runInBand \
+            test/criar-invoice.e2e-spec.ts \
+            test/cancelar-invoice.e2e-spec.ts \
+            test/confirmar-pagamento.e2e-spec.ts \
+            test/api-token.acceptance.e2e-spec.ts \
+            --maxWorkers=1 \
             --json \
             --outputFile ./acceptance-report.json
 
@@ -153,12 +156,12 @@ jobs:
         env:
           ASAAS_TOKEN: ${{ secrets.STAGING_ASAAS_TOKEN }}
           ASAAS_WEBHOOK_TOKEN: ${{ secrets.STAGING_ASAAS_WEBHOOK_TOKEN }}
-          API_TOKENS: ${{ secrets.STAGING_API_TOKENS }}
+          ADMIN_SECRET: ${{ secrets.STAGING_ADMIN_SECRET }}
         run: |
           MISSING=()
           [[ -z "$ASAAS_TOKEN" ]]        && MISSING+=("STAGING_ASAAS_TOKEN")
           [[ -z "$ASAAS_WEBHOOK_TOKEN" ]] && MISSING+=("STAGING_ASAAS_WEBHOOK_TOKEN")
-          [[ -z "$API_TOKENS" ]]          && MISSING+=("STAGING_API_TOKENS")
+          [[ -z "$ADMIN_SECRET" ]]        && MISSING+=("STAGING_ADMIN_SECRET")
           if [[ ${#MISSING[@]} -gt 0 ]]; then
             echo "ERROR: The following required secrets are not set:"
             printf '  - %s\n' "${MISSING[@]}"
@@ -208,7 +211,7 @@ jobs:
         env:
           STAGING_ASAAS_TOKEN: ${{ secrets.STAGING_ASAAS_TOKEN }}
           STAGING_ASAAS_WEBHOOK_TOKEN: ${{ secrets.STAGING_ASAAS_WEBHOOK_TOKEN }}
-          STAGING_API_TOKENS: ${{ secrets.STAGING_API_TOKENS }}
+          STAGING_ADMIN_SECRET: ${{ secrets.STAGING_ADMIN_SECRET }}
         run: |
           sam deploy \
             --config-file samconfig.toml \
@@ -233,7 +236,7 @@ jobs:
               DatadogEnabled=false \
               AsaasToken="$STAGING_ASAAS_TOKEN" \
               AsaasWebhookToken="$STAGING_ASAAS_WEBHOOK_TOKEN" \
-              ApiTokens="$STAGING_API_TOKENS"
+              AdminSecret="$STAGING_ADMIN_SECRET"
 
       # ── Retrieve deployed API URL ────────────────────────────────────────────
       - name: Get API URL
@@ -280,6 +283,7 @@ jobs:
             echo "AsaasMock         = false    (real Asaas sandbox)"
             echo "WebhookProcessing = async    (real SQS)"
             echo "ApiTokenLocal     = (not set — local dev token does NOT work in staging)"
+            echo "AdminSecret       = (set — /admin/tokens endpoint active)"
             echo "\`\`\`"
           } >> "$GITHUB_STEP_SUMMARY"
 

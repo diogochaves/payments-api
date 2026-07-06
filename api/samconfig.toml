@@ -2,7 +2,7 @@ version = 0.1
 
 # ── Staging ──────────────────────────────────────────────────────────────────
 # All parameters below reflect REAL infrastructure — no mocks, no LocalStack.
-# Secrets (AsaasToken, AsaasWebhookToken, ApiTokens) are injected at deploy
+# Secrets (AsaasToken, AsaasWebhookToken, AdminSecret) are injected at deploy
 # time by the CI pipeline and must never be stored in this file.
 #
 # Deploy manually:
@@ -10,7 +10,7 @@ version = 0.1
 #     --parameter-overrides \
 #       AsaasToken="..." \
 #       AsaasWebhookToken="..." \
-#       ApiTokens='[{"token":"...","tokenId":"...","tenantId":"...","revoked":false}]'
+#       AdminSecret="..."
 # ─────────────────────────────────────────────────────────────────────────────
 [staging.deploy.parameters]
 stack_name              = "payments-api-staging"
@@ -52,7 +52,7 @@ parameter_overrides = [
 #     --parameter-overrides \
 #       AsaasToken="..." \
 #       AsaasWebhookToken="..." \
-#       ApiTokens='[...]'
+#       AdminSecret="..."
 # ─────────────────────────────────────────────────────────────────────────────
 [production.deploy.parameters]
 stack_name              = "payments-api-production"

@@ -18,6 +18,22 @@ type BillingType = 'BOLETO' | 'PIX' | 'CREDIT_CARD' | 'UNDEFINED';
 type Provider = 'ASAAS' | 'ITAU';
 type CreditCardFlow = 'HOSTED_INVOICE' | 'SAVED_CARD' | 'NEW_CARD';
 type RuntimeMode = 'LOCAL_MOCK' | 'ASAAS_SANDBOX_REAL' | 'LOCALSTACK';
+type DeployEnv = 'local' | 'staging';
+
+const ENV_PRESETS: Record<DeployEnv, { apiUrl: string; apiToken: string; label: string; badge: string }> = {
+  local: {
+    apiUrl: import.meta.env.VITE_LOCAL_API_URL ?? 'http://localhost:3011',
+    apiToken: import.meta.env.VITE_LOCAL_API_TOKEN ?? 'local-dev-token-insecure-do-not-use-in-prod',
+    label: 'Local',
+    badge: 'DEV',
+  },
+  staging: {
+    apiUrl: import.meta.env.VITE_STAGING_API_URL ?? 'https://oj2st2d44b7bseur6rcd3nl77y0wlqec.lambda-url.us-east-1.on.aws',
+    apiToken: import.meta.env.VITE_STAGING_API_TOKEN ?? '',
+    label: 'Staging AWS',
+    badge: 'STAGING',
+  },
+};
 type WebhookEvent =
   | 'PAYMENT_AWAITING_RISK_ANALYSIS'
   | 'PAYMENT_APPROVED_BY_RISK_ANALYSIS'
@@ -152,9 +168,10 @@ const initialNewCard: NewCardForm = {
 };
 
 function App() {
-  const [apiUrl, setApiUrl] = useState('http://localhost:3011');
+  const [deployEnv, setDeployEnv] = useState<DeployEnv>('local');
+  const [apiUrl, setApiUrl] = useState(ENV_PRESETS.local.apiUrl);
   const [runtimeMode, setRuntimeMode] = useState<RuntimeMode>('LOCAL_MOCK');
-  const [apiToken, setApiToken] = useState('local-dev-token-insecure-do-not-use-in-prod');
+  const [apiToken, setApiToken] = useState(ENV_PRESETS.local.apiToken);
   const [webhookToken, setWebhookToken] = useState('payments-api-local-webhook-token-0001');
   const [tenantId, setTenantId] = useState('magazine-siara');
   const [orderId, setOrderId] = useState(makeOrderId);
@@ -306,6 +323,30 @@ function App() {
   const cancelIdempotencyKey = `${lastInvoice?.orderId ?? orderId}:cancel`;
   const isCreditCard = billingType === 'CREDIT_CARD';
   const isRealAsaasSandbox = runtimeMode === 'ASAAS_SANDBOX_REAL';
+  const isStaging = deployEnv === 'staging';
+
+  const switchEnv = (env: DeployEnv) => {
+    const preset = ENV_PRESETS[env];
+    setDeployEnv(env);
+    setApiUrl(preset.apiUrl);
+    setApiToken(preset.apiToken);
+
+    if (env === 'staging') {
+      setRuntimeMode('ASAAS_SANDBOX_REAL');
+      setProvider('ASAAS');
+    } else {
+      setRuntimeMode('LOCAL_MOCK');
+    }
+
+    setResult(null);
+    setLastInvoice(null);
+    setConfirmationResult(null);
+    setSandboxConfirmationResult(null);
+    setCancelResult(null);
+    setQueueSnapshot(null);
+    setError(null);
+    setOrderId(makeOrderId());
+  };
 
   const updateRuntimeMode = (mode: RuntimeMode) => {
     setRuntimeMode(mode);
@@ -587,28 +628,45 @@ function App() {
   return (
     <main className="app-shell">
       <section className="toolbar">
-        <div>
+        <div className="toolbar-title">
           <p className="eyebrow">Payments API</p>
           <h1>Testador BDD de pagamentos</h1>
         </div>
 
-        <label className="api-field runtime-field">
-          <span>Runtime</span>
-          <select
-            value={runtimeMode}
-            onChange={(event) => updateRuntimeMode(event.target.value as RuntimeMode)}
-          >
-            <option value="LOCAL_MOCK">Local mock</option>
-            <option value="ASAAS_SANDBOX_REAL">Asaas Sandbox real</option>
-            <option value="LOCALSTACK">LocalStack</option>
-          </select>
-        </label>
-        <label className="api-field">
+        <div className="env-switcher" role="group" aria-label="Ambiente de destino">
+          {(Object.keys(ENV_PRESETS) as DeployEnv[]).map((env) => (
+            <button
+              key={env}
+              type="button"
+              className={`env-btn${deployEnv === env ? ' env-btn--active' : ''}`}
+              onClick={() => switchEnv(env)}
+            >
+              <span className={`env-badge env-badge--${env}`}>{ENV_PRESETS[env].badge}</span>
+              {ENV_PRESETS[env].label}
+            </button>
+          ))}
+        </div>
+
+        {!isStaging && (
+          <label className="api-field runtime-field">
+            <span>Runtime</span>
+            <select
+              value={runtimeMode}
+              onChange={(event) => updateRuntimeMode(event.target.value as RuntimeMode)}
+            >
+              <option value="LOCAL_MOCK">Local mock</option>
+              <option value="ASAAS_SANDBOX_REAL">Asaas Sandbox real</option>
+              <option value="LOCALSTACK">LocalStack</option>
+            </select>
+          </label>
+        )}
+        <label className="api-field api-field--url">
           <span>API URL</span>
           <input
             value={apiUrl}
             onChange={(event) => setApiUrl(event.target.value)}
             placeholder="http://localhost:3011"
+            readOnly={isStaging}
           />
         </label>
         <label className="api-field">
@@ -617,19 +675,35 @@ function App() {
             value={apiToken}
             onChange={(event) => setApiToken(event.target.value)}
             placeholder="X-Api-Token"
+            type={isStaging ? 'password' : 'text'}
           />
         </label>
-        <label className="api-field">
-          <span>Webhook token</span>
-          <input
-            value={webhookToken}
-            onChange={(event) => setWebhookToken(event.target.value)}
-            placeholder="ASAAS_WEBHOOK_TOKEN"
-          />
-        </label>
+        {!isStaging && (
+          <label className="api-field">
+            <span>Webhook token</span>
+            <input
+              value={webhookToken}
+              onChange={(event) => setWebhookToken(event.target.value)}
+              placeholder="ASAAS_WEBHOOK_TOKEN"
+            />
+          </label>
+        )}
       </section>
 
-      {isRealAsaasSandbox && (
+      {isStaging && (
+        <section className="operational-note operational-note--staging">
+          <div>
+            <span className="env-badge env-badge--staging">STAGING</span>
+            <strong>Lambda AWS — us-east-1 · payments-api-staging</strong>
+          </div>
+          <p>
+            Conectado à infraestrutura real na AWS. Webhooks simulados desabilitados —
+            use a Sandbox da Asaas para disparar eventos reais. Fila SQS ativa.
+          </p>
+        </section>
+      )}
+
+      {!isStaging && isRealAsaasSandbox && (
         <section className="operational-note">
           <div>
             <span>Asaas Sandbox real</span>
@@ -1213,10 +1287,10 @@ function App() {
               className="primary-button"
               type="button"
               onClick={confirmPayment}
-              disabled={!confirmationPayload || isConfirming || isRealAsaasSandbox}
+              disabled={!confirmationPayload || isConfirming || isRealAsaasSandbox || isStaging}
             >
               {isConfirming ? <Loader2 className="spin" size={18} /> : <CheckCircle2 size={18} />}
-              {isRealAsaasSandbox ? 'Webhook via Asaas' : 'Enviar webhook'}
+              {isStaging ? 'Webhook via Asaas (real)' : isRealAsaasSandbox ? 'Webhook via Asaas' : 'Enviar webhook'}
             </button>
           </div>
 

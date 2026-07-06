@@ -64,13 +64,13 @@ Parameters:
     AllowedValues: [async, sync]
 
   # ── API Tokens ─────────────────────────────────────────────────────────────
-  ApiTokens:
+  AdminSecret:
     Type: String
     Default: ''
     NoEcho: true
     Description: >
-      JSON array of API tokens. Format:
-      [{"token":"tok_x","tokenId":"checkout","tenantId":"my-tenant","revoked":false}]
+      Secret for the X-Admin-Secret header on /admin/tokens endpoints.
+      Leave empty to disable the admin API entirely.
   ApiTokenLocal:
     Type: String
     Default: ''
@@ -86,7 +86,7 @@ Conditions:
   HasAwsDynamoDbEndpoint:   !Not [!Equals [!Ref AwsDynamoDbEndpoint, '']]
   HasAsaasToken:            !Not [!Equals [!Ref AsaasToken, '']]
   HasAsaasWebhookToken:     !Not [!Equals [!Ref AsaasWebhookToken, '']]
-  HasApiTokens:             !Not [!Equals [!Ref ApiTokens, '']]
+  HasAdminSecret:           !Not [!Equals [!Ref AdminSecret, '']]
   HasApiTokenLocal:         !Not [!Equals [!Ref ApiTokenLocal, '']]
   UseDatadogExtension:
     !And [!Condition IsDatadogEnabled, !Condition HasDatadogExtensionLayer]
@@ -156,9 +156,9 @@ Globals:
         WEBHOOK_DLQ_URL: !Ref WebhookDeadLetterQueue
 
         # API Tokens
-        API_TOKENS: !If
-          - HasApiTokens
-          - !Ref ApiTokens
+        ADMIN_SECRET: !If
+          - HasAdminSecret
+          - !Ref AdminSecret
           - !Ref AWS::NoValue
         API_TOKEN_LOCAL: !If
           - HasApiTokenLocal

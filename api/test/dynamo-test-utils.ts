@@ -5,15 +5,30 @@ import {
   DynamoDBClient,
   ScanCommand,
 } from '@aws-sdk/client-dynamodb';
+import { NodeHttpHandler } from '@smithy/node-http-handler';
 
-function makeClient() {
-  return new DynamoDBClient({
-    region: 'us-east-1',
-    endpoint:
-      process.env.AWS_DYNAMODB_ENDPOINT ??
-      'http://localhost.localstack.cloud:4566',
-    credentials: { accessKeyId: 'test', secretAccessKey: 'test' },
-  });
+let _client: DynamoDBClient | undefined;
+
+function getClient() {
+  if (!_client) {
+    _client = new DynamoDBClient({
+      region: 'us-east-1',
+      endpoint:
+        process.env.AWS_DYNAMODB_ENDPOINT ??
+        'http://localhost.localstack.cloud:4566',
+      credentials: { accessKeyId: 'test', secretAccessKey: 'test' },
+      requestHandler: new NodeHttpHandler({
+        requestTimeout: 8000,
+        throwOnRequestTimeout: true,
+      }),
+    });
+  }
+  return _client;
+}
+
+export function resetTestClient(): void {
+  _client?.destroy();
+  _client = undefined;
 }
 
 const TABLES: CreateTableCommand[] = [
@@ -138,7 +153,7 @@ const TABLES: CreateTableCommand[] = [
 ];
 
 export async function setupTestTables(): Promise<void> {
-  const client = makeClient();
+  const client = getClient();
   await Promise.all(
     TABLES.map(async (cmd) => {
       try {
@@ -151,8 +166,8 @@ export async function setupTestTables(): Promise<void> {
   );
 }
 
-export async function truncateAllTables(): Promise<void> {
-  const client = makeClient();
+async function doTruncate(): Promise<void> {
+  const client = getClient();
   const tableNames = TABLES.map((t) => t.input.TableName!);
 
   await Promise.all(
@@ -178,4 +193,16 @@ export async function truncateAllTables(): Promise<void> {
       } while (lastKey);
     }),
   );
+}
+
+export async function truncateAllTables(): Promise<void> {
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      await doTruncate();
+      return;
+    } catch (err) {
+      if (attempt === 3) throw err;
+      await new Promise((r) => setTimeout(r, attempt * 600));
+    }
+  }
 }

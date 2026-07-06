@@ -14,7 +14,7 @@
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
-    "test:acceptance": "jest --config ./test/jest-e2e.json test/create-invoice.acceptance.e2e-spec.ts --runInBand",
+    "test:acceptance": "jest --config ./test/jest-e2e.json test/criar-invoice.e2e-spec.ts test/cancelar-invoice.e2e-spec.ts test/confirmar-pagamento.e2e-spec.ts test/api-token.acceptance.e2e-spec.ts --maxWorkers=1 --forceExit",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",

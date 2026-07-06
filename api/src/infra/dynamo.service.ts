@@ -1,5 +1,6 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import {
+  DeleteCommand,
   DynamoDBDocumentClient,
   GetCommand,
   PutCommand,
@@ -71,6 +72,35 @@ export class DynamoService {
       }),
     );
     return result.Items ?? [];
+  }
+
+  async queryItems(
+    table: string,
+    pk: string,
+    skPrefix?: string,
+  ): Promise<Record<string, unknown>[]> {
+    const hasSk = Boolean(skPrefix);
+    const result = await this.client.send(
+      new QueryCommand({
+        TableName: table,
+        KeyConditionExpression: hasSk
+          ? '#pk = :pk AND begins_with(#sk, :sk)'
+          : '#pk = :pk',
+        ExpressionAttributeNames: hasSk
+          ? { '#pk': 'PK', '#sk': 'SK' }
+          : { '#pk': 'PK' },
+        ExpressionAttributeValues: hasSk
+          ? { ':pk': pk, ':sk': skPrefix }
+          : { ':pk': pk },
+      }),
+    );
+    return result.Items ?? [];
+  }
+
+  async deleteItem(table: string, pk: string, sk: string) {
+    return this.client.send(
+      new DeleteCommand({ TableName: table, Key: { PK: pk, SK: sk } }),
+    );
   }
 
   async updateItem(

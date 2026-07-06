@@ -42,10 +42,96 @@ button:disabled {
 .toolbar {
   align-items: end;
   display: flex;
-  gap: 24px;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  justify-content: flex-start;
   margin: 0 auto 22px;
   max-width: 1480px;
+}
+
+.toolbar-title {
+  flex: 0 0 auto;
+  margin-right: auto;
+}
+
+/* ── Environment switcher ────────────────────────────────────────────────────── */
+.env-switcher {
+  align-items: center;
+  background: #eef1f4;
+  border: 1px solid #cfd6dc;
+  border-radius: 10px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 4px;
+  padding: 4px;
+}
+
+.env-btn {
+  align-items: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  color: #5b6770;
+  display: inline-flex;
+  font-size: 0.9rem;
+  font-weight: 700;
+  gap: 8px;
+  min-height: 38px;
+  padding: 6px 14px;
+  transition: background 120ms, color 120ms, border-color 120ms;
+}
+
+.env-btn:hover {
+  background: #ffffff;
+  color: #172026;
+}
+
+.env-btn--active {
+  background: #ffffff;
+  border-color: #cfd6dc;
+  box-shadow: 0 1px 4px rgba(18, 24, 29, 0.1);
+  color: #172026;
+}
+
+.env-badge {
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  text-transform: uppercase;
+}
+
+.env-badge--local {
+  background: #e8f0fe;
+  color: #3b5bdb;
+}
+
+.env-badge--staging {
+  background: #fff3bf;
+  color: #7c4a03;
+}
+
+/* ── Staging operational note ────────────────────────────────────────────────── */
+.operational-note--staging {
+  background: #fffbf0;
+  border-color: #f0d070;
+  color: #5c3a00;
+}
+
+.operational-note--staging strong {
+  color: #5c3a00;
+}
+
+/* ── URL field wider ─────────────────────────────────────────────────────────── */
+.api-field--url {
+  max-width: 560px;
+  width: min(40vw, 560px);
+}
+
+input[readonly] {
+  background: #f4f7f8;
+  color: #5b6770;
 }
 
 .eyebrow {
