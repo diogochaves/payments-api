@@ -6,9 +6,9 @@ Bootstrap é o primeiro estágio do **CI Sync**. Prepara o ambiente de desenvolv
 
 ## Objetivo
 
-Garantir que o ambiente está pronto, a branch está criada, e os artefatos ProdOps relevantes foram lidos antes de escrever qualquer código ou teste.
+Entregar ao Hack uma branch limpa, o ambiente pronto, os artefatos ProdOps lidos e o contrato verificado.
 
-O Bootstrap não produz código. Produz **contexto**.
+O Bootstrap não produz código, não escreve testes, não lê código-fonte. Produz **contexto e condições para o Hack começar diretamente no TDD**.
 
 ---
 
@@ -87,6 +87,20 @@ Se não existir → criar o contrato antes de prosseguir para Hack.
 - [ ] Contrato verificável confirmado ou criado.
 
 ---
+
+## O que o Bootstrap entrega para o Hack
+
+Ao terminar o Bootstrap, o Hack pode começar **sem nenhuma preparação adicional**:
+
+| Entregável | Estado |
+|---|---|
+| Branch | Criada a partir de `main` atualizado |
+| Ambiente | LocalStack rodando, `.env` configurado, hooks ativos |
+| Artefatos ProdOps | OBC, BDD Feature, riscos — lidos e compreendidos |
+| Testes existentes | Inventariados — o Hack sabe de onde parte |
+| Contrato verificável | Confirmado ou criado — o Hack começa com ele em mãos |
+
+O Hack não re-lê artefatos. O Hack não verifica ambiente. O Hack começa no Red Bar.
 
 ## Próximo estágio
 
