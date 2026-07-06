@@ -112,15 +112,14 @@ Every Downstream item must have:
 capabilities tied to active experiments only. Do not create Downstream BDD
 Features or OBCs there, even as drafts.
 
-Downstream follows the full governed flow:
+Downstream follows the full governed flow, organized in two groups:
 
 ```text
-Hack
--> Sync
--> Finish
--> Ship
--> Validate
--> Promote
+CI Sync (trabalho local, síncrono)
+  Bootstrap → Hack → Sync → Finish
+
+CI Async (plataforma, pipelines, ambientes)
+  Ship → Validate → Promote
 ```
 
 Required Downstream sequence:
@@ -131,14 +130,13 @@ AGENTS.md
 -> Assessment
 -> Reliability Plan
 -> BDD Feature
--> Downstream Skill
--> Hack
--> Sync
--> Finish
--> Ship
--> Validate
--> Promote
--> Release Trail
+-> Bootstrap         (branch + contexto ProdOps)
+-> Hack              (ProdOps TDD + Commit Workflow)
+-> Sync              (consistência de artefatos)
+-> Finish            (Quality Gates + PR)
+-> Ship              (Preparation + Deployment)
+-> Validate          (runtime + SLO + observabilidade)
+-> Promote           (aprovação + Release Trail)
 ```
 
 Before changing production code or committed product artifacts:

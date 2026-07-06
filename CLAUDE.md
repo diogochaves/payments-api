@@ -15,6 +15,16 @@ Claude-specific behavior:
   the appropriate file under `prodops/` instead.
 - Use `skills/` for execution mode guidance and `prodops/` for product context.
 
+## Organização do ProdOps Delivery
+
+```
+CI Sync   → Bootstrap → Hack → Sync → Finish
+CI Async  → Ship → Validate → Promote
+```
+
+Bootstrap: branch + leitura de OBC/BDD Feature/testes existentes.
+Ship: duas famílias — Preparation (Build, Package, Version, Sign, SBOM, Publish) e Deployment (Deploy, Progressive Delivery, Rollout, Rollback). Build/Package/Publish são capabilities internas do Ship, não etapas principais.
+
 ## Hack Flow com ProdOps TDD (Claude sessions)
 
 O Hack Flow consome duas capabilities: **ProdOps TDD** (como implementar) e **Commit Workflow** (como validar e publicar).

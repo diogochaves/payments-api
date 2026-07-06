@@ -6,11 +6,23 @@
 
 **Reliability Plan** — The execution contract for a Downstream item. Defines risks, OBCs, SLOs, and mitigation actions. Lives in `prodops/assessment/reliability-plan/`.
 
-**Upstream** — The exploratory path. Goal: transform hypotheses into validated knowledge. Code is disposable until promoted to Downstream. Upstream selects flow steps as needed — there is no mandatory sequence. A typical Upstream cycle uses Hack + Sync; Ship, Validate, and Promote are used only when the experiment needs staging validation or a promotion decision. See [`prodops/upstream/README.md`](../upstream/README.md).
+**CI Sync** — O agrupamento síncrono do ProdOps Delivery. Representa o trabalho local, colaborativo e conduzido pelo engenheiro. Inclui Bootstrap, Hack, Sync e Finish. Produz: task fechada, PR com narrativa, evidências, commits organizados, validações locais executadas. Ver [`delivery/README.md`](../delivery/README.md).
 
-**Downstream** — The governed delivery path. Goal: ship with confidence using validated knowledge. Every item requires OBC + BDD Feature + Reliability Plan entry. Downstream requires the full flow: `Hack → Sync → Finish → Ship → Validate → Promote`. See [`prodops/downstream/README.md`](../downstream/README.md).
+**CI Async** — O agrupamento assíncrono do ProdOps Delivery. Representa o trabalho conduzido pela plataforma, pipelines e ambientes. Inclui Ship, Validate e Promote. Produz: artefato publicado, deploy realizado, validação em runtime, promoção controlada. Ver [`delivery/README.md`](../delivery/README.md).
 
-**Hack Flow** — The coding phase inside both Upstream and Downstream. Defined in [`delivery/hack-flow.md`](../delivery/hack-flow.md). Execution mechanics in [`skills/hack/`](../../skills/hack/).
+**Bootstrap** — O primeiro estágio do CI Sync. Prepara o ambiente, cria a branch e estabelece o contexto de produto (OBC, BDD Feature, testes existentes) antes de iniciar a implementação. Não produz código — produz contexto. Ver [`delivery/bootstrap-flow.md`](../delivery/bootstrap-flow.md).
+
+**Upstream** — The exploratory path. Goal: transform hypotheses into validated knowledge. Code is disposable until promoted to Downstream. Upstream selects flow steps as needed — there is no mandatory sequence. A typical Upstream cycle uses Bootstrap + Hack + Sync; Ship, Validate, and Promote are used only when the experiment needs staging validation or a promotion decision. See [`prodops/upstream/README.md`](../upstream/README.md).
+
+**Downstream** — The governed delivery path. Goal: ship with confidence using validated knowledge. Every item requires OBC + BDD Feature + Reliability Plan entry. Downstream requires the full flow: `Bootstrap → Hack → Sync → Finish → Ship → Validate → Promote`. See [`prodops/downstream/README.md`](../downstream/README.md).
+
+**Hack Flow** — The coding phase inside both Upstream and Downstream. Second stage of CI Sync, follows Bootstrap. Defined in [`delivery/hack-flow.md`](../delivery/hack-flow.md). Execution mechanics in [`skills/hack/`](../../skills/hack/).
+
+**Ship** — O primeiro estágio do CI Async. Transforma a implementação finalizada em artefato executável e conduz o deploy. Organizado em duas famílias: Preparation (Build, Package, Version, Sign, SBOM, Publish Artifact) e Deployment (Deploy, Progressive Delivery, Feature Flags, Rollout, Rollback, Infrastructure Validation). Build, Package e Publish são capabilities internas do Ship — não são etapas independentes do fluxo principal. Ver [`delivery/ship-validate-promote-flow.md`](../delivery/ship-validate-promote-flow.md).
+
+**Validate** — O segundo estágio do CI Async. Verifica a entrega em execução no ambiente alvo. Capabilities: Smoke Tests, Runtime Contract Validation, Synthetic Monitoring, Health Checks, Observability Validation, SLO Validation, Business Validation, Incident Signals. Ver [`delivery/ship-validate-promote-flow.md`](../delivery/ship-validate-promote-flow.md).
+
+**Promote** — O terceiro estágio do CI Async. Oficializa a evolução da versão com aprovação formal e evidência registrada. Capabilities: Promotion Gates, Environment Promotion, Release Approval, Release Trail, Operational Evidence, Release Documentation, Rollback Readiness. Ver [`delivery/ship-validate-promote-flow.md`](../delivery/ship-validate-promote-flow.md).
 
 **ProdOps TDD** — The practice used inside Hack Flow to produce observable, reliable code. Defined in [`delivery/practices/tdd-prodops.md`](../delivery/practices/tdd-prodops.md).
 

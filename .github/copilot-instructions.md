@@ -1,6 +1,13 @@
 # GitHub Copilot Instructions
 
-This project follows **ProdOps Delivery**. Read `AGENTS.md` for the full operating guide.
+This project follows **ProdOps Delivery**, organized in two groups:
+
+```
+CI Sync   → Bootstrap → Hack → Sync → Finish    (trabalho local, síncrono)
+CI Async  → Ship → Validate → Promote            (plataforma, pipelines, ambientes)
+```
+
+Read `AGENTS.md` for the full operating guide.
 
 ## Hack Flow (3 fases)
 

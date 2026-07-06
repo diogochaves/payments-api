@@ -1,6 +1,6 @@
 # Hack Flow
 
-Hack Flow is the coding phase of ProdOps Delivery. It is used in both Upstream and Downstream and produces implementation with tests, contracts, observability, and recorded evidence.
+Hack Flow é o segundo estágio do **CI Sync**, sucede o [Bootstrap](bootstrap-flow.md) e precede o Sync. É usado em Upstream e Downstream e produz implementação com testes, contratos, observabilidade e evidência registrada.
 
 ## Capabilities do Hack Flow
 

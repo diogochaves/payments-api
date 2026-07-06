@@ -1,8 +1,14 @@
 # Sync + Finish Flow
 
-Sync and Finish are the phases that follow Hack. They ensure the implementation is consistent with ProdOps artifacts, all quality gates pass, and the work is ready to ship.
+Sync e Finish são os dois últimos estágios do **CI Sync**. Garantem que a implementação está consistente com os artefatos ProdOps, que todos os Quality Gates passam, e que o trabalho está pronto para o CI Async.
 
-For execution mechanics, see [`skills/sync/`](../../skills/sync/) and [`skills/finish/`](../../skills/finish/).
+```
+CI Sync: Bootstrap → Hack → Sync → Finish
+                                        ↓
+CI Async:                             Ship → Validate → Promote
+```
+
+Para mecânica de execução, veja [`skills/sync/`](../../skills/sync/) e [`skills/finish/`](../../skills/finish/).
 
 ---
 
