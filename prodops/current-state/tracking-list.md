@@ -1,5 +1,10 @@
 # Tracking List
 
+> **Escopo:** itens de produto e engenharia derivados de experimentos Upstream e do Reliability Plan — decisões técnicas e de produto que precisam de refinamento antes de entrar em um OBC ou Iteration Plan.
+>
+> Existe uma segunda Tracking List de demandas operacionais e de stakeholders (Analytics, DataDog, ITSM) em:
+> [`prodops/assessment/reliability-plan/iteration-backlog.md`](../assessment/reliability-plan/iteration-backlog.md)
+
 | Item | Origem | Dimensao | Dono | Status | Proxima acao |
 | --- | --- | --- | --- | --- | --- |
 | Coletar evidencia de readiness da Feature Flag do novo gateway no Checkout. | EXP-004 Checkout Gateway Feature Flag Readiness | Release/Confiabilidade/Checkout | Tech Lead Checkout + Payments | P0 Aberto | Obter bug, owner, fix status, rollout targeting, auditoria, rollback e telemetria por pedido. |

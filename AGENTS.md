@@ -246,3 +246,79 @@ templates/downstream-release-entry.md
 ```
 
 Do not overwrite previous entries.
+
+## Hack Flow com ProdOps TDD
+
+O Hack Flow consome duas capabilities:
+
+```
+Hack Flow
+├── ProdOps TDD       → define como implementar (Contract First, Integration First, Observability First)
+└── Commit Workflow   → define como validar, versionar e publicar
+```
+
+### Fase 1 — Antes de implementar
+
+1. Localizar o contrato verificável: OBC em `prodops/assessment/reliability-plan/obcs/`, BDD Feature em `prodops/current-state/features/` ou `prodops/upstream/features/`, OpenAPI spec.
+2. Localizar testes existentes para o comportamento em `api/test/`.
+3. Se o contrato não existir: criá-lo antes de escrever qualquer teste ou código.
+4. Se a BDD Feature não existir para um item Downstream: criá-la em `prodops/current-state/features/` antes de escrever código.
+5. Não iniciar implementação sem critério de aceite.
+
+### Fase 2 — Durante a implementação
+
+**Contract First:** toda implementação parte de um contrato verificável. Sem contrato, sem código.
+
+**Integration First:** escrever o teste de integração antes do código. O teste verifica comportamento na fronteira HTTP ou de evento, não implementação interna. Executar e confirmar o Red Bar antes de implementar.
+
+**Observability First:** antes de implementar, definir quais logs serão emitidos, qual `correlationId` propagará, quais métricas serão registradas.
+
+**Confiabilidade:** verificar durante o Green Bar: timeout configurado para o provedor, idempotência, tratamento de exceções com resposta HTTP + `message`, degradação controlada, códigos HTTP semânticos.
+
+**Regras obrigatórias:**
+- Não usar `jest.fn()`, `jest.spyOn().mockXxx()`, nem `.overrideProvider()` em `api/test/`.
+- `ASAAS_MOCK=true` é permitido — é modo de comportamento do serviço real, não um mock.
+- Erros por falha de sistema externo (timeout, resposta malformada) pertencem a unit tests, não acceptance tests.
+- Não criar branches de código exclusivos para teste na produção.
+
+### Fase 3 — Após cada ciclo Red→Green→Refactor
+
+Consumir o **Commit Workflow**:
+
+```bash
+# Com hooks configurados (rodam automaticamente):
+git commit -m "<type>(<scope>): <summary>"
+
+# Sem hooks:
+cd api && npm run lint   # formatter + lint com --fix
+cd api && npm run test   # unit tests
+```
+
+Produzir evidências antes de fechar o Hack:
+- Append em `prodops/downstream/release-trail.md` (Downstream) ou `upstream-trail.md` (Upstream).
+- Evidências incluem: saída dos testes, saída do lint, resumo do que mudou.
+
+### Checklist de fechamento do Hack
+
+1. [ ] Contrato identificado ou criado.
+2. [ ] Red Bar confirmado.
+3. [ ] Lint passa (`npm run lint` exit 0).
+4. [ ] Formatter executado.
+5. [ ] Acceptance suite passa (`./scripts/test-acceptance.sh`).
+6. [ ] Observabilidade validada (logs, correlationId, sem PII).
+7. [ ] Confiabilidade verificada (timeout, idempotência, exceções, HTTP codes).
+8. [ ] Commits seguem Conventional Commits.
+9. [ ] Evidências registradas.
+
+### Handling conflicts
+
+When a new guideline conflicts with an existing rule in this repository (lint config, CI/CD workflow, test structure, architecture boundary), **preserve the existing rule** and record the conflict in a [Decision Trail](prodops/templates/decision-trail.md) entry. Do not silently override existing constraints.
+
+### Reference
+
+- Hack Flow sequence: [prodops/delivery/hack-flow.md](prodops/delivery/hack-flow.md)
+- ProdOps TDD practice: [prodops/delivery/practices/tdd-prodops.md](prodops/delivery/practices/tdd-prodops.md)
+- Commit Workflow: [prodops/commit-workflow/README.md](prodops/commit-workflow/README.md)
+- Definition of Done: [prodops/engineering/definition-of-done.md](prodops/engineering/definition-of-done.md)
+- Testing Policy: [prodops/engineering/testing-policy.md](prodops/engineering/testing-policy.md)
+- Reliability Policy: [prodops/engineering/reliability-policy.md](prodops/engineering/reliability-policy.md)

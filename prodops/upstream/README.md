@@ -208,6 +208,54 @@ Assessment decides whether a capability should:
 - wait for business decisions;
 - be discarded.
 
+## Revisão do Decision Package
+
+O Decision Package não é revisado automaticamente — ele precisa de uma decisão explícita de quem tem autoridade sobre o produto e a arquitetura.
+
+### Quando revisar
+
+Após o experimento atingir seus Exit Criteria (hipótese respondida, recomendação produzida, artefatos atualizados). Não revisar experimentos incompletos.
+
+### Quem participa
+
+| Papel | Responsabilidade na revisão |
+|---|---|
+| Product Manager | Valida o valor de negócio e decide se a capability entra no Iteration Plan |
+| Tech Lead | Valida viabilidade técnica, riscos arquiteturais e OBC |
+| Autor do experimento | Apresenta as descobertas e defende a recomendação |
+
+### O que é revisado
+
+O Decision Package completo (seções do `experiment.md`):
+- **Executive Summary** — entendimento compartilhado do que foi descoberto
+- **Recommended Decision** — a recomendação do autor (ver opções abaixo)
+- **Updated Risks** — novos riscos ou riscos mitigados
+- **Updated Opportunities** — oportunidades identificadas
+- **Updated Tracking Items** — itens que precisam entrar nas Tracking Lists
+- **Updated OBCs** — critérios de sucesso propostos
+- **Recommended Downstream Scope** — o que entra na próxima iteração, se aprovado
+
+### Possíveis saídas da revisão
+
+| Recomendação | O que acontece |
+|---|---|
+| **Promover** | Iniciar processo de promoção (ver seção "Processo de promoção para Downstream"). BDD Feature + OBC movidos. Capability entra no Iteration Plan. |
+| **Promover com restrição** | Subconjunto da capability é promovido. Partes restritas permanecem em Upstream para outro experimento. |
+| **Requer outro experimento** | Criar novo experimento com hipótese mais específica. Registrar a decisão no `upstream-trail.md` do experimento atual. |
+| **Aguardar decisão de negócio** | Bloquear o experimento na Tracking List com o decisor e a data esperada. Não abrir novo experimento até a decisão chegar. |
+| **Aguardar dependência externa** | Registrar a dependência no Reliability Plan e na Tracking List. Monitorar no Continuous Assessment. |
+| **Descartar** | Registrar o aprendizado em `prodops/upstream/learnings.md`. Fechar o experimento com justificativa no `upstream-trail.md`. |
+
+### Registro da decisão
+
+Independente da saída, registrar no `upstream-trail.md` do experimento:
+- Data da revisão
+- Participantes
+- Decisão tomada
+- Próximos passos
+
+Se a saída gerar mudança no Reliability Plan, atualizar `prodops/assessment/reliability-plan/risks.md` ou `opportunities.md` antes de fechar o ciclo.
+
 ---
 
 # Relationship with Downstream
@@ -223,6 +271,59 @@ A capability should only move to Downstream when:
 - the Reliability Plan has been updated;
 - the OBC is sufficiently defined;
 - the remaining uncertainty is acceptable.
+
+## Processo de promoção para Downstream
+
+A promoção é uma decisão explícita, não uma consequência automática de um experimento concluído.
+
+### Quem decide
+
+A decisão de promover é do Product Manager + Tech Lead responsáveis pela capability, com base no Decision Package produzido pelo experimento.
+
+### Critérios de promoção
+
+Antes de promover, confirmar que:
+
+1. O Decision Package do experimento tem recomendação clara (`Promover` ou `Promover com restrição`).
+2. O comportamento esperado está descrito em um BDD Feature em `prodops/upstream/features/` pronto para ser movido para `prodops/current-state/features/`.
+3. O OBC draft em `prodops/upstream/obcs/` tem critérios mensuráveis e pode ser movido para `prodops/assessment/reliability-plan/obcs/`.
+4. O Reliability Plan foi atualizado com os riscos e mitigation actions identificados no experimento.
+5. A incerteza remanescente é aceitável para entrar em Downstream com compromisso de entrega.
+
+### Passos da promoção
+
+```
+1. Mover BDD Feature:
+   prodops/upstream/features/<slug>.feature
+   → prodops/current-state/features/<slug>.feature
+
+2. Mover OBC:
+   prodops/upstream/obcs/<slug>.md
+   → prodops/assessment/reliability-plan/obcs/<slug>.md
+   (remover marcação "Upstream draft only")
+
+3. Criar ou atualizar entrada no Iteration Plan:
+   prodops/assessment/iteration-plan.md
+   (adicionar à tabela "Iteration Backlog identificado")
+
+4. Atualizar Tracking List se o item estava lá:
+   prodops/current-state/tracking-list.md
+   (mudar status para "Promovido para Downstream")
+
+5. Registrar a promoção no upstream-trail do experimento:
+   prodops/upstream/experiments/<NNN-slug>/upstream-trail.md
+
+6. Registrar no global upstream trail:
+   prodops/upstream/upstream-trail.md
+   (entrada de alto nível: o quê foi promovido e quando)
+```
+
+### O que NÃO é promoção
+
+- Mover código para produção sem mover os artefatos ProdOps.
+- Criar um OBC committed sem BDD Feature correspondente.
+- Iniciar implementação Downstream antes de o OBC estar em `assessment/reliability-plan/obcs/`.
+- Promover com recomendação `Não promover` ou `Requer outro experimento` no Decision Package.
 
 ---
 

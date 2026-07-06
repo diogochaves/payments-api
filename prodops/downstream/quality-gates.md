@@ -13,6 +13,8 @@ validation, shipping, and promotion.
 
 ## Test Quality Gates
 
+> **Fonte canônica do No Mocks Rule.** A definição técnica completa está em [`skills/hack/references/workflow.md § No Mocks Rule`](../../skills/hack/references/workflow.md). Este arquivo define o gate de enforcement — o que bloqueia merge.
+
 **No test doubles in acceptance tests.** `api/test/` must not contain `jest.fn()` service replacements, `jest.spyOn(...).mockXxx()` implementations, or `.overrideProvider()` calls. Violations block merge.
 
 **`ASAAS_MOCK=true` is allowed.** It is a designed behavior mode of the real `AsaasService`, not a test double. The real service is instantiated; the mock flag controls which branch runs.
