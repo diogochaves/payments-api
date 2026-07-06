@@ -83,12 +83,18 @@ Required evidence for code changes:
 - red-phase focused test failure, when TDD applies;
 - green focused test pass;
 - relevant broader tests when shared behavior changed;
-- lint result for the affected package when available.
+- lint clean (`npm run lint` exits 0) for the affected package — mandatory, not optional.
 
 Known repository commands:
 
-- API lint: run `npm run lint` inside `api/`.
-- API acceptance test: run `npm run test:acceptance` inside `api/` when payment
-  behavior or contracts change.
+- API lint+fix: `cd api && npm run lint` — runs ESLint with `--fix`; auto-corrects
+  Prettier and fixable ESLint violations; remaining errors must be fixed in source.
+  Run after green phase, after refactor, and before commit.
+- API acceptance test: `./scripts/test-acceptance.sh` or `cd api && npm run test:acceptance`
+  when payment behavior or contracts change.
 - Validation Workbench: no lint script exists; run `npm run build` inside
   `validation-workbench/` for TypeScript and Vite validation.
+
+Write code that satisfies the active lint rules from the start. See
+`references/workflow.md` section **Code Style — Active Lint Rules** for the
+Prettier and TypeScript constraints enforced in `api/`.

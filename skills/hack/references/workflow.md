@@ -22,6 +22,26 @@ HACK is the implementation phase. The agent repeats the work engineers did manua
 - Add abstractions only when they remove real duplication or match an existing local pattern.
 - For this payments-api repository, read `skills/payments-api-local-testing/references/repository-standards.md` before changing payment behavior.
 
+## Code Style — Active Lint Rules
+
+The `api/` package enforces these rules via `eslint.config.mjs`. Write code that satisfies them from the start; do not leave formatting to a post-edit fix pass.
+
+**Prettier** (auto-fixable — enforced via `eslint-plugin-prettier`):
+- Single quotes for strings.
+- Trailing commas in multi-line arrays, objects, and parameter lists.
+- No semicolons at end of statements (the project uses them — do not remove).
+- 2-space indentation.
+- Max line width: 100 characters. Break long argument lists and object literals across lines.
+- Opening brace on same line (`if (x) {`); closing brace on its own line.
+
+**TypeScript strict** (`tseslint.configs.recommendedTypeChecked`):
+- No `any` explicit type (rule is off, but avoid it anyway — use `unknown` or a concrete type).
+- No floating promises: every `async` call that returns a promise must be `await`ed or explicitly `void`-cast.
+- No unsafe argument: do not pass `any`-typed values to typed parameters.
+- Unused variables and imports cause lint errors — remove them immediately.
+
+**Practical rule:** after writing a file, mentally apply Prettier line-break rules before saving. Multi-line object literals need a trailing comma on the last property. Import lists with 3+ items should be multi-line.
+
 ## Clean Code
 
 - Keep the implementation cohesive and close to the behavior being changed.
@@ -73,10 +93,22 @@ Prohibited in `api/test/`:
 - Use existing test frameworks and scripts.
 - Run the narrowest meaningful test first.
 - Run broad validation before committing when shared behavior, contracts, or build config changed.
-- Run lint for the affected package after tests pass when a lint script exists.
-- In `api/`, run `npm run lint` when API source or API tests changed.
-- In `validation-workbench/`, no lint script exists; run `npm run build` for TypeScript and Vite validation.
-- If no lint command exists for the touched package, record that explicitly in the final evidence.
+
+**Lint is mandatory after every code change in `api/`.** Run it with `--fix` so Prettier and auto-fixable ESLint violations are corrected in place. TypeScript type errors are not auto-fixable — they must be resolved in the source.
+
+```sh
+# Inside api/
+npm run lint        # runs eslint "{src,apps,libs,test}/**/*.ts" --fix
+```
+
+Run lint:
+1. After implementing the green phase.
+2. After refactoring.
+3. Before committing — always.
+
+If lint exits non-zero after `--fix`, read the remaining errors, fix them in the source, and re-run until clean.
+
+In `validation-workbench/`, no lint script exists; run `npm run build` for TypeScript and Vite validation.
 
 ## Commit
 

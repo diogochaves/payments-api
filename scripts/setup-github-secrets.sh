@@ -9,7 +9,7 @@
 #   export AWS_DEPLOY_ROLE_ARN="arn:aws:iam::123456789:role/payments-api-github-deploy"
 #   export STAGING_ASAAS_TOKEN="your_asaas_sandbox_key"
 #   export STAGING_ASAAS_WEBHOOK_TOKEN="your_asaas_webhook_token"
-#   export STAGING_API_TOKENS='[{"token":"tok_x","tokenId":"checkout","tenantId":"my-tenant","revoked":false}]'
+#   export STAGING_ADMIN_SECRET="your_admin_api_secret"
 #
 #   ./scripts/setup-github-secrets.sh <github-org>/<github-repo>
 #
@@ -17,10 +17,10 @@
 #   - GitHub CLI (gh) installed and authenticated: gh auth login
 #
 # Secret placement:
-#   - AWS_DEPLOY_ROLE_ARN      → repo level (needed by smoke-test, which has no environment)
-#   - STAGING_ASAAS_TOKEN      → staging environment (only accessible to deploy-staging job)
+#   - AWS_DEPLOY_ROLE_ARN         → repo level (needed by smoke-test, which has no environment)
+#   - STAGING_ASAAS_TOKEN         → staging environment (only accessible to deploy-staging job)
 #   - STAGING_ASAAS_WEBHOOK_TOKEN → staging environment
-#   - STAGING_API_TOKENS       → staging environment
+#   - STAGING_ADMIN_SECRET        → staging environment (protects POST /admin/tokens)
 
 set -euo pipefail
 
@@ -52,7 +52,7 @@ MISSING=()
 [[ -z "${AWS_DEPLOY_ROLE_ARN:-}" ]]         && MISSING+=("AWS_DEPLOY_ROLE_ARN")
 [[ -z "${STAGING_ASAAS_TOKEN:-}" ]]          && MISSING+=("STAGING_ASAAS_TOKEN")
 [[ -z "${STAGING_ASAAS_WEBHOOK_TOKEN:-}" ]]  && MISSING+=("STAGING_ASAAS_WEBHOOK_TOKEN")
-[[ -z "${STAGING_API_TOKENS:-}" ]]           && MISSING+=("STAGING_API_TOKENS")
+[[ -z "${STAGING_ADMIN_SECRET:-}" ]]         && MISSING+=("STAGING_ADMIN_SECRET")
 
 if [[ ${#MISSING[@]} -gt 0 ]]; then
   echo "ERROR: The following environment variables are not set:"
@@ -95,9 +95,9 @@ printf '%s' "$STAGING_ASAAS_WEBHOOK_TOKEN" \
   | gh secret set STAGING_ASAAS_WEBHOOK_TOKEN --repo "$REPO" --env staging --body -
 echo "    ✓ STAGING_ASAAS_WEBHOOK_TOKEN"
 
-printf '%s' "$STAGING_API_TOKENS" \
-  | gh secret set STAGING_API_TOKENS --repo "$REPO" --env staging --body -
-echo "    ✓ STAGING_API_TOKENS"
+printf '%s' "$STAGING_ADMIN_SECRET" \
+  | gh secret set STAGING_ADMIN_SECRET --repo "$REPO" --env staging --body -
+echo "    ✓ STAGING_ADMIN_SECRET"
 
 echo ""
 echo "✓ All secrets configured. Summary:"
@@ -108,7 +108,7 @@ echo ""
 echo "  Staging environment secrets (deploy-staging job only):"
 echo "    STAGING_ASAAS_TOKEN"
 echo "    STAGING_ASAAS_WEBHOOK_TOKEN"
-echo "    STAGING_API_TOKENS"
+echo "    STAGING_ADMIN_SECRET"
 echo ""
 echo "Next steps:"
 echo "  1. Push to main (or current branch) to trigger the staging-deploy pipeline."
