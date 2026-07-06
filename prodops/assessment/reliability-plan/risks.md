@@ -130,6 +130,78 @@ Incidentes já ocorreram anteriormente e podem voltar a acontecer sem detecção
 
 ---
 
+# Riscos — Boleto Bancário
+
+## Risco B1 — bankSlipUrl ausente ou expirada
+
+### Descrição
+
+O provedor Asaas pode retornar a cobrança sem `bankSlipUrl` em cenários de instabilidade ou de boleto em processamento. O cliente recebe invoice sem conseguir acessar o boleto para pagamento.
+
+### Impacto
+
+- Alto: cliente não consegue realizar o pagamento; conversão perdida.
+- Suporte aumenta com chamados de "boleto não chegou".
+
+### Mitigações
+
+- Validar presença de `bankSlipUrl` na resposta do provedor antes de retornar status `OPEN`. Se ausente, marcar invoice como `FAILED` e logar `payment.boleto.creation_failed`.
+- Acceptance test deve verificar que `bankSlipUrl` está presente na resposta.
+
+---
+
+## Risco B2 — dueDate no passado ou ausente
+
+### Descrição
+
+O ecommerce pode enviar `dueDate` no passado ou omiti-la. A Asaas rejeita cobranças com `dueDate` passada com erro 400, mas a falha ocorre após uma chamada desnecessária ao provedor.
+
+### Impacto
+
+- Médio: chamada desnecessária ao provedor; resposta de erro menos clara ao ecommerce.
+
+### Mitigações
+
+- Validar `dueDate` no gateway antes de chamar o provedor: obrigatória e futura (≥ D+1).
+- Rejeitar com `400` e mensagem clara antes de qualquer chamada à Asaas.
+
+---
+
+## Risco B3 — Confirmação assíncrona confundida com falha
+
+### Descrição
+
+Diferente do Pix (confirmação imediata), o Boleto permanece em status `OPEN` por dias até o pagamento bancário. Sistemas que esperam confirmação síncrona podem tratar o status `OPEN` como falha.
+
+### Impacto
+
+- Médio: Checkout ou Order Management pode cancelar pedido prematuramente aguardando confirmação.
+
+### Mitigações
+
+- Documentar claramente no OBC e na BDD Feature que status `OPEN` é o estado correto após criação.
+- Confirmação de Boleto chega via webhook assíncrono (mesmo fluxo do Pix confirmado).
+- Runbook deve incluir diagnóstico de "boleto criado, pagamento não confirmado".
+
+---
+
+## Risco B4 — identificationField ausente na resposta
+
+### Descrição
+
+A linha digitável (`identificationField`) não está mapeada no `ProviderChargeResponse` nem no `InvoiceResponseDto` atual. A implementação exige extensão do contrato de resposta.
+
+### Impacto
+
+- Alto para implementação: campos precisam ser adicionados antes do primeiro test passar. Sem isso a BDD Feature falha no acceptance test.
+
+### Mitigações
+
+- Adicionar `identificationField` a `ProviderChargeResponse`, `InvoiceRecord` e `InvoiceResponseDto` antes de escrever o acceptance test.
+- O Bootstrap do Hack deve identificar essa dependência na leitura do OBC.
+
+---
+
 # Recomendações para o Reliability Plan
 
 ## Antes da release

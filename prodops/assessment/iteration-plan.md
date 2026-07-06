@@ -47,7 +47,7 @@ A decisao principal e reduzir o lote: entregar uma jornada menor, completa e com
 | Feature | Valor esperado | Dependencias | Estado atual |
 | --- | --- | --- | --- |
 | Criar invoice via Pix | Permite ao Checkout iniciar a jornada de pagamento de maior prioridade para a Release. | Checkout, Payments, provedor Asaas, Feature Flag. | Documentada em feature file e parcialmente implementada no codigo. |
-| Criar invoice via Boleto | Amplia meios de pagamento atendidos pelo novo gateway. | Checkout, Payments, regras de Boleto, provedor Asaas, notificacao. | Suportada genericamente por `billingType`, mas sem evidencia de jornada especifica completa. |
+| Criar invoice via Boleto | Amplia meios de pagamento atendidos pelo novo gateway. | Checkout, Payments, regras de Boleto, provedor Asaas, notificacao. | OBC criado em `prodops/assessment/reliability-plan/obcs/create-invoice-boleto.md`. BDD Feature criada em `prodops/current-state/features/create-invoice-boleto.feature`. Riscos documentados em `risks.md`. Pronta para entrar no fluxo Downstream. |
 | Confirmacao de pagamento | Permite ao Ecommerce reconhecer pagamento aprovado e seguir a jornada do cliente. | Payments, webhook do provedor, Ecommerce/Orders, Notification Service. | Documentada e implementada no codigo para eventos principais. |
 | Notificacao de status de pagamento | Fecha o ciclo de comunicacao com o cliente e reduz incerteza pos-pagamento. | Ecommerce, Notification Service, Payments. | Documentada como necessidade critica; integracao final nao aparece como funcionalidade completa neste repositorio. |
 | Cancelar invoice pendente | Evita que cobrancas indevidas continuem ativas. | Payments, provedor Asaas, regras de estado da invoice. | Documentada e implementada no codigo. |
@@ -64,7 +64,7 @@ A decisao principal e reduzir o lote: entregar uma jornada menor, completa e com
 | Confirmacao de pagamento | Entrou | Sem confirmacao, a invoice criada nao fecha a jornada de negocio. Essa funcionalidade reduz o principal risco de cliente pagar sem continuidade clara. | Ecommerce recebe sinal confiavel de pagamento aprovado. |
 
 | Notificacao de status de pagamento | Entrou como MVP | A notificacao e essencial para a experiencia do cliente, mas deve ficar restrita aos status da jornada principal da Release. | Cliente recebe informacao de status para o pagamento da jornada priorizada. |
-| Criar invoice via Boleto | Dividida | Boleto tem valor, mas amplia variacoes de regra e comunicacao. Entra apenas como preparacao de contrato/escopo reduzido se nao competir com Pix, confirmacao e notificacao. | Mantem opcao de evolucao para Boleto sem comprometer a previsibilidade da Release. |
+| Criar invoice via Boleto | Entrou | OBC e BDD Feature criados em 2026-07-06. Jornada especifica documentada com 8 cenarios, 4 riscos e contrato de resposta incluindo `bankSlipUrl` e `identificationField`. Dependencias de implementacao identificadas no OBC. Pronta para Bootstrap + Hack. | Checkout passa a oferecer Boleto como meio de pagamento via gateway Payments, com linha digitavel e link PDF retornados ao cliente. |
 | Validação de acesso por token de API | Entrou | Protege a Payments API de acessos não autorizados e habilita rastreabilidade por tenant desde o primeiro slice de produção. Chave local elimina fricção no ambiente de desenvolvimento. | Checkout e integrações passam a autenticar via token cadastrado; acesso local funciona sem dependência de secrets externos. |
 | Configuração de webhook por token de API | Entrou | Completa o contrato de integração: consumidores que usam o token de API precisam receber notificações de status sem polling. Dependência direta do token de API já entregue. | Checkout e integrações recebem `invoice.confirmed` e `invoice.cancelled` via HTTP POST com assinatura verificável. |
 | Cancelar invoice pendente | Adiada | Apesar de implementada, nao e essencial para validar a ativacao inicial do novo gateway no Checkout. Incluir como compromisso principal aumentaria superficie da Release. | Valor preservado para iteracao posterior com menor risco de dispersao. |
@@ -73,7 +73,7 @@ A decisao principal e reduzir o lote: entregar uma jornada menor, completa e com
 
 ## Trade-offs realizados
 
-Boleto ficou dividido porque amplia o escopo sem ser a menor fatia necessaria para validar o novo gateway. A decisao preserva o valor futuro de Boleto, mas evita que a Release dependa simultaneamente de duas jornadas de pagamento com regras distintas.
+Boleto estava dividido por falta de evidencia de jornada completa. Em 2026-07-06 o OBC, a BDD Feature e os riscos foram criados. A decisao foi revisada para "Entrou" — o contrato e os criterios de aceite estao definidos e a jornada pode seguir para Bootstrap + Hack sem competir com a estabilizacao do Pix, pois os artefatos delimitam claramente as regras e as dependencias de implementacao.
 
 Cancelamento ficou adiado porque, embora tenha valor operacional e esteja implementado, nao e a capacidade central para provar a nova jornada Checkout -> Payments -> confirmacao -> cliente informado. Ele pode ser retomado quando a ativacao principal estiver estabilizada.
 
