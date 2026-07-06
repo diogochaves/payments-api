@@ -55,9 +55,9 @@ O repositório materializa vários elementos do Framework ProdOps:
 | Product Reliability Engineering / PRE | O repositório inclui premortem, riscos, oportunidades, tracking list e reliability plan em [prodops/assessment](prodops/assessment). |
 | Reliability Plan | O plano de confiabilidade da release está em [prodops/assessment/reliability-plan/README.md](prodops/assessment/reliability-plan/README.md). |
 | SLOs / OpenSLO | SLOs iniciais existem em formato documental no Product Deck e Service Deck. Não há arquivo OpenSLO dedicado. |
-| Runbooks | Há seções de runbook nos decks e no premortem, mas ainda não há runbooks operacionais dedicados em arquivos separados. |
+| Runbooks | Runbooks operacionais em [prodops/operation/runbooks.md](prodops/operation/runbooks.md). Seções de runbook também existem nos decks e no premortem. |
 | Postmortem / Premortem | Existe um premortem em [prodops/assessment/premortem.md](prodops/assessment/premortem.md). Não há postmortems versionados no momento. |
-| Decision Trail / Release Trail | O Release Trail está em [prodops/downstream/release-trail.md](prodops/downstream/release-trail.md). Não há Decision Trail separado. |
+| Decision Trail / Release Trail | O Release Trail está em [prodops/downstream/release-trail.md](prodops/downstream/release-trail.md). O template de Decision Trail está em [prodops/templates/decision-trail.md](prodops/templates/decision-trail.md). |
 | GitOps / CI/CD / Delivery Flow | O workflow de release está em [.github/workflows/release.yml](.github/workflows/release.yml). Ele instala dependências, faz build, executa testes de aceitação e publica artefatos de release. |
 | Validation Workbench | O sandbox local está documentado pelos scripts em [api/scripts](api/scripts), pela skill local em [skills/payments-api-local-testing](skills/payments-api-local-testing) e pelo [validation-workbench](validation-workbench), que pertence à via Upstream. Algumas referências locais ainda citam o endpoint legado `/payments`; o fluxo atual do código fonte está concentrado em invoices. |
 | Testes automatizados | A suíte de aceitação principal está em [api/test/create-invoice.acceptance.e2e-spec.ts](api/test/create-invoice.acceptance.e2e-spec.ts). |
@@ -101,7 +101,7 @@ O repositório materializa vários elementos do Framework ProdOps:
 | [docs](docs) | Documentação complementar, features e materiais ProdOps anteriores. |
 | [prodops](prodops) | Camada principal de contexto ProdOps: estado atual, assessment, reliability plan e diligence. |
 | [.github/workflows/release.yml](.github/workflows/release.yml) | Pipeline de release no GitHub Actions. |
-| [.codex](.codex) | Instruções, skills e referências usadas para operar e evoluir este laboratório com agentes. |
+| [skills/](skills/) | Skills de execução usadas por agentes: hack, sync, finish, ship, validate, upstream. |
 
 ## Como Executar Localmente
 
