@@ -74,10 +74,25 @@ Use these standards to keep prompt iterations and code changes aligned with this
 ## Validation Pattern
 
 - Backend build: `cd api && npm run build`.
-- Backend acceptance test: `cd api && npm run test:acceptance`.
+- Backend acceptance test: `cd api && npm run test:acceptance` (requires LocalStack running).
 - Frontend build: `cd validation-workbench && npm run build`.
 - Local payload smoke test: `skills/payments-api-local-testing/scripts/validate-local-payloads.sh`.
-- CI release workflow builds `api`, runs acceptance tests with memory repository and Asaas mock, packages `dist` and metadata into a release artifact.
+- CI acceptance tests run against LocalStack (real DynamoDB API) with `ASAAS_MOCK=true`.
+- Local acceptance test setup: `./scripts/test-acceptance.sh` (starts LocalStack if needed, sets env vars, runs Jest).
+
+## Acceptance Test Rules
+
+These rules apply to everything under `api/test/` and are enforced by `prodops/downstream/quality-gates.md`.
+
+**No test doubles.** `jest.fn()` as a service replacement, `jest.spyOn(...).mockXxx()`, and `.overrideProvider()` are prohibited. Tests must use the real NestJS application with the real service instances.
+
+**`ASAAS_MOCK=true` is the Asaas boundary.** The real `AsaasService` is instantiated. The env flag controls which internal branch runs (mock returns / real HTTP). This is a designed service mode, not a test double.
+
+**Real DynamoDB.** LocalStack provides a real DynamoDB-compatible API. `INVOICE_REPOSITORY=memory` and `DYNAMO_MOCK=true` must not appear in acceptance test setup.
+
+**Shared app per file.** `beforeAll` creates the app once; `afterAll` tears it down; `beforeEach` truncates DynamoDB tables. App recreation per test is prohibited.
+
+**Error injection is a unit test concern.** Forcing provider failures (timeouts, bad responses) requires replacing real behavior and therefore belongs in service-layer unit tests, not acceptance specs.
 
 ## Prompt Guardrails
 

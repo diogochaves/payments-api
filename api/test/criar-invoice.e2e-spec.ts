@@ -3,11 +3,11 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
-import { AsaasService } from '../src/infra/asaas.service';
 import { InvoiceRepository } from '../src/modules/invoices/services/invoice-repository.service';
 import {
   buildTestFixture,
   teardownFixture,
+  TestFixture,
   TEST_API_TOKEN,
   TENANT_ID,
   truncateAllTables,
@@ -32,19 +32,18 @@ const BASE_PAYLOAD = {
 };
 
 describe('Criar Invoice', () => {
+  let fixture: TestFixture;
   let app: INestApplication<App>;
   let repository: InvoiceRepository;
-  let asaas: AsaasService;
 
   beforeAll(async () => {
-    const fixture = await buildTestFixture();
+    fixture = await buildTestFixture();
     app = fixture.app;
     repository = fixture.repository;
-    asaas = fixture.asaas;
   });
 
   afterAll(async () => {
-    if (app) await teardownFixture({ app, repository, asaas });
+    if (fixture) await teardownFixture(fixture);
   });
 
   beforeEach(async () => {
@@ -52,7 +51,6 @@ describe('Criar Invoice', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
     process.env.ENABLED_PAYMENT_PROVIDERS = 'ASAAS';
     process.env.DEFAULT_PAYMENT_PROVIDER = 'ASAAS';
     process.env.ASAAS_MOCK = 'true';
@@ -120,7 +118,10 @@ describe('Criar Invoice', () => {
         providerPaymentId: 'pay_mock_MS-100045',
       });
 
-      const saved = await repository.findInvoice(TENANT_ID, response.body.invoiceId);
+      const saved = await repository.findInvoice(
+        TENANT_ID,
+        response.body.invoiceId,
+      );
       expect(saved?.status).toBe('OPEN');
       expect(saved?.providerPaymentId).toBe('pay_mock_MS-100045');
     });
@@ -150,10 +151,17 @@ describe('Criar Invoice', () => {
         .post('/invoices')
         .set('X-Api-Token', TEST_API_TOKEN)
         .set('Idempotency-Key', 'MS-100045:tokenized')
-        .send({ ...BASE_PAYLOAD, billingType: 'CREDIT_CARD', creditCardToken: 'tok_xyz', remoteIp: '127.0.0.1' })
+        .send({
+          ...BASE_PAYLOAD,
+          billingType: 'CREDIT_CARD',
+          creditCardToken: 'tok_xyz',
+          remoteIp: '127.0.0.1',
+        })
         .expect(400);
 
-      expect(response.body.message).toContain('Hosted credit card flow does not accept card data fields');
+      expect(response.body.message).toContain(
+        'Hosted credit card flow does not accept card data fields',
+      );
     });
 
     it('rejeita provedor nao habilitado no ambiente', async () => {
@@ -167,85 +175,6 @@ describe('Criar Invoice', () => {
         .expect(400);
 
       expect(response.body.message).toBe('Provider ASAAS is not enabled');
-    });
-  });
-
-  describe('Falhas do provedor', () => {
-    it('retorna 503 em falha transiente do provedor de pagamento', async () => {
-      jest.spyOn(asaas, 'createCharge').mockRejectedValueOnce(new Error('timeout'));
-
-      const response = await request(app.getHttpServer())
-        .post('/invoices')
-        .set('X-Api-Token', TEST_API_TOKEN)
-        .set('Idempotency-Key', 'MS-100045:create')
-        .send(BASE_PAYLOAD)
-        .expect(503);
-
-      expect(response.body).toMatchObject({
-        message: 'Failed to create invoice on payment provider',
-        provider: 'ASAAS',
-        orderId: 'MS-100045',
-        detail: 'timeout',
-      });
-    });
-
-    it('retorna 503 quando provedor rejeita dados invalidos do cliente', async () => {
-      jest
-        .spyOn(asaas, 'createCustomer')
-        .mockRejectedValueOnce(new Error('invalid_mobilePhone: O celular informado é inválido.'));
-
-      const response = await request(app.getHttpServer())
-        .post('/invoices')
-        .set('X-Api-Token', TEST_API_TOKEN)
-        .set('Idempotency-Key', 'MS-100045:create')
-        .send(BASE_PAYLOAD)
-        .expect(503);
-
-      expect(response.body).toMatchObject({
-        message: 'Failed to create invoice on payment provider',
-        provider: 'ASAAS',
-        detail: 'invalid_mobilePhone: O celular informado é inválido.',
-      });
-      expect(JSON.stringify(response.body)).not.toContain('ASAAS_TOKEN');
-    });
-
-    it('retorna 503 quando provedor nao retorna identificador da cobranca', async () => {
-      jest.spyOn(asaas, 'createCharge').mockResolvedValueOnce({
-        id: '',
-        status: 'PENDING',
-        value: 159.9,
-        dueDate: '2027-12-31',
-        billingType: 'PIX',
-        externalReference: 'MS-100045',
-        invoiceUrl: 'https://sandbox.asaas.com/i/missing',
-        payload: {},
-      });
-
-      const response = await request(app.getHttpServer())
-        .post('/invoices')
-        .set('X-Api-Token', TEST_API_TOKEN)
-        .set('Idempotency-Key', 'MS-100045:create')
-        .send(BASE_PAYLOAD)
-        .expect(503);
-
-      expect(response.body.detail).toBe('provider_contract_violation: missing payment id');
-    });
-
-    it('mapeia cobranca ja confirmada na sandbox como conflito de negocio', async () => {
-      process.env.ASAAS_MOCK = 'false';
-      process.env.ASAAS_URL = 'https://api-sandbox.asaas.com';
-
-      jest
-        .spyOn(asaas, 'confirmSandboxPayment')
-        .mockRejectedValueOnce(
-          Object.assign(new Error('invalid_action: Cobrança já confirmada.'), { status: 400 }),
-        );
-
-      const response = await request(app.getHttpServer())
-        .post('/sandbox/asaas/payments/pay_already_confirmed/confirm')
-        .expect(409);
-
-      expect(response.body.message).toBe('invalid_action: Cobrança já confirmada.');
     });
   });
 });

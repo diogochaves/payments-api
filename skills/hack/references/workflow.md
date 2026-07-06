@@ -33,7 +33,7 @@ HACK is the implementation phase. The agent repeats the work engineers did manua
 
 ## TDD Cycle
 
-Use traditional TDD for behavior changes:
+Use classical TDD (Detroit school) for behavior changes. Classical TDD verifies observable state — HTTP responses and database state — not interactions or call sequences.
 
 1. Red: write or update a focused test that expresses the desired behavior.
 2. Run the focused test and confirm it fails for the expected behavioral reason.
@@ -49,6 +49,23 @@ Good TDD evidence includes:
 - The passing command from the green/refactor phase.
 
 Do not skip the red phase unless the task is documentation-only, mechanical cleanup, dependency maintenance, or an explicitly untestable operational change. If skipped, record why.
+
+## No Mocks Rule
+
+**Acceptance and integration tests never use test doubles.** This is an unconditional rule.
+
+Prohibited in `api/test/`:
+
+- `jest.fn()` as a service replacement
+- `jest.spyOn(...).mockImplementation()`, `.mockReturnValue()`, `.mockResolvedValue()`, `.mockRejectedValue()` and all `mockXxx` variants
+- `.overrideProvider()` in `Test.createTestingModule()`
+- Any class, object, or function that replaces a real owned service with a test-controlled substitute
+
+**`ASAAS_MOCK=true` is not a mock.** It is a designed behavior mode of the real `AsaasService`. The real service is instantiated and runs; it returns deterministic data via an internal branch rather than making HTTP calls. This is acceptable because it exercises the real code path.
+
+**Error paths that require external system failure** (provider timeout, provider returning malformed data, network errors) are not covered by acceptance tests. Those scenarios belong in focused unit or service-layer tests that can use test doubles because they test a single unit in isolation. Acceptance tests cover the contract visible at the HTTP boundary using only the real system.
+
+**Shared app per file.** Each acceptance test file creates the NestJS app once in `beforeAll` and tears it down in `afterAll`. Tables are truncated in `beforeEach`. Recreating the app per test is prohibited — it bypasses shared state that the real system maintains and makes test runs artificially expensive.
 
 ## Tests and Validation
 

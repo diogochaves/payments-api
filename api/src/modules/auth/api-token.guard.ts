@@ -24,13 +24,23 @@ export class ApiTokenGuard implements CanActivate {
     const method = req.method;
 
     if (!rawToken) {
-      this.emitRejected({ correlationId, path, method, reason: 'token_missing' });
+      this.emitRejected({
+        correlationId,
+        path,
+        method,
+        reason: 'token_missing',
+      });
       throw new UnauthorizedException('Missing X-Api-Token header');
     }
 
     const entry = await this.apiTokenService.validate(rawToken);
     if (!entry) {
-      this.emitRejected({ correlationId, path, method, reason: 'token_invalid' });
+      this.emitRejected({
+        correlationId,
+        path,
+        method,
+        reason: 'token_invalid',
+      });
       throw new UnauthorizedException('Invalid or revoked API token');
     }
 

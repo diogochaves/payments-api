@@ -1,72 +1,40 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { App } from 'supertest/types';
-import { AppModule } from '../src/app.module';
 import { AsaasService } from '../src/infra/asaas.service';
+import { InvoiceRepository } from '../src/modules/invoices/services/invoice-repository.service';
 import { TokenRepository } from '../src/modules/auth/token.repository';
-import { setupTestTables, truncateAllTables } from './dynamo-test-utils';
+import {
+  buildTestFixture,
+  teardownFixture,
+  truncateAllTables,
+} from './support/app-fixture';
 
-const ADMIN_SECRET = 'test-admin-secret-local';
+const ADMIN_SECRET = 'test-admin-secret';
 const TENANT_ID = 'tenant-token-tests';
-
-class AsaasServiceStub {
-  createCustomer = jest.fn(async (payload: { externalReference: string }) => ({
-    id: `cus_stub_${payload.externalReference}`,
-    object: 'customer',
-    ...payload,
-  }));
-  createCharge = jest.fn(async (payload: { externalReference: string; value: number }) => ({
-    id: `pay_stub_${payload.externalReference}`,
-    status: 'PENDING',
-    value: payload.value,
-    invoiceUrl: `https://sandbox.asaas.com/i/${payload.externalReference}`,
-    ...payload,
-  }));
-  cancelCharge = jest.fn(async (id: string) => ({ id, status: 'DELETED' }));
-  confirmSandboxPayment = jest.fn(async (id: string) => ({ id, status: 'CONFIRMED' }));
-}
 
 describe('API Token Management (acceptance)', () => {
   let app: INestApplication<App>;
+  let repository: InvoiceRepository;
+  let asaas: AsaasService;
   let tokenRepository: TokenRepository;
 
   beforeAll(async () => {
-    process.env.AWS_DYNAMODB_ENDPOINT ??=
-      'http://localhost.localstack.cloud:4566';
-    await setupTestTables();
+    const fixture = await buildTestFixture();
+    app = fixture.app;
+    repository = fixture.repository;
+    asaas = fixture.asaas;
+    tokenRepository = app.get(TokenRepository);
+  });
+
+  afterAll(async () => {
+    if (app) await teardownFixture({ app, repository, asaas });
   });
 
   beforeEach(async () => {
     await truncateAllTables();
-    process.env.ADMIN_SECRET = ADMIN_SECRET;
-    process.env.ENABLED_PAYMENT_PROVIDERS = 'ASAAS';
-    process.env.DEFAULT_PAYMENT_PROVIDER = 'ASAAS';
-    process.env.ASAAS_MOCK = 'true';
-    process.env.WEBHOOK_PROCESSING_MODE = 'sync';
-    delete process.env.API_TOKEN_LOCAL;
-
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    })
-      .overrideProvider(AsaasService)
-      .useValue(new AsaasServiceStub())
-      .compile();
-
-    app = moduleFixture.createNestApplication();
-    tokenRepository = moduleFixture.get(TokenRepository);
-    await app.init();
-  });
-
-  afterEach(async () => {
-    await app.close();
-    delete process.env.ADMIN_SECRET;
-    delete process.env.ENABLED_PAYMENT_PROVIDERS;
-    delete process.env.DEFAULT_PAYMENT_PROVIDER;
-    delete process.env.ASAAS_MOCK;
-    delete process.env.WEBHOOK_PROCESSING_MODE;
   });
 
   describe('Admin token endpoints', () => {
@@ -203,7 +171,11 @@ describe('API Token Management (acceptance)', () => {
         .post('/invoices')
         .set('x-api-token', 'local-dev-escape-hatch')
         .set('Idempotency-Key', 'local-dev-001')
-        .send({ ...invoicePayload, tenantId: 'local', orderId: 'LOCAL-DEV-001' })
+        .send({
+          ...invoicePayload,
+          tenantId: 'local',
+          orderId: 'LOCAL-DEV-001',
+        })
         .expect(201);
 
       delete process.env.API_TOKEN_LOCAL;

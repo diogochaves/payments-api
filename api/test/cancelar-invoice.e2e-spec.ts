@@ -52,10 +52,6 @@ describe('Cancelar Invoice', () => {
     await truncateAllTables();
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   async function criarInvoice(idempotencyKey = 'MS-100045:create') {
     return request(app.getHttpServer())
       .post('/invoices')
@@ -108,7 +104,10 @@ describe('Cancelar Invoice', () => {
   it('impede cancelamento apos pagamento confirmado', async () => {
     const created = await criarInvoice();
 
-    const existing = await repository.findInvoice(TENANT_ID, created.body.invoiceId);
+    const existing = await repository.findInvoice(
+      TENANT_ID,
+      created.body.invoiceId,
+    );
     await repository.updateInvoice(existing!, 'CONFIRMED');
 
     const response = await request(app.getHttpServer())
@@ -118,31 +117,18 @@ describe('Cancelar Invoice', () => {
       .set('Idempotency-Key', 'MS-100045:cancel')
       .expect(400);
 
-    expect(response.body.message).toBe('Invoice cancellation after confirmation requires refund flow');
-  });
-
-  it('exige reconciliacao operacional quando provedor informa cobranca inexistente', async () => {
-    const created = await criarInvoice();
-
-    jest
-      .spyOn(asaas, 'cancelCharge')
-      .mockRejectedValueOnce(Object.assign(new Error('payment not found'), { status: 404 }));
-
-    const response = await request(app.getHttpServer())
-      .delete(`/invoices/${created.body.invoiceId}`)
-      .set('X-Api-Token', TEST_API_TOKEN)
-      .set('X-Tenant-Id', TENANT_ID)
-      .set('Idempotency-Key', 'MS-100045:cancel')
-      .expect(409);
-
-    expect(response.body.message).toBe('Payment provider cancellation requires operational reconciliation');
-    expect(response.body.status).toBe('CANCEL_RECONCILIATION_REQUIRED');
+    expect(response.body.message).toBe(
+      'Invoice cancellation after confirmation requires refund flow',
+    );
   });
 
   it('confirma cancelamento quando webhook PAYMENT_DELETED chega apos solicitacao', async () => {
     const created = await criarInvoice();
 
-    const existing = await repository.findInvoice(TENANT_ID, created.body.invoiceId);
+    const existing = await repository.findInvoice(
+      TENANT_ID,
+      created.body.invoiceId,
+    );
     await repository.updateInvoice(existing!, 'CANCEL_REQUESTED');
 
     await request(app.getHttpServer())
@@ -159,11 +145,16 @@ describe('Cancelar Invoice', () => {
       })
       .expect(200);
 
-    const cancelled = await repository.findInvoice(TENANT_ID, created.body.invoiceId);
+    const cancelled = await repository.findInvoice(
+      TENANT_ID,
+      created.body.invoiceId,
+    );
     expect(cancelled?.status).toBe('CANCELLED');
 
     expect(
-      await repository.hasRawProviderEvent(`PAYMENT_DELETED:${created.body.providerPaymentId}`),
+      await repository.hasRawProviderEvent(
+        `PAYMENT_DELETED:${created.body.providerPaymentId}`,
+      ),
     ).toBe(true);
   });
 });

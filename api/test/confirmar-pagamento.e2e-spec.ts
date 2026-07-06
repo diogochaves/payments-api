@@ -52,7 +52,10 @@ describe('Confirmar Pagamento via Webhook', () => {
     await truncateAllTables();
   });
 
-  async function criarInvoice(idempotencyKey = 'MS-200045:create', payload = BASE_PAYLOAD) {
+  async function criarInvoice(
+    idempotencyKey = 'MS-200045:create',
+    payload = BASE_PAYLOAD,
+  ) {
     return request(app.getHttpServer())
       .post('/invoices')
       .set('X-Api-Token', TEST_API_TOKEN)
@@ -61,7 +64,10 @@ describe('Confirmar Pagamento via Webhook', () => {
       .expect(201);
   }
 
-  async function enviarWebhook(event: string, paymentOverrides: Record<string, unknown> = {}) {
+  async function enviarWebhook(
+    event: string,
+    paymentOverrides: Record<string, unknown> = {},
+  ) {
     const created = await criarInvoice();
     const payment = {
       id: created.body.providerPaymentId,
@@ -70,26 +76,36 @@ describe('Confirmar Pagamento via Webhook', () => {
       customer: 'cus_mock_customer-200',
       ...paymentOverrides,
     };
-    return { created, webhookResponse: await request(app.getHttpServer())
-      .post('/webhook/payments')
-      .set('asaas-access-token', WEBHOOK_SECRET)
-      .send({ event, payment })
+    return {
+      created,
+      webhookResponse: await request(app.getHttpServer())
+        .post('/webhook/payments')
+        .set('asaas-access-token', WEBHOOK_SECRET)
+        .send({ event, payment }),
     };
   }
 
   it('confirma pagamento ao receber PAYMENT_CONFIRMED autenticado', async () => {
     const { created } = await enviarWebhook('PAYMENT_CONFIRMED');
 
-    const invoice = await repository.findInvoice(TENANT_ID, created.body.invoiceId);
+    const invoice = await repository.findInvoice(
+      TENANT_ID,
+      created.body.invoiceId,
+    );
     expect(invoice?.status).toBe('CONFIRMED');
     expect(
-      await repository.hasRawProviderEvent(`PAYMENT_CONFIRMED:${created.body.providerPaymentId}`),
+      await repository.hasRawProviderEvent(
+        `PAYMENT_CONFIRMED:${created.body.providerPaymentId}`,
+      ),
     ).toBe(true);
   });
 
   it('registra PAYMENT_RECEIVED sem liberar pedido novamente apos ja confirmado', async () => {
     const created = await criarInvoice();
-    const existing = await repository.findInvoice(TENANT_ID, created.body.invoiceId);
+    const existing = await repository.findInvoice(
+      TENANT_ID,
+      created.body.invoiceId,
+    );
     await repository.updateInvoice(existing!, 'CONFIRMED');
 
     await request(app.getHttpServer())
@@ -107,7 +123,10 @@ describe('Confirmar Pagamento via Webhook', () => {
       })
       .expect(200);
 
-    const invoice = await repository.findInvoice(TENANT_ID, created.body.invoiceId);
+    const invoice = await repository.findInvoice(
+      TENANT_ID,
+      created.body.invoiceId,
+    );
     expect(invoice?.status).toBe('RECEIVED');
   });
 
@@ -128,10 +147,15 @@ describe('Confirmar Pagamento via Webhook', () => {
       })
       .expect(401);
 
-    const invoice = await repository.findInvoice(TENANT_ID, created.body.invoiceId);
+    const invoice = await repository.findInvoice(
+      TENANT_ID,
+      created.body.invoiceId,
+    );
     expect(invoice?.status).toBe('OPEN');
     expect(
-      await repository.hasRawProviderEvent(`PAYMENT_CONFIRMED:${created.body.providerPaymentId}`),
+      await repository.hasRawProviderEvent(
+        `PAYMENT_CONFIRMED:${created.body.providerPaymentId}`,
+      ),
     ).toBe(false);
   });
 
@@ -139,20 +163,41 @@ describe('Confirmar Pagamento via Webhook', () => {
     const created = await criarInvoice();
     const webhook = {
       event: 'PAYMENT_CONFIRMED',
-      payment: { id: created.body.providerPaymentId, status: 'CONFIRMED', value: 219.9, customer: 'cus_mock_customer-200' },
+      payment: {
+        id: created.body.providerPaymentId,
+        status: 'CONFIRMED',
+        value: 219.9,
+        customer: 'cus_mock_customer-200',
+      },
     };
 
-    await request(app.getHttpServer()).post('/webhook/payments').set('asaas-access-token', WEBHOOK_SECRET).send(webhook).expect(200);
-    await request(app.getHttpServer()).post('/webhook/payments').set('asaas-access-token', WEBHOOK_SECRET).send(webhook).expect(200);
+    await request(app.getHttpServer())
+      .post('/webhook/payments')
+      .set('asaas-access-token', WEBHOOK_SECRET)
+      .send(webhook)
+      .expect(200);
+    await request(app.getHttpServer())
+      .post('/webhook/payments')
+      .set('asaas-access-token', WEBHOOK_SECRET)
+      .send(webhook)
+      .expect(200);
 
-    const invoice = await repository.findInvoice(TENANT_ID, created.body.invoiceId);
+    const invoice = await repository.findInvoice(
+      TENANT_ID,
+      created.body.invoiceId,
+    );
     expect(invoice?.status).toBe('CONFIRMED');
   });
 
   it('correlaciona confirmacao por externalReference quando providerPaymentId ainda nao foi consolidado', async () => {
     const created = await criarInvoice();
-    const existing = await repository.findInvoice(TENANT_ID, created.body.invoiceId);
-    await repository.updateInvoice(existing!, 'OPEN', { providerPaymentId: undefined });
+    const existing = await repository.findInvoice(
+      TENANT_ID,
+      created.body.invoiceId,
+    );
+    await repository.updateInvoice(existing!, 'OPEN', {
+      providerPaymentId: undefined,
+    });
 
     await request(app.getHttpServer())
       .post('/webhook/payments')
@@ -169,7 +214,10 @@ describe('Confirmar Pagamento via Webhook', () => {
       })
       .expect(200);
 
-    const invoice = await repository.findInvoice(TENANT_ID, created.body.invoiceId);
+    const invoice = await repository.findInvoice(
+      TENANT_ID,
+      created.body.invoiceId,
+    );
     expect(invoice?.status).toBe('CONFIRMED');
     expect(invoice?.providerPaymentId).toBe('pay_asaas_early_correlation');
   });
@@ -191,10 +239,15 @@ describe('Confirmar Pagamento via Webhook', () => {
       })
       .expect(200);
 
-    const invoice = await repository.findInvoice(TENANT_ID, created.body.invoiceId);
+    const invoice = await repository.findInvoice(
+      TENANT_ID,
+      created.body.invoiceId,
+    );
     expect(invoice?.status).toBe('OPEN');
     expect(
-      await repository.hasRawProviderEvent(`PAYMENT_OVERDUE:${created.body.providerPaymentId}`),
+      await repository.hasRawProviderEvent(
+        `PAYMENT_OVERDUE:${created.body.providerPaymentId}`,
+      ),
     ).toBe(true);
   });
 
@@ -218,7 +271,10 @@ describe('Confirmar Pagamento via Webhook', () => {
       })
       .expect(200);
 
-    const invoice = await repository.findInvoice(TENANT_ID, created.body.invoiceId);
+    const invoice = await repository.findInvoice(
+      TENANT_ID,
+      created.body.invoiceId,
+    );
     expect(invoice?.status).toBe('OPEN');
   });
 
@@ -242,7 +298,10 @@ describe('Confirmar Pagamento via Webhook', () => {
       })
       .expect(200);
 
-    const invoice = await repository.findInvoice(TENANT_ID, created.body.invoiceId);
+    const invoice = await repository.findInvoice(
+      TENANT_ID,
+      created.body.invoiceId,
+    );
     expect(invoice?.status).toBe('FAILED');
     expect(invoice?.failureReason).toBe('PAYMENT_CREDIT_CARD_CAPTURE_REFUSED');
   });
@@ -253,7 +312,12 @@ describe('Confirmar Pagamento via Webhook', () => {
       .set('asaas-access-token', WEBHOOK_SECRET)
       .send({
         event: 'PAYMENT_CONFIRMED',
-        payment: { id: 'pay_desconhecido', status: 'CONFIRMED', value: 219.9, customer: 'cus_desconhecido' },
+        payment: {
+          id: 'pay_desconhecido',
+          status: 'CONFIRMED',
+          value: 219.9,
+          customer: 'cus_desconhecido',
+        },
       })
       .expect(200);
   });
