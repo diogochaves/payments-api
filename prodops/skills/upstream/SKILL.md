@@ -5,6 +5,34 @@ description: Execute ProdOps exploratory engineering. Use when exploring, experi
 
 # Upstream Skill
 
+## Steps
+
+When invoked with a step argument (`/upstream <step>`), execute only that step
+instead of the full flow. Read the corresponding step file and follow it
+exclusively — do not run the rest of the flow.
+
+| Step | File | When to use |
+|---|---|---|
+| `move-to-delivery` | [steps/move-to-delivery/SKILL.md](steps/move-to-delivery/SKILL.md) | Promote a completed experiment to the Downstream delivery flow |
+
+If the requested step is not listed, run the full flow.
+
+### Naming rationale
+
+`move-to-delivery` follows the canonical term from Dual-Track Agile (Patton / Cagan, SVPG).
+In that model, a validated capability in the Discovery Track is said to **"move to delivery"**
+when it crosses into the Delivery Track with a committed scope.
+
+The term `promote` was not adopted here because it is already used in this
+framework's CI Async phase (`Ship → Validate → Promote`) with a different
+meaning: advancing a release through deployment stages. Using `promote` for
+both the experiment transition and the release stage would create ambiguity.
+
+References: [SVPG — Discovery vs. Delivery](https://www.svpg.com/discovery-vs-delivery/) ·
+[SVPG — Discovery-Delivery](https://www.svpg.com/discovery-delivery/)
+
+---
+
 ## Purpose
 
 Use this skill for exploratory engineering before committing work to the Downstream delivery flow.
