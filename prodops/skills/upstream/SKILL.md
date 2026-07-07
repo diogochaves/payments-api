@@ -60,10 +60,10 @@ Use Upstream when the work is:
 
 Before starting, read:
 
-- `prodops/product/`
-- `prodops/assessment/reliability-plan/`
-- `prodops/upstream/README.md`
-- `prodops/upstream/experiments.md`
+- `prodops/artifacts/product/`
+- `prodops/journeys/assessment/reliability-plans/`
+- `prodops/journeys/discovery/README.md`
+- `prodops/journeys/discovery/experiments.md`
 - `prodops/templates/discovery/experiment.md`
 - `prodops/templates/discovery/trail.md`
 
@@ -109,8 +109,8 @@ Every Upstream experiment must:
 6. Stop when the hypothesis is answered.
 7. Avoid expanding into unrelated or out-of-repository capabilities.
 8. Update impacted ProdOps artifacts.
-9. Register progress in the active experiment trail at `prodops/upstream/experiments/<id>-<slug>/upstream-trail.md`.
-10. Register reusable findings in `prodops/upstream/learnings.md`.
+9. Register progress in the active experiment trail at `prodops/journeys/discovery/experiments/<id>-<slug>/upstream-trail.md`.
+10. Register reusable findings in `prodops/journeys/discovery/learnings.md`.
 11. Finish with a recommendation.
 
 ## Expected Outputs
@@ -137,17 +137,17 @@ Whenever new knowledge is produced, update impacted artifacts.
 
 Possible targets:
 
-- `prodops/product/product-deck.md`
-- `prodops/product/service-decks/`
-- `prodops/product/tracking-list.md`
+- `prodops/artifacts/product/product-deck.md`
+- `prodops/artifacts/product/service-decks/`
+- `prodops/artifacts/product/tracking-list.md`
 - `prodops/journeys/discovery/features/` (for uncommitted capability features)
-- `prodops/upstream/obcs/` (for draft OBCs from upstream experiments)
-- `prodops/assessment/event-storming/`
-- `prodops/assessment/reliability-plan/`
+- `prodops/journeys/discovery/obcs/` (for draft OBCs from upstream experiments)
+- `prodops/journeys/assessment/event-storming/`
+- `prodops/journeys/assessment/reliability-plans/`
 - `prodops/artifacts/obcs/` (for committed OBCs)
-- `prodops/upstream/learnings.md`
-- `prodops/upstream/experiments/<id>-<slug>/upstream-trail.md`
-- `prodops/upstream/upstream-trail.md` only for global milestones, promotions, migrations, or repository-wide Upstream process changes
+- `prodops/journeys/discovery/learnings.md`
+- `prodops/journeys/discovery/experiments/<id>-<slug>/upstream-trail.md`
+- `prodops/journeys/discovery/upstream-trail.md` only for global milestones, promotions, migrations, or repository-wide Upstream process changes
 
 Do not update unrelated artifacts.
 

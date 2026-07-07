@@ -232,7 +232,7 @@ O Decision Package completo (seções do `experiment.md`):
 | **Requer outro experimento** | Criar novo experimento com hipótese mais específica. Registrar a decisão no `upstream-trail.md` do experimento atual. |
 | **Aguardar decisão de negócio** | Bloquear o experimento na Tracking List com o decisor e a data esperada. Não abrir novo experimento até a decisão chegar. |
 | **Aguardar dependência externa** | Registrar a dependência no Reliability Plan e na Tracking List. Monitorar no Continuous Assessment. |
-| **Descartar** | Registrar o aprendizado em `prodops/upstream/learnings.md`. Fechar o experimento com justificativa no `upstream-trail.md`. |
+| **Descartar** | Registrar o aprendizado em `prodops/journeys/discovery/learnings.md`. Fechar o experimento com justificativa no `upstream-trail.md`. |
 
 ### Registro da decisão
 
@@ -274,7 +274,7 @@ Antes de promover, confirmar que:
 
 1. O Decision Package do experimento tem recomendação clara (`Promover` ou `Promover com restrição`).
 2. O comportamento esperado está descrito em um BDD Feature em `prodops/journeys/discovery/features/` pronto para ser movido para `prodops/artifacts/bdd/`.
-3. O OBC draft em `prodops/upstream/obcs/` tem critérios mensuráveis e pode ser movido para `prodops/artifacts/obcs/`.
+3. O OBC draft em `prodops/journeys/discovery/obcs/` tem critérios mensuráveis e pode ser movido para `prodops/artifacts/obcs/`.
 4. O Reliability Plan foi atualizado com os riscos e mitigation actions identificados no experimento.
 5. A incerteza remanescente é aceitável para entrar em Downstream com compromisso de entrega.
 
@@ -286,23 +286,23 @@ Antes de promover, confirmar que:
    → prodops/artifacts/bdd/<slug>.feature
 
 2. Mover OBC:
-   prodops/upstream/obcs/<slug>.md
+   prodops/journeys/discovery/obcs/<slug>.md
    → prodops/artifacts/obcs/<slug>.md
    (remover marcação "Upstream draft only")
 
 3. Criar ou atualizar entrada no Iteration Plan:
-   prodops/assessment/iteration-plans/iteration-plan.md
+   prodops/artifacts/plans/iteration-plan.md
    (adicionar à tabela "Iteration Backlog identificado")
 
 4. Atualizar Tracking List se o item estava lá:
-   prodops/product/tracking-list.md
+   prodops/artifacts/product/tracking-list.md
    (mudar status para "Promovido para Downstream")
 
 5. Registrar a promoção no upstream-trail do experimento:
-   prodops/upstream/experiments/<NNN-slug>/upstream-trail.md
+   prodops/journeys/discovery/experiments/<NNN-slug>/upstream-trail.md
 
 6. Registrar no global upstream trail:
-   prodops/upstream/upstream-trail.md
+   prodops/journeys/discovery/upstream-trail.md
    (entrada de alto nível: o quê foi promovido e quando)
 ```
 

@@ -20,7 +20,7 @@ O Bootstrap não produz código, não escreve testes, não lê código-fonte. Pr
 - BDD Feature presente em `prodops/artifacts/bdd/`
 
 **Upstream:**
-- Experimento criado em `prodops/upstream/experiments/`
+- Experimento criado em `prodops/journeys/discovery/experiments/`
 - Hipótese ou objetivo definido
 
 ---
@@ -57,9 +57,9 @@ Antes de qualquer teste ou código, ler:
 | OBC da capability | `prodops/artifacts/obcs/<capability>.md` |
 | BDD Feature | `prodops/artifacts/bdd/<capability>.feature` |
 | Riscos e mitigações | `prodops/journeys/assessment/risks.md` |
-| Iteration Plan | `prodops/assessment/iteration-plans/iteration-plan.md` |
+| Iteration Plan | `prodops/artifacts/plans/iteration-plan.md` |
 
-Para Upstream: ler `prodops/upstream/experiments/<id>-<slug>/experiment.md`.
+Para Upstream: ler `prodops/journeys/discovery/experiments/<id>-<slug>/experiment.md`.
 
 ### 4. Verificar testes existentes
 

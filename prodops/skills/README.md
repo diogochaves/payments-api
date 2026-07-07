@@ -16,8 +16,10 @@ Skills NÃO são capabilities.
 | Ship | Fase Ship | [ship/SKILL.md](ship/SKILL.md) |
 | Validate | Fase Validate | [validate/SKILL.md](validate/SKILL.md) |
 | Upstream | Jornada Discovery | [upstream/SKILL.md](upstream/SKILL.md) |
+| `upstream/move-to-delivery` | Step within Upstream | [upstream/steps/move-to-delivery/SKILL.md](upstream/steps/move-to-delivery/SKILL.md) |
 | Downstream | Modo Downstream | [downstream/SKILL.md](downstream/SKILL.md) |
 | Promote | Fase Promote | [promote/SKILL.md](promote/SKILL.md) |
+| `hack/commit` | Step within Hack | [hack/steps/commit/SKILL.md](hack/steps/commit/SKILL.md) |
 
 ## Estrutura de cada Skill
 

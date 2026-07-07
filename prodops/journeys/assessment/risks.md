@@ -32,7 +32,7 @@ A Feature Flag que habilita o novo Gateway permanece desativada devido a um bug 
 
 ## Evidência Upstream requerida
 
-O experimento `prodops/upstream/experiments/004-feature-flag-readiness/experiment.md`
+O experimento `prodops/journeys/discovery/experiments/004-feature-flag-readiness/experiment.md`
 classifica esta incerteza como P0 e requer evidências de Checkout antes da
 promoção final:
 

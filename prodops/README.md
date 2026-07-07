@@ -30,4 +30,4 @@ Business Intent → Assessment → Execution Mode → Journey → Phase → Prac
 | [artifacts/](artifacts/) | Artefatos produzidos: OBCs, BDD Features, planos, trilhas, evidências |
 | [templates/](templates/) | Templates centralizados por área |
 | [skills/](skills/) | Skills executáveis por agentes |
-| [commit-workflow/](commit-workflow/) | Commit Workflow: hooks Git nativos, scripts, documentação |
+| [journeys/delivery/capabilities/commit-workflow/](journeys/delivery/capabilities/commit-workflow/) | Commit Workflow: hooks Git nativos, scripts, documentação |

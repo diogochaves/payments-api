@@ -4,7 +4,7 @@ Features BDD para capabilities **ainda em exploração**, sem comprometimento de
 
 Cada Feature aqui representa o comportamento esperado de uma capability que está sendo
 experimentada ou investigada. Ela **deve estar associada a um experimento ativo** em
-`prodops/upstream/experiments/`.
+`prodops/journeys/discovery/experiments/`.
 
 ## Regra de escopo
 
@@ -31,12 +31,12 @@ Uma Feature passa de Upstream para `prodops/artifacts/bdd/` quando:
 
 1. O experimento correspondente está concluído com decisão `Move Downstream`.
 2. Os cenários BDD estão revisados e refletem o comportamento aprovado.
-3. A Feature foi referenciada no `prodops/assessment/iteration-plans/iteration-plan.md` com decisão `Entrou`.
+3. A Feature foi referenciada no `prodops/artifacts/plans/iteration-plan.md` com decisão `Entrou`.
 4. O registro de promoção foi feito no `upstream-trail.md` do experimento e, quando a promoção afetar mais de um experimento, também no trail global.
 
 ## Referências
 
-- Features comprometidas: [`prodops/artifacts/bdd/`](../../product/features/)
+- Features comprometidas: [`prodops/artifacts/bdd/`](../../artifacts/bdd/)
 - Trilha de experimentos: [`../experiments/`](../experiments/)
-- Iteration Plan: [`prodops/assessment/iteration-plans/iteration-plan.md`](../../assessment/iteration-plans/iteration-plan.md)
+- Iteration Plan: [`prodops/artifacts/plans/iteration-plan.md`](../../artifacts/plans/iteration-plan.md)
 - Histórico global: [`../upstream-trail.md`](../upstream-trail.md)
