@@ -29,3 +29,5 @@ Para registrar um novo Business Intent, utilize o template em [`prodops/template
 ## Business Intents ativos
 
 *(registrar aqui à medida que business intents forem criados)*
+
+[Split Payment](./split-payment.md)

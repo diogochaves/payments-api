@@ -75,6 +75,39 @@ Observações adicionais, bloqueios ou ações de acompanhamento.
 > Acrescentar novas entradas abaixo.
 > Nunca reescrever entradas anteriores.
 
+## 2026-07-07 — EXP-007
+
+### Experiment
+
+Reference:
+
+`prodops/journeys/discovery/experiments/007-split-payment-model/experiment.md`
+
+### Activity
+
+Execução completa da jornada Upstream para o Business Intent "Suporte a Múltiplos Pagamentos no Checkout".
+
+### Summary
+
+Todas as 10 perguntas em aberto do Business Intent foram respondidas. O modelo de domínio atual (1:1:1 — 1 pedido : 1 invoice : 1 método) foi analisado e comparado com alternativas de composição. Benchmark de Stripe, Adyen, MercadoPago e Asaas confirmou que a Payments API precisa absorver a orquestração da composição, pois o Asaas não tem suporte nativo a múltiplos métodos por pedido.
+
+A Opção A (múltiplas invoices por pedido com nova entidade `PaymentComposition`) foi selecionada por ser aditiva ao modelo atual e não quebrar pagamentos simples. Event Storming do novo fluxo identificou 7 novos eventos de domínio. OBC candidato foi criado. A única decisão pendente de produto é a política de falha parcial (A: reverter tudo / B: manter confirmados / C: janela parcial) — Política B é a recomendada.
+
+### Artifacts Updated
+
+- `prodops/journeys/discovery/experiments/007-split-payment-model/experiment.md`
+- `prodops/journeys/discovery/experiments/007-split-payment-model/upstream-trail.md`
+- `prodops/artifacts/obcs/payment-composition-draft.md`
+- `prodops/journeys/discovery/upstream-trail.md`
+
+### Decision
+
+Pronto para Assessment — aguarda decisão de produto sobre política de falha parcial.
+
+### Notes
+
+Próximos passos após decisão de produto: criar BDD Feature `prodops/artifacts/bdd/payment-composition.feature`, atualizar Iteration Plan, Bootstrap → Hack.
+
 ## 2026-07-03 18:04
 
 ### Experiment
