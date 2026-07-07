@@ -108,7 +108,7 @@ O EXP-004 foi recuperado como registro de referência porque o trail global, o R
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/upstream-trail.md`
 - `prodops/assessment/risks.md`
-- `prodops/upstream/features/README.md`
+- `prodops/journeys/discovery/features/README.md`
 
 ### Decision
 
@@ -116,7 +116,7 @@ Pronto para Assessment.
 
 ### Notes
 
-A referência histórica a `prodops/upstream/features/checkout-gateway-feature-flag.feature` permanece como gap: o arquivo é referenciado por entradas do trail mas não está presente no workspace.
+A referência histórica a `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature` permanece como gap: o arquivo é referenciado por entradas do trail mas não está presente no workspace.
 
 ## 2026-07-03 17:58
 
@@ -368,8 +368,8 @@ Uma nova BDD de prontidão da Feature Flag do Checkout foi adicionada para repre
 
 ### Artifacts Updated
 
-- `prodops/upstream/features/credit-card-payment.feature`
-- `prodops/upstream/features/checkout-gateway-feature-flag.feature`
+- `prodops/journeys/discovery/features/credit-card-payment.feature`
+- `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature`
 
 ### Decision
 
@@ -435,7 +435,7 @@ O Validation Workbench agora permite que agentes e humanos explorem os shapes de
 - `prodops/upstream/experiments/001-credit-card-lifecycle/experiment.md`
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/learnings.md`
-- `prodops/upstream/features/credit-card-payment.feature`
+- `prodops/journeys/discovery/features/credit-card-payment.feature`
 - `prodops/product/tracking-list.md`
 - `prodops/assessment/risks.md`
 - `prodops/upstream/obcs/credit-card-authorization-confirmation.md`

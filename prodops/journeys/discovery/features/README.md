@@ -15,9 +15,9 @@ Esta pasta aceita **apenas** features nascidas de experimentos Upstream (`EXP-XX
 - capabilities adicionadas diretamente ao Iteration Backlog como Downstream;
 - capabilities sem experimento de origem associado.
 
-Nesse caso, crie a BDD Feature diretamente em `prodops/product/features/`.
+Nesse caso, crie a BDD Feature diretamente em `prodops/artifacts/bdd/`.
 
-Features de capabilities comprometidas vivem em `prodops/product/features/`.
+Features de capabilities comprometidas vivem em `prodops/artifacts/bdd/`.
 
 ## Features exploratórias
 
@@ -27,7 +27,7 @@ Features de capabilities comprometidas vivem em `prodops/product/features/`.
 
 ## Regra de promoção
 
-Uma Feature passa de Upstream para `prodops/product/features/` quando:
+Uma Feature passa de Upstream para `prodops/artifacts/bdd/` quando:
 
 1. O experimento correspondente está concluído com decisão `Move Downstream`.
 2. Os cenários BDD estão revisados e refletem o comportamento aprovado.
@@ -36,7 +36,7 @@ Uma Feature passa de Upstream para `prodops/product/features/` quando:
 
 ## Referências
 
-- Features comprometidas: [`prodops/product/features/`](../../product/features/)
+- Features comprometidas: [`prodops/artifacts/bdd/`](../../product/features/)
 - Trilha de experimentos: [`../experiments/`](../experiments/)
 - Iteration Plan: [`prodops/assessment/iteration-plans/iteration-plan.md`](../../assessment/iteration-plans/iteration-plan.md)
 - Histórico global: [`../upstream-trail.md`](../upstream-trail.md)

@@ -44,7 +44,7 @@ in the global trail.
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/upstream-trail.md`
 - `prodops/assessment/risks.md`
-- `prodops/upstream/features/README.md`
+- `prodops/journeys/discovery/features/README.md`
 
 ### Evidence
 
@@ -58,7 +58,7 @@ Ready for Assessment.
 
 ### Notes
 
-`prodops/upstream/features/checkout-gateway-feature-flag.feature` is referenced
+`prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature` is referenced
 by historical trail entries but is not present in the workspace.
 
 ## 2026-07-03 17:58

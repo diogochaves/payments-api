@@ -16,7 +16,7 @@ For detailed Codex branch synchronization mechanics, read
 - `AGENTS.md`
 - `prodops/product/`
 - `prodops/assessment/`
-- `prodops/downstream/release-trail.md`
+- `prodops/artifacts/trails/release-trail.md`
 
 ## Flow
 

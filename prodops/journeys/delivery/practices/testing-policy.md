@@ -22,7 +22,7 @@ Unit tests não substituem testes de aceitação para comportamento funcional.
 A proibição de test doubles em testes de aceitação é aplicada como Quality Gate que bloqueia merge.
 
 - Definição técnica completa: [`skills/hack/references/workflow.md § No Mocks Rule`](../../skills/hack/references/workflow.md)
-- Enforcement gate (o que bloqueia merge): [`prodops/downstream/quality-gates.md § Test Quality Gates`](../downstream/quality-gates.md)
+- Enforcement gate (o que bloqueia merge): [`prodops/journeys/delivery/phases/finish/quality-gates.md § Test Quality Gates`](../downstream/quality-gates.md)
 
 ## Testes de caminhos de erro
 

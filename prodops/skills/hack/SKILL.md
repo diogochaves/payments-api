@@ -19,8 +19,8 @@ Read before editing:
   `prodops/product/`
 - Reliability Plan sections directly related to the requested capability in
   `prodops/assessment/reliability-plan/`
-- Relevant BDD Feature in `prodops/product/features/` (committed) or
-  `prodops/upstream/features/` (exploratory)
+- Relevant BDD Feature in `prodops/artifacts/bdd/` (committed) or
+  `prodops/journeys/discovery/features/` (exploratory)
 
 Do not read the whole repository or the whole codebase by default. Read only:
 
@@ -59,7 +59,7 @@ module boundary.
     or event topic), update `prodops/assessment/architecture/overview.md`:
     - edit the Mermaid diagram to reflect the change;
     - add a row to the History table with today's date and a one-line description.
-12. Append evidence to `prodops/downstream/release-trail.md`.
+12. Append evidence to `prodops/artifacts/trails/release-trail.md`.
 
 ## Guardrails
 

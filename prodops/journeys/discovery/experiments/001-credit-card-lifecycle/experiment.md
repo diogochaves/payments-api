@@ -829,7 +829,7 @@ The Reliability Plan should include:
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/upstream-trail.md`
 - `prodops/upstream/learnings.md`
-- `prodops/upstream/features/credit-card-payment.feature`
+- `prodops/journeys/discovery/features/credit-card-payment.feature`
 - `prodops/product/tracking-list.md`
 - `prodops/assessment/risks.md`
 - `prodops/upstream/obcs/credit-card-authorization-confirmation.md`

@@ -22,8 +22,8 @@ Definir, manter e verificar contratos que descrevem o comportamento esperado do 
 
 ## Artefatos produzidos
 
-- BDD Feature em `prodops/product/features/` (committed) ou `prodops/upstream/features/` (exploratory)
-- OBC em `prodops/assessment/obcs/`
+- BDD Feature em `prodops/artifacts/bdd/` (committed) ou `prodops/journeys/discovery/features/` (exploratory)
+- OBC em `prodops/artifacts/obcs/`
 - OpenAPI spec atualizada
 - AsyncAPI spec atualizada
 

@@ -13,8 +13,8 @@ For detailed Codex submission mechanics, read `references/workflow.md`.
 
 - `AGENTS.md`
 - `prodops/assessment/reliability-plan/`
-- `prodops/downstream/release-trail.md`
-- `prodops/downstream/quality-gates.md`
+- `prodops/artifacts/trails/release-trail.md`
+- `prodops/journeys/delivery/phases/finish/quality-gates.md`
 - Current branch diff and validation evidence
 
 ## Flow

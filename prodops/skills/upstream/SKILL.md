@@ -112,11 +112,11 @@ Possible targets:
 - `prodops/product/product-deck.md`
 - `prodops/product/service-decks/`
 - `prodops/product/tracking-list.md`
-- `prodops/upstream/features/` (for uncommitted capability features)
+- `prodops/journeys/discovery/features/` (for uncommitted capability features)
 - `prodops/upstream/obcs/` (for draft OBCs from upstream experiments)
 - `prodops/assessment/event-storming/`
 - `prodops/assessment/reliability-plan/`
-- `prodops/assessment/obcs/` (for committed OBCs)
+- `prodops/artifacts/obcs/` (for committed OBCs)
 - `prodops/upstream/learnings.md`
 - `prodops/upstream/experiments/<id>-<slug>/upstream-trail.md`
 - `prodops/upstream/upstream-trail.md` only for global milestones, promotions, migrations, or repository-wide Upstream process changes

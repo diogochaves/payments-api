@@ -12,19 +12,19 @@ Use this skill for standardized, traceable delivery.
 - `AGENTS.md`
 - `prodops/product/`
 - `prodops/assessment/reliability-plan/`
-- `prodops/downstream/iteration-backlog.md`
-- Relevant BDD Feature in `prodops/product/features/`
-- Relevant OBC in `prodops/assessment/obcs/`
-- Relevant quality gates in `prodops/downstream/quality-gates.md`
+- `prodops/artifacts/plans/downstream-iteration-backlog.md`
+- Relevant BDD Feature in `prodops/artifacts/bdd/`
+- Relevant OBC in `prodops/artifacts/obcs/`
+- Relevant quality gates in `prodops/journeys/delivery/phases/finish/quality-gates.md`
 
 ## Artifact placement rules
 
 Before coding, ensure these artifacts exist in the correct locations:
 
-- **BDD Feature** → `prodops/product/features/<capability>.feature`
-- **OBC** → `prodops/assessment/obcs/<capability>.md`
+- **BDD Feature** → `prodops/artifacts/bdd/<capability>.feature`
+- **OBC** → `prodops/artifacts/obcs/<capability>.md`
 
-Do not create Downstream BDD Features in `prodops/upstream/features/`. That
+Do not create Downstream BDD Features in `prodops/journeys/discovery/features/`. That
 directory is reserved for exploratory features tied to active Upstream experiments.
 Do not create Downstream OBCs in `prodops/upstream/obcs/`.
 
@@ -39,7 +39,7 @@ Do not create Downstream OBCs in `prodops/upstream/obcs/`.
 4. Use TDD for behavior changes.
 5. Update impacted OBCs, BDDs, Reliability Plan items, and operational artifacts.
 6. Validate with concrete evidence.
-7. Append delivery evidence to `prodops/downstream/release-trail.md`.
+7. Append delivery evidence to `prodops/artifacts/trails/release-trail.md`.
 
 ## Guardrails
 

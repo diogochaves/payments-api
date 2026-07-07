@@ -15,7 +15,7 @@ O Reliability Plan fica em: `prodops/assessment/reliability-plan/`
 
 Um OBC ancora a implementação a um resultado de negócio. Define o que "pronto" significa em termos observáveis e mensuráveis. OBCs devem existir antes de qualquer código ser escrito para um item Downstream.
 
-Arquivos de OBC: `prodops/assessment/obcs/`
+Arquivos de OBC: `prodops/artifacts/obcs/`
 
 ## Definition of Done
 
@@ -48,4 +48,4 @@ Para detalhes sobre como aplicar durante o TDD cycle: [ProdOps TDD — Confiabil
 
 ## Validação pós-deploy
 
-Após o deploy, validar os critérios de confiabilidade definidos no OBC. Registrar evidências em `prodops/downstream/release-trail.md` e `prodops/operation/operational-trail.md`.
+Após o deploy, validar os critérios de confiabilidade definidos no OBC. Registrar evidências em `prodops/artifacts/trails/release-trail.md` e `prodops/operation/operational-trail.md`.

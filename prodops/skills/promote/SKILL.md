@@ -11,8 +11,8 @@ Use this skill to move a release to the next stage or close it.
 
 - `AGENTS.md`
 - `prodops/assessment/reliability-plan/`
-- `prodops/downstream/release-trail.md`
-- `prodops/downstream/done-criteria.md`
+- `prodops/artifacts/trails/release-trail.md`
+- `prodops/journeys/delivery/phases/finish/done-criteria.md`
 - `prodops/operation/`
 
 ## Flow

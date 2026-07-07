@@ -31,8 +31,8 @@ EXP-003 and the missing EXP-004 reference.
 
 ### Artifacts Updated
 
-- `prodops/upstream/features/credit-card-payment.feature`
-- `prodops/upstream/features/checkout-gateway-feature-flag.feature`
+- `prodops/journeys/discovery/features/credit-card-payment.feature`
+- `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature`
 
 ### Evidence
 
@@ -112,7 +112,7 @@ confirmation, refusal, cancellation and refund.
 - `prodops/upstream/experiments/001-credit-card-lifecycle/experiment.md`
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/learnings.md`
-- `prodops/upstream/features/credit-card-payment.feature`
+- `prodops/journeys/discovery/features/credit-card-payment.feature`
 - `prodops/product/tracking-list.md`
 - `prodops/assessment/risks.md`
 - `prodops/upstream/obcs/credit-card-authorization-confirmation.md`

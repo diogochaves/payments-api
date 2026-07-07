@@ -72,7 +72,7 @@ Do not skip the red phase unless the task is documentation-only, mechanical clea
 
 ## No Mocks Rule
 
-> **Definição técnica canônica.** O gate de enforcement (o que bloqueia merge) está em [`prodops/downstream/quality-gates.md`](../../../prodops/downstream/quality-gates.md).
+> **Definição técnica canônica.** O gate de enforcement (o que bloqueia merge) está em [`prodops/journeys/delivery/phases/finish/quality-gates.md`](../../../prodops/journeys/delivery/phases/finish/quality-gates.md).
 
 **Acceptance and integration tests never use test doubles.** This is an unconditional rule.
 

@@ -15,9 +15,9 @@ O Bootstrap não produz código, não escreve testes, não lê código-fonte. Pr
 ## Pré-condição
 
 **Downstream:**
-- Item presente no Iteration Backlog (`prodops/downstream/iteration-backlog.md`)
-- OBC criado em `prodops/assessment/obcs/`
-- BDD Feature presente em `prodops/product/features/`
+- Item presente no Iteration Backlog (`prodops/artifacts/plans/downstream-iteration-backlog.md`)
+- OBC criado em `prodops/artifacts/obcs/`
+- BDD Feature presente em `prodops/artifacts/bdd/`
 
 **Upstream:**
 - Experimento criado em `prodops/upstream/experiments/`
@@ -54,8 +54,8 @@ Antes de qualquer teste ou código, ler:
 
 | Artefato | Localização |
 |---|---|
-| OBC da capability | `prodops/assessment/obcs/<capability>.md` |
-| BDD Feature | `prodops/product/features/<capability>.feature` |
+| OBC da capability | `prodops/artifacts/obcs/<capability>.md` |
+| BDD Feature | `prodops/artifacts/bdd/<capability>.feature` |
 | Riscos e mitigações | `prodops/assessment/risks.md` |
 | Iteration Plan | `prodops/assessment/iteration-plans/iteration-plan.md` |
 

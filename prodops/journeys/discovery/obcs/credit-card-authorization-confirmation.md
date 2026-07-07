@@ -3,7 +3,7 @@
 ## Status
 
 Draft from Upstream experiment. Do not treat as Downstream commitment until the
-capability is accepted into `prodops/downstream/iteration-backlog.md`.
+capability is accepted into `prodops/artifacts/plans/downstream-iteration-backlog.md`.
 
 ## Business Outcome
 
@@ -57,6 +57,6 @@ receipt and refund boundary.
 
 ## Related Artifacts
 
-- BDD: `prodops/upstream/features/credit-card-payment.feature`
+- BDD: `prodops/journeys/discovery/features/credit-card-payment.feature`
 - Upstream trail: `prodops/upstream/upstream-trail.md`
 - Experiment notes: `prodops/upstream/experiments.md`

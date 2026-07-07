@@ -90,7 +90,7 @@ Ver [skills/hack/SKILL.md](../../../skills/hack/SKILL.md) para a lista completa 
 ### Passo 7 — Registrar evidência
 
 Antes de avançar para Sync ou Finish:
-- Acrescentar evidência em `prodops/downstream/release-trail.md` (Downstream) ou no `upstream-trail.md` do experimento (Upstream).
+- Acrescentar evidência em `prodops/artifacts/trails/release-trail.md` (Downstream) ou no `upstream-trail.md` do experimento (Upstream).
 - Evidência deve incluir: saída dos testes, saída do lint e resumo do que mudou.
 
 ---

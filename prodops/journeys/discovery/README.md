@@ -273,8 +273,8 @@ A decisão de promover é do Product Manager + Tech Lead responsáveis pela capa
 Antes de promover, confirmar que:
 
 1. O Decision Package do experimento tem recomendação clara (`Promover` ou `Promover com restrição`).
-2. O comportamento esperado está descrito em um BDD Feature em `prodops/upstream/features/` pronto para ser movido para `prodops/product/features/`.
-3. O OBC draft em `prodops/upstream/obcs/` tem critérios mensuráveis e pode ser movido para `prodops/assessment/obcs/`.
+2. O comportamento esperado está descrito em um BDD Feature em `prodops/journeys/discovery/features/` pronto para ser movido para `prodops/artifacts/bdd/`.
+3. O OBC draft em `prodops/upstream/obcs/` tem critérios mensuráveis e pode ser movido para `prodops/artifacts/obcs/`.
 4. O Reliability Plan foi atualizado com os riscos e mitigation actions identificados no experimento.
 5. A incerteza remanescente é aceitável para entrar em Downstream com compromisso de entrega.
 
@@ -282,12 +282,12 @@ Antes de promover, confirmar que:
 
 ```
 1. Mover BDD Feature:
-   prodops/upstream/features/<slug>.feature
-   → prodops/product/features/<slug>.feature
+   prodops/journeys/discovery/features/<slug>.feature
+   → prodops/artifacts/bdd/<slug>.feature
 
 2. Mover OBC:
    prodops/upstream/obcs/<slug>.md
-   → prodops/assessment/obcs/<slug>.md
+   → prodops/artifacts/obcs/<slug>.md
    (remover marcação "Upstream draft only")
 
 3. Criar ou atualizar entrada no Iteration Plan:
