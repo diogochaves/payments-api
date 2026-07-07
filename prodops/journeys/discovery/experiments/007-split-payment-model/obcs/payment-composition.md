@@ -1,7 +1,9 @@
 # OBC — Composição de Pagamento (Draft)
 
 > Status: **Draft — aguarda decisão de política de falha parcial**
+> Localização: `prodops/journeys/discovery/experiments/007-split-payment-model/obcs/payment-composition.md`
 > Experimento de origem: `prodops/journeys/discovery/experiments/007-split-payment-model/experiment.md`
+> Promover via: `/upstream move-to-delivery` após decisão de produto
 
 ---
 
@@ -98,9 +100,10 @@
 ## Próximo passo após decisão
 
 1. Preencher política de falha e janela de expiração acima
-2. Criar BDD Feature: `prodops/artifacts/bdd/payment-composition.feature`
-3. Atualizar Iteration Plan para incluir Split Payment
-4. Bootstrap → Hack
+2. Criar BDD Feature: `prodops/journeys/discovery/experiments/007-split-payment-model/features/payment-composition.feature`
+3. Executar `/upstream move-to-delivery` — moverá OBC e BDD Feature para `artifacts/`
+4. Atualizar Iteration Plan para incluir Split Payment
+5. Bootstrap → Hack
 
 ---
 

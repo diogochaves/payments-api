@@ -140,11 +140,12 @@ Possible targets:
 - `prodops/artifacts/product/product-deck.md`
 - `prodops/artifacts/product/service-decks/`
 - `prodops/artifacts/product/tracking-list.md`
-- `prodops/journeys/discovery/features/` (for uncommitted capability features)
-- `prodops/journeys/discovery/obcs/` (for draft OBCs from upstream experiments)
+- `prodops/journeys/discovery/experiments/<id>-<slug>/features/` (BDD Features — stay here until move-to-delivery)
+- `prodops/journeys/discovery/experiments/<id>-<slug>/obcs/` (OBC drafts — stay here until move-to-delivery)
 - `prodops/journeys/assessment/event-storming/`
 - `prodops/journeys/assessment/reliability-plans/`
-- `prodops/artifacts/obcs/` (for committed OBCs)
+- `prodops/artifacts/obcs/` (committed OBCs — only after move-to-delivery)
+- `prodops/artifacts/bdd/` (committed BDD Features — only after move-to-delivery)
 - `prodops/journeys/discovery/learnings.md`
 - `prodops/journeys/discovery/experiments/<id>-<slug>/upstream-trail.md`
 - `prodops/journeys/discovery/upstream-trail.md` only for global milestones, promotions, migrations, or repository-wide Upstream process changes

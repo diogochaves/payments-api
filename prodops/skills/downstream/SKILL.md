@@ -24,9 +24,10 @@ Before coding, ensure these artifacts exist in the correct locations:
 - **BDD Feature** → `prodops/artifacts/bdd/<capability>.feature`
 - **OBC** → `prodops/artifacts/obcs/<capability>.md`
 
-Do not create Downstream BDD Features in `prodops/journeys/discovery/features/`. That
-directory is reserved for exploratory features tied to active Upstream experiments.
-Do not create Downstream OBCs in `prodops/journeys/discovery/obcs/`.
+Do not create Downstream BDD Features in experiment directories. Downstream BDD
+Features belong only in `prodops/artifacts/bdd/`.
+Do not create Downstream OBCs in experiment directories. Downstream OBCs belong
+only in `prodops/artifacts/obcs/`.
 
 ## Flow
 

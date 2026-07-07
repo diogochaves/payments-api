@@ -32,7 +32,7 @@ Read before editing:
 - Reliability Plan sections directly related to the requested capability in
   `prodops/assessment/reliability-plan/`
 - Relevant BDD Feature in `prodops/artifacts/bdd/` (committed) or
-  `prodops/journeys/discovery/features/` (exploratory)
+  `prodops/journeys/discovery/experiments/<NNN-slug>/features/` (exploratory)
 
 Do not read the whole repository or the whole codebase by default. Read only:
 

@@ -45,8 +45,8 @@ Ao final de um ciclo Upstream, deve existir:
 
 Uma capability promovida do Upstream para Downstream deve ter:
 
-1. BDD Feature movida de `prodops/journeys/discovery/features/` para `prodops/artifacts/bdd/`
-2. OBC movido de `prodops/journeys/discovery/obcs/` para `prodops/artifacts/obcs/`
+1. BDD Feature movida de `prodops/journeys/discovery/experiments/<NNN-slug>/features/` para `prodops/artifacts/bdd/`
+2. OBC movido de `prodops/journeys/discovery/experiments/<NNN-slug>/obcs/` para `prodops/artifacts/obcs/`
 3. Entrada no Iteration Plan em `prodops/artifacts/plans/iteration-plan.md`
 4. Reliability Plan atualizado em `prodops/journeys/assessment/reliability-plans/`
 

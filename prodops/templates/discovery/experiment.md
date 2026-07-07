@@ -11,7 +11,11 @@ Cada experimento deve ter também:
 ```text
 prodops/journeys/discovery/experiments/NNN-short-slug/upstream-trail.md
 prodops/journeys/discovery/experiments/NNN-short-slug/evidence/
+prodops/journeys/discovery/experiments/NNN-short-slug/features/   ← BDD Features (criadas durante o experimento)
+prodops/journeys/discovery/experiments/NNN-short-slug/obcs/       ← OBC drafts (criados durante o experimento)
 ```
+
+`features/` e `obcs/` são criados conforme necessário. Artefatos ficam aqui até `move-to-delivery`, quando são movidos para `prodops/artifacts/bdd/` e `prodops/artifacts/obcs/`.
 
 Não criar arquivos de experimento diretamente em `prodops/journeys/discovery/experiments/` — sempre dentro de um subdiretório com slug.
 

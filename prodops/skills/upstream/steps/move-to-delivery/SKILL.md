@@ -16,10 +16,10 @@ locations and registering the capability in the Iteration Plan.
 1. Read the experiment's `experiment.md` and confirm the Decision Package has
    recommendation `Promover` or `Promover com restrição`.
 2. Move the BDD Feature:
-   - From: `prodops/journeys/discovery/features/<slug>.feature`
+   - From: `prodops/journeys/discovery/experiments/<NNN-slug>/features/<slug>.feature`
    - To: `prodops/artifacts/bdd/<slug>.feature`
 3. Move the OBC:
-   - From: `prodops/journeys/discovery/obcs/<slug>.md`
+   - From: `prodops/journeys/discovery/experiments/<NNN-slug>/obcs/<slug>.md`
    - To: `prodops/artifacts/obcs/<slug>.md`
    - Remove any "Upstream draft only" marking from the file.
 4. Add an entry to the Iteration Plan at
