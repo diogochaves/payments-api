@@ -3,7 +3,7 @@
 > **Escopo:** itens de produto e engenharia derivados de experimentos Upstream e do Reliability Plan — decisões técnicas e de produto que precisam de refinamento antes de entrar em um OBC ou Iteration Plan.
 >
 > Existe uma segunda Tracking List de demandas operacionais e de stakeholders (Analytics, DataDog, ITSM) em:
-> [`prodops/assessment/reliability-plan/iteration-backlog.md`](../assessment/reliability-plan/iteration-backlog.md)
+> [`prodops/artifacts/plans/iteration-backlog.md`](../plans/iteration-backlog.md)
 
 | Item | Origem | Dimensão | Dono | Status | Próxima ação |
 | --- | --- | --- | --- | --- | --- |

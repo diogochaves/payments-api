@@ -5,10 +5,10 @@
 > Esses itens precisam de refinamento antes de entrar em um OBC ou Iteration Plan.
 >
 > Para o escopo de entrega aprovado (Entrou / Saiu / Adiada), consulte:
-> [`prodops/assessment/iteration-plans/iteration-plan.md`](iteration-plan.md)
+> [`prodops/artifacts/plans/iteration-plan.md`](iteration-plan.md)
 >
 > Existe uma segunda Tracking List de itens de produto e engenharia derivados de experimentos Upstream em:
-> [`prodops/product/tracking-list.md`](../../product/tracking-list.md)
+> [`prodops/artifacts/product/tracking-list.md`](../product/tracking-list.md)
 
 > Derivado das solicitações associadas identificadas no Premortem da release de Payments.
 

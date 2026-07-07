@@ -93,17 +93,15 @@ Fallback/Itau ficou fora porque aumentaria muito o tamanho da Release. A oportun
 
 ## Fontes consultadas
 
-- `prodops/product/product-deck.md`
-- `prodops/product/service-decks/compra-com-pix.md`
-- `prodops/product/icebox-backlog.md`
+- `prodops/artifacts/product/product-deck.md`
+- `prodops/artifacts/product/service-decks/compra-com-pix.md`
+- `prodops/artifacts/product/icebox-backlog.md`
 - `prodops/artifacts/bdd/create-invoice.feature`
 - `prodops/artifacts/bdd/payment-confirmation.feature`
 - `prodops/artifacts/bdd/cancel-invoice.feature`
-- `prodops/assessment/premortem.md`
-- `prodops/assessment/risks.md`
-- `prodops/assessment/opportunities.md`
-- `prodops/assessment/reliability-plan/iteration-backlog.md`
-- `prodops/assessment/event-storming/plan.json`
+- `prodops/journeys/assessment/`
+- `prodops/artifacts/plans/iteration-backlog.md`
+- `prodops/journeys/assessment/event-storming/plan.json`
 - `api/src/modules/invoices`
 - `api/src/infra/asaas.service.ts`
 - `api/test/create-invoice.acceptance.e2e-spec.ts`

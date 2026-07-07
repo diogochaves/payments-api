@@ -34,15 +34,19 @@ Payments existe para proteger conversão, GMV, confiança do cliente e capacidad
 
 ## 4. Services
 
-| Serviço ou jornada | Cliente/usuário | Resultado esperado | Criticidade |
-| --- | --- | --- | --- |
-| Autorização de pagamento | Cliente comprador | Pagamento autorizado ou recusado com resposta clara. | Crítica |
-| Compra com Pix | Cliente comprador | Pix gerado, pago, confirmado e pedido liberado. | Crítica |
-| Confirmação de pagamento | Checkout, Order Management, cliente | Pedido recebe confirmação confiável e segue fluxo. | Crítica |
-| Fallback de gateway | Checkout, operação | Gateway alternativo assume sem perda de rastreabilidade. | Alta |
-| Consulta de status de pagamento | Atendimento, cliente, operação | Status atual consistente para troubleshooting e suporte. | Alta |
-| Conciliação de pagamento | Financeiro, operação | Pagamentos conciliados com pedidos e transações. | Alta |
-| Notificação de resultado | Cliente, Order Management | Cliente e pedido recebem atualização correta. | Média |
+| Serviço / Jornada | Cliente/Usuário | Resultado esperado | Criticidade | Service Deck | Status — v0.0.1 |
+| --- | --- | --- | --- | --- | --- |
+| Compra com Pix | Cliente comprador | Pix gerado, pago, confirmado e pedido liberado. | Crítica | [compra-com-pix.md](service-decks/compra-com-pix.md) | Em desenvolvimento |
+| Compra com Boleto | Cliente comprador | Boleto gerado com linha digitável e link PDF, confirmado pelo webhook do provedor. | Alta | — | Em desenvolvimento |
+| Compra com Cartão de Crédito | Cliente comprador | Cartão autorizado via fluxo hospedado, confirmado e pedido liberado. | Alta | — | Planejado |
+| Confirmação de pagamento | Checkout, Order Management | Pagamento confirmado via webhook; pedido avança no fluxo sem intervenção manual. | Crítica | — | Em desenvolvimento |
+| Notificação de resultado ao cliente | Cliente, sistemas integradores | Cliente e sistemas recebem atualização de status via webhook com assinatura verificável. | Alta | — | Em desenvolvimento (MVP) |
+| Cancelamento de invoice pendente | Operação, cliente | Cobrança inativa eliminada; nenhum valor processado após cancelamento. | Alta | — | Implementado — adiado para pós v0.0.1 |
+| Autenticação via API Token | Sistemas integradores | Somente sistemas autorizados acessam a API; acesso rastreável por tenant e token. | Crítica | — | Em desenvolvimento |
+| Configuração de webhook | Sistemas integradores | Consumidor registra endpoint e recebe eventos de pagamento sem polling. | Alta | — | Em desenvolvimento |
+| Consulta de status de pagamento | Atendimento, cliente, operação | Status atual consistente entre Payments, provedor e Order Management. | Alta | — | Planejado |
+| Fallback de gateway | Checkout, operação | Gateway alternativo assume falhas do primário sem perda de rastreabilidade. | Alta | — | Não previsto — v0.0.1 |
+| Conciliação de pagamento | Financeiro, operação | Pagamentos conciliados com pedidos e transações do provedor. | Alta | — | Não previsto — v0.0.1 |
 
 ## 5. Time do produto
 
