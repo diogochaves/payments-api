@@ -209,7 +209,7 @@ describe('Confirmar Pagamento via Webhook', () => {
           status: 'CONFIRMED',
           value: 219.9,
           customer: 'cus_mock_customer-200',
-          externalReference: 'MS-200045',
+          externalReference: created.body.invoiceId,
         },
       })
       .expect(200);

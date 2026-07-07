@@ -77,8 +77,9 @@ export class InvoiceService {
     }
 
     const now = new Date().toISOString();
+    const invoiceId = `inv_${ulid()}`;
     const invoice: InvoiceRecord = {
-      invoiceId: `inv_${ulid()}`,
+      invoiceId,
       tenantId: createInvoiceDto.tenantId,
       orderId: createInvoiceDto.orderId,
       customer: createInvoiceDto.customer,
@@ -91,7 +92,7 @@ export class InvoiceService {
       description:
         createInvoiceDto.description ??
         `Pedido ${createInvoiceDto.orderId} - Magazine Siará`,
-      externalReference: createInvoiceDto.orderId,
+      externalReference: invoiceId,
       createdAt: now,
       updatedAt: now,
     };
@@ -248,6 +249,33 @@ export class InvoiceService {
         detail: message,
       });
     }
+  }
+
+  async getInvoice(
+    tenantId: string,
+    invoiceId: string,
+  ): Promise<{
+    invoiceId: string;
+    orderId: string;
+    status: string;
+    amount: number;
+    currency: string;
+    billingType: string;
+    updatedAt: string;
+  }> {
+    const invoice = await this.repository.findInvoice(tenantId, invoiceId);
+    if (!invoice) {
+      throw new NotFoundException('Invoice not found');
+    }
+    return {
+      invoiceId: invoice.invoiceId,
+      orderId: invoice.orderId,
+      status: invoice.status,
+      amount: invoice.amount,
+      currency: invoice.currency,
+      billingType: invoice.billingType,
+      updatedAt: invoice.updatedAt,
+    };
   }
 
   async cancelInvoice(

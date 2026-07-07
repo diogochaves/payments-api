@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Headers,
   HttpCode,
   HttpStatus,
@@ -30,6 +31,15 @@ export class InvoiceController {
       idempotencyKey,
       correlationId,
     );
+  }
+
+  @Get(':invoiceId')
+  @HttpCode(HttpStatus.OK)
+  async getInvoice(
+    @Param('invoiceId') invoiceId: string,
+    @Headers('x-tenant-id') tenantId: string,
+  ) {
+    return await this.invoiceService.getInvoice(tenantId, invoiceId);
   }
 
   @Delete(':invoiceId')

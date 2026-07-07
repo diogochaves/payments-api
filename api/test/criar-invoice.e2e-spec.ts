@@ -82,9 +82,11 @@ describe('Criar Invoice', () => {
         status: 'OPEN',
         amount: 159.9,
         currency: 'BRL',
-        externalReference: 'MS-100045',
-        providerPaymentId: 'pay_mock_MS-100045',
-        paymentUrl: 'https://sandbox.asaas.com/i/pay_mock_MS-100045',
+        externalReference: expect.stringMatching(/^inv_/),
+        providerPaymentId: expect.stringMatching(/^pay_mock_inv_/),
+        paymentUrl: expect.stringMatching(
+          /^https:\/\/sandbox\.asaas\.com\/i\/pay_mock_inv_/,
+        ),
       });
       expect(response.body.invoiceId).toMatch(/^inv_/);
     });
@@ -100,7 +102,7 @@ describe('Criar Invoice', () => {
       expect(response.body).toMatchObject({
         orderId: 'MS-100045',
         status: 'OPEN',
-        providerPaymentId: 'pay_mock_MS-100045',
+        providerPaymentId: expect.stringMatching(/^pay_mock_inv_/),
       });
     });
 
@@ -115,7 +117,7 @@ describe('Criar Invoice', () => {
       expect(response.body).toMatchObject({
         status: 'OPEN',
         orderId: 'MS-100045',
-        providerPaymentId: 'pay_mock_MS-100045',
+        providerPaymentId: expect.stringMatching(/^pay_mock_inv_/),
       });
 
       const saved = await repository.findInvoice(
@@ -123,7 +125,7 @@ describe('Criar Invoice', () => {
         response.body.invoiceId,
       );
       expect(saved?.status).toBe('OPEN');
-      expect(saved?.providerPaymentId).toBe('pay_mock_MS-100045');
+      expect(saved?.providerPaymentId).toMatch(/^pay_mock_inv_/);
     });
 
     it('retorna a mesma invoice em retentativa com mesma chave de idempotencia', async () => {
