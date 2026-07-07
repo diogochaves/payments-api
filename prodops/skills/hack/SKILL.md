@@ -10,6 +10,18 @@ current ProdOps release context.
 
 For detailed Codex execution mechanics, read `references/workflow.md`.
 
+## Steps
+
+When invoked with a step argument (`/hack <step>`), execute only that step
+instead of the full flow. Read the corresponding step file and follow it
+exclusively — do not run the rest of the flow.
+
+| Step | File | When to use |
+|---|---|---|
+| `commit` | [steps/commit/SKILL.md](steps/commit/SKILL.md) | Stage and commit after green + lint + trail |
+
+If the requested step is not listed, run the full flow.
+
 ## Inputs
 
 Read before editing:

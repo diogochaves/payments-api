@@ -31,6 +31,20 @@ Por que esta intenção surgiu agora? Qual pressão, oportunidade ou problema a 
 
 ---
 
+## Hipóteses de Negócio
+
+Liste as hipóteses que motivam esta intenção e que deverão ser confirmadas, refinadas ou descartadas durante a exploração.
+
+Uma hipótese deve representar uma crença sobre o negócio, o usuário ou o produto, e não uma decisão de implementação.
+
+Exemplos:
+
+- [ ] A limitação atual reduz a conversão.
+- [ ] Resolver este problema aumentará a satisfação do cliente.
+- [ ] Existe demanda suficiente para justificar o investimento.
+
+---
+
 ## Perguntas em aberto
 
 O que precisa ser respondido antes de comprometer implementação?
