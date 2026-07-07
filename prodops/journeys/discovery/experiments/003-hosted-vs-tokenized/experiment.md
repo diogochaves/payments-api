@@ -345,7 +345,7 @@ Move Hosted Checkout to Downstream after Product and Tech Lead approval.
 
 ## Updated OBCs
 
-Draft OBC: `prodops/upstream/obcs/credit-card-authorization-confirmation.md`.
+Draft OBC: `prodops/journeys/discovery/obcs/credit-card-authorization-confirmation.md`.
 
 ## Updated Reliability Plan
 

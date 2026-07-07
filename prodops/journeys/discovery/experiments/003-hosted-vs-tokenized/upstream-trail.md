@@ -4,7 +4,7 @@
 
 Reference:
 
-`prodops/upstream/experiments/003-hosted-vs-tokenized/experiment.md`
+`prodops/journeys/discovery/experiments/003-hosted-vs-tokenized/experiment.md`
 
 ---
 
@@ -85,3 +85,36 @@ Ready for Assessment.
 ### Notes
 
 This entry also relates to EXP-001.
+
+## 2026-07-07
+
+### Activity
+
+Decision Package reviewed and approved. Capability moved to Downstream delivery flow.
+
+### Summary
+
+PM approved the hosted card slice for Downstream. Decision Package recommendation
+`Move Hosted Checkout to Downstream` was accepted. Scope restricted to hosted
+card entry only — tokenized card, saved-card and direct capture remain Upstream.
+
+### Participants
+
+- Christiano Milfont (PM Payments) — approved
+
+### Decision
+
+Move to Downstream.
+
+### Artifacts Updated
+
+- `prodops/journeys/discovery/features/credit-card-payment.feature` → `prodops/artifacts/bdd/credit-card-payment.feature`
+- `prodops/journeys/discovery/obcs/credit-card-authorization-confirmation.md` → `prodops/artifacts/obcs/credit-card-authorization-confirmation.md` (draft marking removed)
+- `prodops/artifacts/plans/iteration-plan.md` — entrada adicionada: Criar invoice via Cartão de Crédito (Hosted)
+- `prodops/artifacts/product/tracking-list.md` — status: Candidato → Promovido para Downstream
+
+### Next Steps
+
+- Bootstrap: criar branch para credit card hosted slice
+- Hack: implementar `POST /invoices` com `billingType: CREDIT_CARD` retornando `paymentUrl` do Asaas
+- BDD Feature `credit-card-payment.feature` é a fonte de cenários para o TDD

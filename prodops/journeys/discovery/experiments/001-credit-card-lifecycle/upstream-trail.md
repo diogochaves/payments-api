@@ -4,7 +4,7 @@
 
 Reference:
 
-`prodops/upstream/experiments/001-credit-card-lifecycle/experiment.md`
+`prodops/journeys/discovery/experiments/001-credit-card-lifecycle/experiment.md`
 
 ---
 
@@ -109,7 +109,7 @@ confirmation, refusal, cancellation and refund.
 
 ### Artifacts Updated
 
-- `prodops/upstream/experiments/001-credit-card-lifecycle/experiment.md`
+- `prodops/journeys/discovery/experiments/001-credit-card-lifecycle/experiment.md`
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/learnings.md`
 - `prodops/journeys/discovery/features/credit-card-payment.feature`
@@ -132,3 +132,35 @@ Continue experiment.
 Recommendation: move only hosted card entry toward Assessment. Keep saved-card
 reuse and new-card registration in Upstream until token storage, PCI boundary,
 consent and refund decisions are recorded.
+
+## 2026-07-07
+
+### Activity
+
+PM approval: hosted card slice promoted to Downstream. Remaining flows stay Upstream.
+
+### Summary
+
+Only the hosted card entry slice was approved for Downstream, consistent with
+the Decision Package recommendation. Saved-card, new-card registration and
+tokenized card remain Upstream pending Security, Architecture and Product
+decisions on token storage, PCI boundary, consent and refund contract.
+
+### Participants
+
+- Christiano Milfont (PM Payments) — approved hosted slice
+
+### Decision
+
+Partial promotion: hosted card entry → Downstream. Remaining flows → continue Upstream.
+
+### Artifacts Updated
+
+- Shared with EXP-003: BDD Feature and OBC moved to committed locations.
+- Tracking List items for saved-card, tokenized card and refund remain Open.
+
+### Next Steps
+
+- Saved-card and new-card registration: open new Upstream experiment when
+  token storage, PCI and consent decisions are available.
+- Refund boundary: requires Financial + Operations input before Downstream.

@@ -1,16 +1,17 @@
 # OBC - Credit Card Authorization And Confirmation
 
-## Status
-
-Draft from Upstream experiment. Do not treat as Downstream commitment until the
-capability is accepted into `prodops/artifacts/plans/downstream-iteration-backlog.md`.
-
 ## Business Outcome
 
 Magazine Siará can accept credit card payments through Payments API with clear
 customer feedback, no direct dependency on Asaas contracts in Checkout, and
 observable states for authorization, risk analysis, refusal, confirmation,
 receipt and refund boundary.
+
+## Downstream Scope (First Slice)
+
+Hosted card entry only. Tokenized card, saved-card reuse and new-card
+registration remain Upstream until token storage, PCI boundary, consent and
+refund decisions are recorded.
 
 ## Observable Events
 
@@ -57,6 +58,6 @@ receipt and refund boundary.
 
 ## Related Artifacts
 
-- BDD: `prodops/journeys/discovery/features/credit-card-payment.feature`
-- Upstream trail: `prodops/upstream/upstream-trail.md`
-- Experiment notes: `prodops/upstream/experiments.md`
+- BDD: `prodops/artifacts/bdd/credit-card-payment.feature`
+- Upstream experiments: EXP-001, EXP-003
+- Iteration Plan: `prodops/artifacts/plans/iteration-plan.md`

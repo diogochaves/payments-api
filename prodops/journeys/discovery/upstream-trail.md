@@ -5,7 +5,7 @@
 O Global Upstream Trail registra marcos de alto nível das atividades de engenharia exploratória.
 
 Cada experimento possui seu histórico de execução em
-`prodops/upstream/experiments/NNN-short-slug/upstream-trail.md`.
+`prodops/journeys/discovery/experiments/NNN-short-slug/upstream-trail.md`.
 
 Este arquivo global existe para ajudar futuros colaboradores a enxergar a evolução Upstream do repositório sem precisar ler cada trail de experimento.
 
@@ -19,7 +19,7 @@ Este arquivo global existe para ajudar futuros colaboradores a enxergar a evolu�
 
 Reference:
 
-`prodops/upstream/experiments/NNN-short-slug/experiment.md`
+`prodops/journeys/discovery/experiments/NNN-short-slug/experiment.md`
 
 ### Activity
 
@@ -482,3 +482,18 @@ Continuar experimento.
 ### Notes
 
 Recomendação: avançar apenas o checkout hospedado para Assessment. Manter reutilização de cartão salvo e cadastro de novo cartão em Upstream até que as decisões de armazenamento de token, fronteira PCI, consentimento e reembolso estejam registradas.
+
+## 2026-07-07
+
+### Experiments
+
+- EXP-003: `prodops/journeys/discovery/experiments/003-hosted-vs-tokenized/experiment.md`
+- EXP-001: `prodops/journeys/discovery/experiments/001-credit-card-lifecycle/experiment.md`
+
+### Activity
+
+Move-to-delivery: hosted card slice promoted to Downstream.
+
+### Decision
+
+PM approved. OBC and BDD Feature moved to committed locations. Iteration Plan updated. Hosted card slice enters Downstream delivery flow.

@@ -1,6 +1,6 @@
 # Iteration Plan - Payments Release
 
-> Documento gerado a partir de `prodops/assessment/reliability-plan/setup/iteration-plan.prompt.md`.
+> Documento gerado a partir de `prodops/journeys/assessment/reliability-plans/setup/iteration-plan.prompt.md`.
 > Foco: decisão de escopo de negócio para a próxima iteração. Este documento não substitui o Reliability Plan.
 
 ## Executive Summary
@@ -47,12 +47,13 @@ A decisão principal é reduzir o lote: entregar uma jornada menor, completa e c
 | Feature | Valor esperado | Dependências | Estado atual |
 | --- | --- | --- | --- |
 | Criar invoice via Pix | Permite ao Checkout iniciar a jornada de pagamento de maior prioridade para a Release. | Checkout, Payments, provedor Asaas, Feature Flag. | Documentada em feature file e parcialmente implementada no código. |
+| Criar invoice via Cartão de Crédito (Hosted) | Amplia meios de pagamento com cartão hospedado, sem exposição PCI no backend. | Checkout, Payments, provedor Asaas, webhook de confirmação. | OBC em `prodops/artifacts/obcs/credit-card-authorization-confirmation.md`. BDD Feature em `prodops/artifacts/bdd/credit-card-payment.feature`. Aprovado em 2026-07-07 (EXP-003 + EXP-001 hosted slice). Pronto para Bootstrap + Hack. |
 | Criar invoice via Boleto | Amplia meios de pagamento atendidos pelo novo gateway. | Checkout, Payments, regras de Boleto, provedor Asaas, notificação. | OBC criado em `prodops/artifacts/obcs/create-invoice-boleto.md`. BDD Feature criada em `prodops/artifacts/bdd/create-invoice-boleto.feature`. Riscos documentados em `risks.md`. Pronta para entrar no fluxo Downstream. |
 | Confirmação de pagamento | Permite ao Ecommerce reconhecer pagamento aprovado e seguir a jornada do cliente. | Payments, webhook do provedor, Ecommerce/Orders, Notification Service. | Documentada e implementada no código para eventos principais. |
 | Notificação de status de pagamento | Fecha o ciclo de comunicação com o cliente e reduz incerteza pós-pagamento. | Ecommerce, Notification Service, Payments. | Documentada como necessidade crítica; integração final não aparece como funcionalidade completa neste repositório. |
 | Cancelar invoice pendente | Evita que cobranças indevidas continuem ativas. | Payments, provedor Asaas, regras de estado da invoice. | Documentada e implementada no código. |
 | Habilitar novo gateway para o Checkout | Permite que a Release gere valor real em produção. | Checkout, Feature Flag, Payments. | Documentada no premortem como preparada, mas bloqueada por bug localizado. |
-| Validação de acesso por token de API | Garante que apenas sistemas autorizados consumam a Payments API, com rastreabilidade por tenant e chave local para desenvolvimento. | Payments API, variáveis de ambiente, time de Checkout e integrações. | Implementado. OBC e BDD em `prodops/product/`. |
+| Validação de acesso por token de API | Garante que apenas sistemas autorizados consumam a Payments API, com rastreabilidade por tenant e chave local para desenvolvimento. | Payments API, variáveis de ambiente, time de Checkout e integrações. | Implementado. OBC em `prodops/artifacts/obcs/`. BDD em `prodops/artifacts/bdd/`. |
 | Configuração de webhook por token de API | Permite que consumidores recebam notificações automáticas de mudança de status de pagamento sem polling. | Payments API, token de API, DynamoDB WebhooksTable. | Novo item; OBC e BDD criados. |
 
 ## Iteration Plan recomendado
