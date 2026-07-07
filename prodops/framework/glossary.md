@@ -1,8 +1,8 @@
 # ProdOps Glossary
 
-**OBC (Outcome-Based Criterion)** — Resultado mensurável que define o sucesso de uma capability. Fica em `prodops/assessment/obcs/`. Ancora cenários TDD a resultados de negócio.
+**OBC (Outcome-Based Criterion)** — Resultado mensurável que define o sucesso de uma capability. Fica em `prodops/artifacts/obcs/`. Ancora cenários TDD a resultados de negócio.
 
-**BDD Feature** — Especificação Gherkin que descreve o comportamento esperado. Fica em `prodops/product/features/` (comprometida) ou `prodops/upstream/features/` (exploratória). Usada como insumo de TDD no Downstream.
+**BDD Feature** — Especificação Gherkin que descreve o comportamento esperado. Fica em `prodops/artifacts/bdd/` (comprometida) ou `prodops/journeys/discovery/features/` (exploratória). Usada como insumo de TDD no Downstream.
 
 **Reliability Plan** — O contrato de execução de um item Downstream. Define riscos, OBCs, SLOs e ações de mitigação. Fica em `prodops/assessment/reliability-plan/`.
 
@@ -12,11 +12,11 @@
 
 **Bootstrap** — O primeiro estágio do CI Sync. Prepara o ambiente, cria a branch e estabelece o contexto de produto (OBC, BDD Feature, testes existentes) antes de iniciar a implementação. Não produz código — produz contexto. Ver [`delivery/flows/bootstrap.md`](../delivery/flows/bootstrap.md).
 
-**Upstream** — O caminho exploratório. Objetivo: transformar hipóteses em conhecimento validado. Código é descartável até ser promovido para Downstream. O Upstream seleciona etapas do fluxo conforme a necessidade — não há sequência obrigatória. Um ciclo Upstream típico usa Bootstrap + Hack + Sync; Ship, Validate e Promote são usados apenas quando o experimento precisa de validação em staging ou de uma decisão de promoção. Ver [`prodops/upstream/README.md`](../upstream/README.md).
+**Upstream** — O caminho exploratório. Objetivo: transformar hipóteses em conhecimento validado. Código é descartável até ser promovido para Downstream. O Upstream seleciona etapas do fluxo conforme a necessidade — não há sequência obrigatória. Um ciclo Upstream típico usa Bootstrap + Hack + Sync; Ship, Validate e Promote são usados apenas quando o experimento precisa de validação em staging ou de uma decisão de promoção. Ver [`prodops/journeys/discovery/README.md`](../journeys/discovery/README.md).
 
-**Downstream** — O caminho de entrega governado. Objetivo: entregar com confiança usando conhecimento validado. Todo item requer OBC + BDD Feature + entrada no Reliability Plan. O Downstream exige o fluxo completo: `Bootstrap → Hack → Sync → Finish → Ship → Validate → Promote`. Ver [`prodops/downstream/README.md`](../downstream/README.md).
+**Downstream** — O caminho de entrega governado. Objetivo: entregar com confiança usando conhecimento validado. Todo item requer OBC + BDD Feature + entrada no Reliability Plan. O Downstream exige o fluxo completo: `Bootstrap → Hack → Sync → Finish → Ship → Validate → Promote`. Ver [`prodops/execution-model/downstream.md`](../execution-model/downstream.md).
 
-**Hack Flow** — A fase de codificação em Upstream e Downstream. Segundo estágio do CI Sync, sucede o Bootstrap. Definido em [`delivery/flows/hack.md`](../delivery/flows/hack.md). Mecânica de execução em [`skills/hack/`](../../skills/hack/).
+**Hack Flow** — A fase de codificação em Upstream e Downstream. Segundo estágio do CI Sync, sucede o Bootstrap. Definido em [`journeys/delivery/phases/hack/README.md`](../journeys/delivery/phases/hack/README.md). Mecânica de execução em [`prodops/skills/hack/`](../../skills/hack/).
 
 **Ship** — O primeiro estágio do CI Async. Transforma a implementação finalizada em artefato executável e conduz o deploy. Organizado em duas famílias: Preparation (Build, Package, Version, Sign, SBOM, Publish Artifact) e Deployment (Deploy, Progressive Delivery, Feature Flags, Rollout, Rollback, Infrastructure Validation). Build, Package e Publish são capabilities internas do Ship — não são etapas independentes do fluxo principal. Ver [`delivery/flows/ship-validate-promote.md`](../delivery/flows/ship-validate-promote.md).
 

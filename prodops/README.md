@@ -2,61 +2,32 @@
 
 Este diretório é a fonte canônica do Framework ProdOps neste repositório.
 
-## Ordem oficial de leitura
-
-Para qualquer tarefa, leia nesta ordem:
-
-```
-README.md
-  ↓ prodops/README.md (aqui)
-    ↓ framework/principles.md
-      ↓ framework/glossary.md
-        ↓ delivery/README.md
-          ↓ CI Sync ou CI Async
-            ↓ Flow específico
-              ↓ Practice
-                ↓ Capabilities
-                  ↓ Artefatos da capability
-```
-
-## Portal
-
-| Área | Conteúdo | Link |
-|---|---|---|
-| **Framework** | Princípios, glossário, modelo operacional | [framework/](framework/) |
-| **Product** | Product Deck, Service Decks, BDD Features, Tracking List | [product/](product/) |
-| **Upstream** | Experimentos, learnings, features exploratórias, OBCs draft | [upstream/](upstream/) |
-| **Assessment** | Reliability Plans, OBCs, riscos, oportunidades, Iteration Plans | [assessment/](assessment/) |
-| **Delivery** | CI Sync, CI Async, flows, practices, capabilities | [delivery/](delivery/) |
-| **Operation** | Runbooks, incidentes, postmortems, trilha operacional | [operation/](operation/) |
-| **Templates** | Templates de engenharia, assessment, delivery e operação | [templates/](templates/) |
-
 ## Modelo operacional
 
 ```
-Journey → Flow → Practice → Capability
-
-Upstream → exploração, hipóteses, experimentos
-Downstream → entrega governada, OBC + BDD + Reliability Plan
-
-CI Sync: Bootstrap → Hack → Sync → Finish     (trabalho local, síncrono)
-CI Async: Ship → Validate → Promote            (plataforma, pipelines, ambientes)
+Business Intent → Assessment → Execution Mode → Journey → Phase → Practice → Capability → Artifacts
 ```
 
-## Delivery em detalhe
+## Ordem de leitura
 
-```
-ProdOps Delivery
-├── CI Sync
-│   ├── Bootstrap  → prepara branch, ambiente e contexto
-│   ├── Hack       → implementa via ProdOps TDD + Commit Workflow
-│   ├── Sync       → verifica consistência de artefatos
-│   └── Finish     → Quality Gates + PR
-│
-└── CI Async
-    ├── Ship       → Preparation (Build/Package/Version/Sign/SBOM/Publish) + Deployment
-    ├── Validate   → verifica entrega em runtime
-    └── Promote    → promoção formal com evidência
-```
+1. `framework/principles.md` — princípios
+2. `framework/glossary.md` — termos canônicos
+3. `framework/operating-model.md` — modelo operacional completo
+4. `execution-model/README.md` — Upstream vs Downstream
+5. `journeys/README.md` — as 5 jornadas
+6. A jornada específica da tarefa
+7. A fase dentro da jornada
+8. As capabilities da fase
 
-Para regras operacionais de agentes: ver `AGENTS.md` na raiz do repositório.
+## Portal
+
+| Área | Descrição |
+|---|---|
+| [framework/](framework/) | Princípios, glossário, modelo operacional |
+| [business-intents/](business-intents/) | Intenções de negócio (ponto de entrada) |
+| [execution-model/](execution-model/) | Upstream e Downstream como modos de execução |
+| [journeys/](journeys/) | As 5 jornadas: Discovery, Delivery, Operation, Assessment, Diligence |
+| [artifacts/](artifacts/) | Artefatos produzidos: OBCs, BDD Features, planos, trilhas, evidências |
+| [templates/](templates/) | Templates centralizados por área |
+| [skills/](skills/) | Skills executáveis por agentes |
+| [commit-workflow/](commit-workflow/) | Commit Workflow: hooks Git nativos, scripts, documentação |
