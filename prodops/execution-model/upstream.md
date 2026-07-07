@@ -41,6 +41,25 @@ Ao final de um ciclo Upstream, deve existir:
 - Recomendação clara (promover, requer outro experimento, aguardar, descartar)
 - Artefatos ProdOps atualizados
 
+## Sandbox Deploy (Upstream)
+
+Um experimento pode ser implantado em AWS real sem passar pelo rigor do Downstream.
+
+Objetivo: validar comportamento contra um provedor real (ex: Asaas sandbox) quando o ambiente local não é suficiente.
+
+**Características:**
+
+- Ativado manualmente via `workflow_dispatch` — nunca em push
+- Stack efêmera: `payments-api-experiment` + `payments-api-dynamo-experiment`
+- Recursos AWS prefixados `experiment-*` — isolados de staging e production
+- Role IAM dedicada `payments-api-github-experiment` — escopo restrito a `experiment-*`
+- Sem gate de aprovação, sem Release Trail, sem OBC committed
+- **Obrigatório:** stack destruída ao final do experimento via `action=teardown`
+
+→ [Step: deploy-to-sandbox](../skills/upstream/steps/deploy-to-sandbox/SKILL.md)
+→ [Workflow: experiment-deploy.yml](../../.github/workflows/experiment-deploy.yml)
+→ [Role IAM: iam-experiment-role.yaml](../../api/infra/iam-experiment-role.yaml)
+
 ## Promoção para Downstream
 
 Uma capability promovida do Upstream para Downstream deve ter:

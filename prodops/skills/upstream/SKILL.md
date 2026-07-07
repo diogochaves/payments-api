@@ -14,6 +14,7 @@ exclusively — do not run the rest of the flow.
 | Step | File | When to use |
 |---|---|---|
 | `move-to-delivery` | [steps/move-to-delivery/SKILL.md](steps/move-to-delivery/SKILL.md) | Promote a completed experiment to the Downstream delivery flow |
+| `deploy-to-sandbox` | [steps/deploy-to-sandbox/SKILL.md](steps/deploy-to-sandbox/SKILL.md) | Deploy experiment branch to real AWS sandbox for provider validation |
 
 If the requested step is not listed, run the full flow.
 

@@ -43,6 +43,45 @@ parameter_overrides = [
   # the insecure local token would grant access to the real staging database.
 ]
 
+# ── Experiment ───────────────────────────────────────────────────────────────
+# Deploy efêmero para validação de experimentos Upstream em AWS real (Asaas sandbox).
+# Stack destruída ao final do experimento — obrigatório.
+# Não acumula Release Trail. Não exige OBC committed nem BDD promoted.
+# Role IAM dedicada: payments-api-github-experiment (escopo experiment-*)
+#
+# Deploy via GitHub Actions:
+#   .github/workflows/experiment-deploy.yml — workflow_dispatch
+#
+# Teardown após conclusão do experimento:
+#   .github/workflows/experiment-deploy.yml — action=teardown
+# ─────────────────────────────────────────────────────────────────────────────
+[experiment.deploy.parameters]
+stack_name              = "payments-api-experiment"
+region                  = "us-east-1"
+resolve_s3              = true
+s3_prefix               = "payments-api/experiment"
+confirm_changeset       = false
+fail_on_empty_changeset = false
+capabilities            = "CAPABILITY_IAM CAPABILITY_NAMED_IAM"
+template_file           = "infra/lambda.yaml"
+
+parameter_overrides = [
+  # Environment — todos os recursos AWS recebem prefixo experiment-*
+  "EnvironmentName=experiment",
+
+  # Asaas — mesma sandbox que staging, dados isolados pelo prefixo
+  "AsaasMock=false",
+  "AsaasUrl=https://api-sandbox.asaas.com",
+  "EnabledPaymentProviders=ASAAS",
+  "DefaultPaymentProvider=ASAAS",
+
+  # Webhooks — real SQS async processing
+  "WebhookProcessingMode=async",
+
+  # Observability — Datadog desabilitado em experimentos
+  "DatadogEnabled=false",
+]
+
 # ── Production ───────────────────────────────────────────────────────────────
 # Production uses the live Asaas API (not sandbox).
 # confirm_changeset=true requires a manual approval before applying changes.

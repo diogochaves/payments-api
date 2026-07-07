@@ -304,6 +304,20 @@ Inclua:
 
 ---
 
+# Sandbox Deploy Record
+
+Preencha apenas se o experimento foi implantado em AWS real via `/upstream deploy-to-sandbox`.
+
+| Field | Value |
+|---|---|
+| Deploy date | |
+| Branch | |
+| API URL | |
+| Triggered by | |
+| Teardown date | |
+
+---
+
 # Exit Criteria
 
 Confirme que:
