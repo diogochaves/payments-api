@@ -1,26 +1,25 @@
 # Quality Gates
 
-Use this file to record release quality gates that apply across implementation,
-validation, shipping, and promotion.
+Use este arquivo para registrar Quality Gates de release que se aplicam à implementação, validação, ship e promoção.
 
 ## Delivery Gates
 
-- Relevant ProdOps context was read before implementation.
-- Behavior changes are covered by BDD-backed tests when applicable.
-- Reliability Plan risks impacted by the change were reviewed.
-- Build, test, or validation evidence is recorded in the Release Trail.
-- Operational follow-ups are recorded instead of being left implicit.
+- O contexto ProdOps relevante foi lido antes da implementação.
+- Mudanças de comportamento são cobertas por testes respaldados por BDD quando aplicável.
+- Riscos do Reliability Plan impactados pela mudança foram revisados.
+- Evidências de build, teste ou validação estão registradas no Release Trail.
+- Acompanhamentos operacionais estão registrados em vez de deixados implícitos.
 
 ## Test Quality Gates
 
 > **Fonte canônica do No Mocks Rule.** A definição técnica completa está em [`skills/hack/references/workflow.md § No Mocks Rule`](../../skills/hack/references/workflow.md). Este arquivo define o gate de enforcement — o que bloqueia merge.
 
-**No test doubles in acceptance tests.** `api/test/` must not contain `jest.fn()` service replacements, `jest.spyOn(...).mockXxx()` implementations, or `.overrideProvider()` calls. Violations block merge.
+**Proibição de test doubles em testes de aceitação.** `api/test/` não deve conter substituições de serviço via `jest.fn()`, implementações de `jest.spyOn(...).mockXxx()` ou chamadas a `.overrideProvider()`. Violações bloqueiam o merge.
 
-**`ASAAS_MOCK=true` is allowed.** It is a designed behavior mode of the real `AsaasService`, not a test double. The real service is instantiated; the mock flag controls which branch runs.
+**`ASAAS_MOCK=true` é permitido.** É um modo de comportamento projetado do `AsaasService` real, não um test double. O serviço real é instanciado; o flag mock controla qual branch executa.
 
-**Real DynamoDB via LocalStack.** All acceptance tests hit a real DynamoDB-compatible API. In-memory or mocked repository modes (`INVOICE_REPOSITORY=memory`, `DYNAMO_MOCK=true`) are prohibited in `api/test/`.
+**DynamoDB real via LocalStack.** Todos os testes de aceitação acessam uma API compatível com DynamoDB real. Modos de repositório em memória ou mockados (`INVOICE_REPOSITORY=memory`, `DYNAMO_MOCK=true`) são proibidos em `api/test/`.
 
-**Shared app per file.** Each spec file creates the NestJS application once in `beforeAll` and tears it down in `afterAll`. Tables are truncated in `beforeEach`. No app recreation per test.
+**App compartilhado por arquivo.** Cada spec file cria a aplicação NestJS uma única vez no `beforeAll` e a encerra no `afterAll`. Tabelas são truncadas no `beforeEach`. Não recriar a app por teste.
 
-**Error injection tests belong in unit tests.** Scenarios that require forcing an external service to fail (timeout, malformed response, network error) are not acceptance test scenarios. They are unit tests targeting the service layer in isolation and live outside `api/test/` acceptance specs.
+**Testes de injeção de erro pertencem a unit tests.** Cenários que exigem forçar falha em um serviço externo (timeout, resposta malformada, erro de rede) não são cenários de teste de aceitação. São unit tests direcionados à camada de serviço em isolamento e ficam fora dos acceptance specs em `api/test/`.

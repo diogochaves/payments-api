@@ -1,6 +1,6 @@
 # Upstream Experiments Directory
 
-New Upstream experiments must be created as directories:
+Novos experimentos Upstream devem ser criados como diretórios:
 
 ```text
 NNN-short-slug/
@@ -9,9 +9,6 @@ NNN-short-slug/
   evidence/
 ```
 
-Use `experiment.md` for the hypothesis, findings, recommendation and Decision
-Package. Use `upstream-trail.md` for chronological execution history for that
-experiment. Store long supporting material in `evidence/`.
+Use `experiment.md` para hipótese, descobertas, recomendação e Decision Package. Use `upstream-trail.md` para o histórico cronológico de execução do experimento. Armazene material de suporte extenso em `evidence/`.
 
-Flat `*.md` files in this directory are legacy experiments. Do not create new
-experiments as flat files.
+Arquivos planos `*.md` neste diretório são experimentos legados. Não criar novos experimentos como arquivos planos.

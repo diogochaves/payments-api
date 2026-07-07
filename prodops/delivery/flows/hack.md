@@ -19,38 +19,38 @@ O Hack é responsável pela implementação. Ele não é substituído por nenhum
 - **ProdOps TDD:** orienta o ciclo de codificação (Contract First, Integration First, Observability First). Ver [practices/prodops-tdd.md](../practices/prodops-tdd.md).
 - **Commit Workflow:** executa após cada ciclo Red→Green→Refactor. Ver [../../commit-workflow/README.md](../../commit-workflow/README.md).
 
-For execution mechanics — branching, commands, lint, tests, commit format — see [`skills/hack/`](../../../skills/hack/).
+Para mecânica de execução — branching, comandos, lint, testes, formato de commit — ver [`skills/hack/`](../../../skills/hack/).
 
 ---
 
-## Sequence
+## Sequência
 
 ```
 Teste → Implementação → Observabilidade → Refactor → Commit → Validação → Evidência
 ```
 
-### Step 1 — Write the integration test first (Red Bar)
+### Passo 1 — Escrever o teste de integração primeiro (Red Bar)
 
 **Pré-condição:** Bootstrap entregou branch limpa, artefatos lidos e contrato verificado. Se isso não ocorreu, volte ao Bootstrap antes de continuar.
 
-- Write a test that expresses the desired behavior at the HTTP or event boundary.
-- Prioritize integration and acceptance tests over unit tests.
-- Run the test and confirm it fails for the expected behavioral reason.
-- Do not proceed to implementation until the red bar is confirmed.
+- Escrever um teste que expresse o comportamento desejado na fronteira HTTP ou de evento.
+- Priorizar testes de integração e aceitação sobre unit tests.
+- Executar o teste e confirmar que ele falha pela razão comportamental esperada.
+- Não avançar para a implementação até que o Red Bar esteja confirmado.
 
-### Step 2 — Implement the minimum (Green Bar)
+### Passo 2 — Implementar o mínimo (Green Bar)
 
-- Write the smallest production change that makes the failing test pass.
-- Do not add logic not demanded by the test.
-- Do not modify production code to make the test pass artificially.
+- Escrever a menor mudança de produção que faz o teste falho passar.
+- Não adicionar lógica não exigida pelo teste.
+- Não modificar código de produção para fazer o teste passar artificialmente.
 
-### Step 3 — Refactor
+### Passo 3 — Refatorar
 
-- Improve structure while keeping tests green.
-- Apply Clean Code rules: explicit names, small functions, clear control flow.
-- Run tests again after refactoring.
+- Melhorar a estrutura mantendo os testes verdes.
+- Aplicar regras de Clean Code: nomes explícitos, funções pequenas, fluxo de controle claro.
+- Executar os testes novamente após a refatoração.
 
-### Step 4 — Commit (Commit Workflow)
+### Passo 4 — Commit (Commit Workflow)
 
 Após cada ciclo Red→Green→Refactor, executar o Commit Workflow:
 
@@ -68,41 +68,41 @@ cd api && npm run test   # unit tests
 
 O Commit Workflow não é responsabilidade do ProdOps TDD — é uma capability separada que o Hack consome. Ver [../../commit-workflow/README.md](../../commit-workflow/README.md).
 
-### Step 5 — Validate observability
+### Passo 5 — Validar observabilidade
 
-After green bar:
-- Verify that relevant logs are emitted with the expected structure.
-- Verify error responses carry meaningful messages.
-- Verify that correlation IDs and tenant context propagate correctly.
-- Confirm that no secret or PII appears in logs.
+Após o Green Bar:
+- Verificar que os logs relevantes são emitidos com a estrutura esperada.
+- Verificar que respostas de erro têm mensagens significativas.
+- Verificar que correlation IDs e contexto de tenant são propagados corretamente.
+- Confirmar que nenhum secret ou PII aparece nos logs.
 
-### Step 6 — Run quality checks
+### Passo 6 — Executar verificações de qualidade
 
 ```sh
-# Inside api/
-npm run lint        # ESLint + Prettier with --fix; must exit 0
+# Dentro de api/
+npm run lint        # ESLint + Prettier com --fix; deve sair com código 0
 npm run test        # unit tests
-./scripts/test-acceptance.sh   # full acceptance suite — when payment behavior or contracts changed
+./scripts/test-acceptance.sh   # suite completa de aceitação — quando comportamento de pagamento ou contratos mudaram
 ```
 
-See [skills/hack/SKILL.md](../../../skills/hack/SKILL.md) for the full validation list.
+Ver [skills/hack/SKILL.md](../../../skills/hack/SKILL.md) para a lista completa de validações.
 
-### Step 7 — Record evidence
+### Passo 7 — Registrar evidência
 
-Before moving to Sync or Finish:
-- Append evidence to `prodops/downstream/release-trail.md` (Downstream) or the experiment's `upstream-trail.md` (Upstream).
-- Evidence must include: test output, lint output, and a summary of what changed.
+Antes de avançar para Sync ou Finish:
+- Acrescentar evidência em `prodops/downstream/release-trail.md` (Downstream) ou no `upstream-trail.md` do experimento (Upstream).
+- Evidência deve incluir: saída dos testes, saída do lint e resumo do que mudou.
 
 ---
 
 ## Guardrails
 
-- If the contract or acceptance criterion is missing, stop: Bootstrap was not completed. Return to Bootstrap before writing any test.
-- Do not skip the red bar — a test that was never red may not actually verify behavior.
-- Do not use mocks for owned services or business rules. See [practices/prodops-tdd.md](../practices/prodops-tdd.md) and [testing policy](../../engineering/testing-policy.md).
-- Do not modify production code solely to make a test pass.
-- Do not add features beyond what the current test demands.
-- Preserve existing architecture and module boundaries.
+- Se o contrato ou critério de aceite estiver ausente, parar: o Bootstrap não foi concluído. Retornar ao Bootstrap antes de escrever qualquer teste.
+- Não pular o Red Bar — um teste que nunca foi vermelho pode não verificar o comportamento de fato.
+- Não usar mocks para serviços próprios ou regras de negócio. Ver [practices/prodops-tdd.md](../practices/prodops-tdd.md) e [testing policy](../../engineering/testing-policy.md).
+- Não modificar código de produção apenas para fazer um teste passar.
+- Não adicionar features além do que o teste atual exige.
+- Preservar a arquitetura e os limites de módulos existentes.
 
 ---
 

@@ -1,5 +1,5 @@
 # Incidents
 
-Record production or release-impacting incidents here.
+Registrar aqui incidentes de produção ou que impactam a release.
 
-No incidents are currently versioned for this release.
+Nenhum incidente foi registrado para esta release.

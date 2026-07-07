@@ -1,16 +1,16 @@
 # Downstream
 
-Downstream is the governed ProdOps delivery path.
+Downstream é o caminho de entrega governado do ProdOps.
 
-Use it for approved Iteration Backlog items, Reliability Plan execution, BDD-led
-TDD, OBC updates, Quality Gates, Release Trail evidence, observability
-validation, and delivery preparation.
+Use para itens aprovados no Iteration Backlog, execução do Reliability Plan,
+TDD guiado por BDD, atualizações de OBC, Quality Gates, evidências no Release
+Trail, validação de observabilidade e preparação de entrega.
 
-The standard flow is:
+O fluxo padrão é:
 
 ```text
 Hack -> Sync -> Finish -> Ship -> Validate -> Promote
 ```
 
-Downstream must preserve traceability from current state and assessment through
-implementation, validation, and promotion.
+O Downstream deve preservar rastreabilidade desde o estado atual e o assessment
+até a implementação, validação e promoção.

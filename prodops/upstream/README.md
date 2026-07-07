@@ -1,119 +1,118 @@
 # Upstream
 
-## Purpose
+## Propósito
 
-Upstream is the exploratory engineering workflow of ProdOps.
+Upstream é o fluxo de engenharia exploratória do ProdOps.
 
-Its purpose is to reduce uncertainty before a capability enters the standard delivery flow.
+Seu propósito é reduzir incerteza antes de uma capability entrar no fluxo padrão de entrega.
 
-Unlike Downstream, Upstream is driven by learning rather than delivery commitments.
+Diferente do Downstream, o Upstream é orientado por aprendizado, não por compromissos de entrega.
 
-An Upstream experiment may produce production-quality code, but that code is considered exploratory until the capability is promoted to Downstream.
+Um experimento Upstream pode produzir código de qualidade de produção, mas esse código é considerado exploratório até que a capability seja promovida para Downstream.
 
 ---
 
-# Objectives
+# Objetivos
 
-Upstream exists to:
+O Upstream existe para:
 
-- understand business problems;
-- validate technical approaches;
-- explore provider capabilities;
-- prototype integrations;
-- validate business flows;
-- reduce implementation risk;
-- evolve Product knowledge.
+- compreender problemas de negócio;
+- validar abordagens técnicas;
+- explorar capabilities de provedores;
+- prototipar integrações;
+- validar fluxos de negócio;
+- reduzir riscos de implementação;
+- evoluir o conhecimento de Produto.
 
 ---
 
 # Repository Scope Gate
 
-Before creating an experiment, BDD Feature, OBC, prototype, Validation Workbench
-change, or any execution artifact, confirm that the capability can be developed
-or validated inside this repository.
+Antes de criar um experimento, BDD Feature, OBC, protótipo, mudança no Validation Workbench
+ou qualquer artefato de execução, confirmar que a capability pode ser desenvolvida
+ou validada dentro deste repositório.
 
-Create execution artifacts only when this repository owns or can directly
-exercise at least one of:
+Criar artefatos de execução apenas quando este repositório for dono ou puder exercitar diretamente
+ao menos um dos seguintes:
 
-- API behavior;
-- domain logic;
-- provider integration;
-- webhook handling;
-- persistence;
-- contracts owned by Payments API;
-- Validation Workbench flow;
-- tests or executable evidence.
+- comportamento de API;
+- lógica de domínio;
+- integração com provedor;
+- tratamento de webhook;
+- persistência;
+- contratos de propriedade da Payments API;
+- fluxo do Validation Workbench;
+- testes ou evidências executáveis.
 
-If the request depends on implementation owned by another repository or system,
-do not create a Feature, experiment, prototype, or execution artifact here.
-Instead, record it only as one of:
+Se a solicitação depende de implementação de propriedade de outro repositório ou sistema,
+não criar Feature, experimento, protótipo ou artefato de execução aqui.
+Registrar apenas como:
 
-- external dependency;
-- release risk;
-- Tracking List item;
-- Reliability Plan note;
-- evidence required from the owning system.
+- dependência externa;
+- risco de release;
+- item da Tracking List;
+- nota do Reliability Plan;
+- evidência requerida do sistema responsável.
 
-Examples of out-of-repository work:
+Exemplos de trabalho fora do repositório:
 
-- Checkout Feature Flag implementation;
-- Checkout rollout targeting;
-- Notification Service delivery behavior;
-- Order Management fulfillment behavior;
-- corporate ITSM integration outside Payments API.
+- implementação da Feature Flag do Checkout;
+- targeting de rollout do Checkout;
+- comportamento de entrega do Notification Service;
+- comportamento de fulfillment do Order Management;
+- integração corporativa de ITSM fora da Payments API.
 
-Upstream may document the dependency, but it must not make it look executable in
-this repository.
+O Upstream pode documentar a dependência, mas não deve fazê-la parecer executável neste repositório.
 
 ---
 
-# Typical Outputs
+# Saídas Típicas
 
-An Upstream activity may produce:
+Uma atividade Upstream pode produzir:
 
-- executable code;
-- Validation Workbench improvements;
-- prototypes;
-- BDD scenarios;
+- código executável;
+- melhorias no Validation Workbench;
+- protótipos;
+- cenários BDD;
 - OBC drafts;
-- OpenAPI updates;
-- AsyncAPI updates;
-- Event Storming updates;
-- Reliability Plan updates;
-- Tracking List updates;
-- architecture decisions.
+- atualizações de OpenAPI;
+- atualizações de AsyncAPI;
+- atualizações de Event Storming;
+- atualizações do Reliability Plan;
+- atualizações da Tracking List;
+- decisões de arquitetura.
 
 ---
 
 # Workflow
 
-A typical Upstream flow is:
+Um fluxo Upstream típico é:
 
-Business Question
-
-↓
-
-Hypothesis
+Pergunta de Negócio
 
 ↓
 
-Experiment
+Hipótese
 
 ↓
 
-Implementation
+Experimento
 
 ↓
 
-Functional Validation
+Implementação
 
 ↓
 
-Learning
+Validação Funcional
 
 ↓
 
-Decision
+Aprendizado
+
+↓
+
+Decisão
 
 ↓
 
@@ -121,32 +120,32 @@ Assessment
 
 ↓
 
-Downstream (if approved)
+Downstream (se aprovado)
 
 ---
 
 # Experiments
 
-Experiments are stored in:
+Experimentos ficam em:
 
 ```
 prodops/upstream/experiments/
 ```
 
-Each experiment should answer a specific question.
+Cada experimento deve responder a uma pergunta específica.
 
-Examples:
+Exemplos:
 
-- Is the provider API sufficient?
-- Which architecture should be adopted?
-- Can this business flow be validated?
-- What are the operational risks?
+- A API do provedor é suficiente?
+- Qual arquitetura deve ser adotada?
+- Este fluxo de negócio pode ser validado?
+- Quais são os riscos operacionais?
 
-Experiments should be small and focused.
+Experimentos devem ser pequenos e focados.
 
 ## Experiment File Layout
 
-New experiments must use one directory per experiment:
+Novos experimentos devem usar um diretório por experimento:
 
 ```text
 prodops/upstream/experiments/NNN-short-slug/
@@ -155,58 +154,47 @@ prodops/upstream/experiments/NNN-short-slug/
   evidence/
 ```
 
-Use `experiment.md` for the stable hypothesis, scope, findings, recommendation
-and Decision Package.
+Use `experiment.md` para a hipótese estável, escopo, descobertas, recomendação e Decision Package.
 
-Use the experiment-local `upstream-trail.md` for chronological execution notes,
-validation evidence, artifact changes and decisions that happened during the
-experiment.
+Use o `upstream-trail.md` local do experimento para notas cronológicas de execução, evidências de validação, mudanças em artefatos e decisões ocorridas durante o experimento.
 
-Use `evidence/` only for supporting material that is too detailed for the
-experiment document, such as command outputs, screenshots, payload examples or
-provider responses.
+Use `evidence/` apenas para material de suporte muito detalhado para o documento do experimento, como saídas de comandos, capturas de tela, exemplos de payload ou respostas do provedor.
 
-Flat experiment files under `prodops/upstream/experiments/*.md` are legacy
-artifacts. Do not create new flat experiment files. If a flat experiment file is
-restored from history or another branch, migrate it to the directory pattern
-before making further changes.
+Arquivos planos de experimento em `prodops/upstream/experiments/*.md` são artefatos legados. Não criar novos arquivos planos de experimento. Se um arquivo plano for restaurado do histórico ou de outra branch, migrá-lo para o padrão de diretório antes de fazer outras alterações.
 
-The global `prodops/upstream/upstream-trail.md` is no longer the primary place
-for experiment execution history. Keep it as a high-level chronological index
-for cross-experiment milestones, migrations, promotions and repository-wide
-Upstream process changes.
+O `prodops/upstream/upstream-trail.md` global não é mais o lugar primário para o histórico de execução de experimentos. Mantê-lo como índice cronológico de alto nível para marcos entre experimentos, migrações, promoções e mudanças de processo Upstream em nível de repositório.
 
 ---
 
 # Validation Workbench
 
-The Validation Workbench is the preferred environment for functional validation.
+O Validation Workbench é o ambiente preferencial para validação funcional.
 
-It is used to:
+É usado para:
 
-- validate business flows;
-- validate integrations;
-- validate BDD scenarios;
-- simulate provider behavior;
-- validate UX;
-- reduce implementation uncertainty.
+- validar fluxos de negócio;
+- validar integrações;
+- validar cenários BDD;
+- simular comportamento do provedor;
+- validar UX;
+- reduzir incerteza de implementação.
 
-The Validation Workbench is part of Upstream.
+O Validation Workbench faz parte do Upstream.
 
 ---
 
 # Relationship with Assessment
 
-Every completed experiment should produce a Decision Package.
+Todo experimento concluído deve produzir um Decision Package.
 
-The Decision Package feeds Continuous Assessment.
+O Decision Package alimenta o Continuous Assessment.
 
-Assessment decides whether a capability should:
+O Assessment decide se uma capability deve:
 
-- move to Downstream;
-- require another experiment;
-- wait for business decisions;
-- be discarded.
+- avançar para Downstream;
+- exigir outro experimento;
+- aguardar decisões de negócio;
+- ser descartada.
 
 ## Revisão do Decision Package
 
@@ -260,17 +248,17 @@ Se a saída gerar mudança no Reliability Plan, atualizar `prodops/assessment/ri
 
 # Relationship with Downstream
 
-Upstream prepares knowledge.
+O Upstream prepara conhecimento.
 
-Downstream delivers software.
+O Downstream entrega software.
 
-A capability should only move to Downstream when:
+Uma capability deve avançar para Downstream apenas quando:
 
-- the business behavior is understood;
-- the architecture is stable;
-- the Reliability Plan has been updated;
-- the OBC is sufficiently defined;
-- the remaining uncertainty is acceptable.
+- o comportamento de negócio está compreendido;
+- a arquitetura está estável;
+- o Reliability Plan foi atualizado;
+- o OBC está suficientemente definido;
+- a incerteza remanescente é aceitável.
 
 ## Processo de promoção para Downstream
 
@@ -329,15 +317,15 @@ Antes de promover, confirmar que:
 
 # Golden Rules
 
-- Keep experiments focused.
-- Answer one question at a time.
-- Produce executable evidence whenever possible.
-- Stop when the hypothesis has been answered.
-- Update affected ProdOps artifacts.
-- Document learnings.
-- Produce a clear recommendation.
-- Avoid implementing unrelated capabilities.
+- Manter experimentos focados.
+- Responder a uma pergunta por vez.
+- Produzir evidências executáveis sempre que possível.
+- Parar quando a hipótese tiver sido respondida.
+- Atualizar os artefatos ProdOps afetados.
+- Documentar aprendizados.
+- Produzir uma recomendação clara.
+- Evitar implementar capabilities não relacionadas.
 
-Learning is the primary outcome.
+O aprendizado é o resultado primário.
 
-Implementation is a means to achieve learning.
+A implementação é um meio para alcançar o aprendizado.

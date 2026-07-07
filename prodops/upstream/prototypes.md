@@ -1,6 +1,5 @@
 # Prototypes
 
-Record prototypes here.
+Registrar protótipos aqui.
 
-Prototype notes should identify whether the prototype is disposable, should be
-kept as reference, or should be converted into Downstream delivery work.
+Notas de protótipo devem identificar se o protótipo é descartável, deve ser mantido como referência ou deve ser convertido em trabalho de entrega Downstream.

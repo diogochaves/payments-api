@@ -1,10 +1,10 @@
 # Diligence
 
-This directory is kept as a compatibility pointer.
+Este diretório é mantido como ponteiro de compatibilidade.
 
-ProdOps execution evidence is now split into:
+As evidências de execução do ProdOps foram divididas em:
 
-- Upstream exploration: `prodops/upstream/`
-- Downstream governed delivery: `prodops/downstream/`
+- Exploração Upstream: `prodops/upstream/`
+- Entrega governada Downstream: `prodops/downstream/`
 
-Do not add new release-trail, quality-gate, or done-criteria content here.
+Não adicionar novos conteúdos de release-trail, quality-gate ou done-criteria aqui.

@@ -1,10 +1,9 @@
 # Done Criteria
 
-A task is done when:
+Uma task está pronta quando:
 
-- The implemented change matches the current ProdOps context.
-- Impacted BDD, Reliability Plan, or operational artifacts are updated.
-- Tests or validation evidence were executed, or skipped with a documented
-  reason.
-- Release Trail has a new entry for meaningful work.
-- Remaining risks and next steps are explicit.
+- A mudança implementada corresponde ao contexto ProdOps atual.
+- Artefatos impactados de BDD, Reliability Plan ou operação foram atualizados.
+- Testes ou evidências de validação foram executados, ou a ausência foi documentada com justificativa.
+- O Release Trail tem uma nova entrada para o trabalho significativo realizado.
+- Riscos remanescentes e próximos passos estão explícitos.

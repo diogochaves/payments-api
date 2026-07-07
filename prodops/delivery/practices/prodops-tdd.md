@@ -1,21 +1,21 @@
 # ProdOps TDD
 
-ProdOps TDD is the evolution of classical TDD for the context of observable, reliable digital products. It combines TDD, contracts, integration testing, observability, reliability, and operational evidence into a single coding practice.
+ProdOps TDD é a evolução do TDD clássico para o contexto de produtos digitais observáveis e confiáveis. Combina TDD, contratos, testes de integração, observabilidade, confiabilidade e evidência operacional em uma única prática de codificação.
 
-**ProdOps TDD is not a separate flow.** It is the practice used inside [Hack Flow](../flows/hack.md).
+**ProdOps TDD não é um fluxo separado.** É a prática utilizada dentro do [Hack Flow](../flows/hack.md).
 
 ---
 
-## Core definition
+## Definição central
 
-> Write a verifiable contract. Write an integration test against that contract. Make it fail. Make it pass with the minimum implementation. Observe. Refactor. Commit. Record evidence.
+> Escrever um contrato verificável. Escrever um teste de integração contra esse contrato. Fazê-lo falhar. Fazê-lo passar com a implementação mínima. Observar. Refatorar. Commitar. Registrar evidência.
 
-ProdOps TDD extends classical TDD (Detroit/Chicago school) by:
-1. Starting from a contract, not just a test.
-2. Prioritizing integration and acceptance tests over unit tests.
-3. Requiring observability validation as part of the cycle.
-4. Consuming the Commit Workflow after each Red→Green→Refactor cycle.
-5. Producing recorded evidence before promotion.
+O ProdOps TDD estende o TDD clássico (escola Detroit/Chicago):
+1. Partindo de um contrato, não apenas de um teste.
+2. Priorizando testes de integração e aceitação sobre unit tests.
+3. Exigindo validação de observabilidade como parte do ciclo.
+4. Consumindo o Commit Workflow após cada ciclo Red→Green→Refactor.
+5. Produzindo evidências registradas antes da promoção.
 
 ---
 
@@ -38,29 +38,29 @@ Nunca alterar payload, headers, regras de negócio ou comportamento de produçã
 
 ---
 
-## Mandatory rules
+## Regras obrigatórias
 
-1. **Prioritize integration tests.** Tests must verify behavior at the HTTP boundary or event boundary, not internal implementation details.
+1. **Priorizar testes de integração.** Os testes devem verificar comportamento na fronteira HTTP ou de evento, não detalhes de implementação interna.
 
-2. **No mocks for business rules.** Do not substitute owned services that carry business logic with test doubles. See the [No Mocks Rule](../../../skills/hack/references/workflow.md) and [quality-gates.md](../../downstream/quality-gates.md).
+2. **Sem mocks para regras de negócio.** Não substituir serviços próprios que carregam lógica de negócio por test doubles. Ver [No Mocks Rule](../../../skills/hack/references/workflow.md) e [quality-gates.md](../../downstream/quality-gates.md).
 
-3. **No mocks for domain APIs when a verifiable contract exists.** If an OpenAPI, AsyncAPI, or BDD spec exists, test against it. Mock Servers based on that contract are acceptable as temporary infrastructure.
+3. **Sem mocks para APIs de domínio quando existe contrato verificável.** Se existe spec OpenAPI, AsyncAPI ou BDD, testar contra ela. Mock Servers baseados nesse contrato são aceitáveis como infraestrutura temporária.
 
-4. **Mock Servers are infrastructure, not shortcuts.** A Mock Server simulates an external dependency based on a published contract. It must be replaceable by the real integration without rewriting the tests (Progressive Substitution principle).
+4. **Mock Servers são infraestrutura, não atalhos.** Um Mock Server simula uma dependência externa com base em um contrato publicado. Deve ser substituível pela integração real sem reescrever os testes (princípio Progressive Substitution).
 
-5. **Do not alter production payloads, headers, or logic for tests.** Tests must exercise the real code path. Environment variables and configuration switches are acceptable; code branches that only activate under test are not.
+5. **Não alterar payloads, headers ou lógica de produção para testes.** Os testes devem exercitar o caminho de código real. Variáveis de ambiente e switches de configuração são aceitáveis; branches que só ativam em teste não são.
 
-6. **Prefer environment configuration.** Use env vars (e.g., `ASAAS_MOCK=true`) to switch between test modes. `ASAAS_MOCK=true` activates a designed behavior mode of the real service — it is not a mock object.
+6. **Preferir configuração por ambiente.** Usar env vars (ex.: `ASAAS_MOCK=true`) para alternar entre modos de teste. `ASAAS_MOCK=true` ativa um modo de comportamento projetado do serviço real — não é um mock object.
 
-7. **Exercise through real calls whenever possible.** Use `supertest` against the running NestJS app, real DynamoDB via LocalStack, and real service instances.
+7. **Exercitar por chamadas reais sempre que possível.** Usar `supertest` contra a aplicação NestJS em execução, DynamoDB real via LocalStack e instâncias de serviço reais.
 
-8. **Test behavior, not implementation.** Assert on HTTP responses, database state, log output, and emitted events — not on which internal methods were called.
+8. **Testar comportamento, não implementação.** Fazer asserções sobre respostas HTTP, estado do banco, saída de logs e eventos emitidos — não sobre quais métodos internos foram chamados.
 
-9. **Validate HTTP responses, error messages, logs, and traceability.** A test that only checks status code is incomplete.
+9. **Validar respostas HTTP, mensagens de erro, logs e rastreabilidade.** Um teste que apenas verifica status code é incompleto.
 
-10. **Use contracts when applicable.** OpenAPI, AsyncAPI, Gherkin BDD Features, and JSON schemas are valid contracts. Reference them in test plans.
+10. **Usar contratos quando aplicável.** OpenAPI, AsyncAPI, Gherkin BDD Features e JSON schemas são contratos válidos. Referenciá-los nos planos de teste.
 
-11. **Maintain Progressive Substitution compatibility.** Tests written against a Mock Server must pass without modification when the real integration is substituted.
+11. **Manter compatibilidade com Progressive Substitution.** Testes escritos contra um Mock Server devem passar sem modificação quando a integração real for substituída.
 
 ---
 
@@ -76,7 +76,7 @@ Nunca alterar payload, headers, regras de negócio ou comportamento de produçã
 7. Registrar evidência
 ```
 
-Do not skip step 2. A test that was never red is not a verified test.
+Não pular o passo 2. Um teste que nunca foi vermelho não é um teste verificado.
 
 ### Integração com Commit Workflow
 
@@ -117,49 +117,49 @@ Esses aspectos não precisam de testes separados quando já cobertos pelo teste 
 
 ### Red Bar Patterns
 
-| Pattern | When to use |
+| Pattern | Quando usar |
 |---|---|
-| **Starter Test** | First test for a new capability; verifies the simplest possible observable result. |
-| **One Step Test** | One new behavior increment per test; avoids leaping ahead. |
-| **Explanation Test** | Clarifies expected behavior for a spec that is ambiguous or underdocumented. |
-| **Learning Test** | Explores behavior of a third-party dependency before integrating it. |
-| **Another Test** | Captures a new idea that surfaced while writing the current test; add it to the list to avoid losing it. |
-| **Triangulation Test** | Adds a second scenario to drive out generalization when Fake It was used first. |
-| **Regression Test** | Written before fixing a confirmed defect; ensures the defect cannot recur. |
-| **Break Test** | Verifies boundary conditions: empty input, max values, invalid states. |
-| **Do Over** | Deletes a test suite that tested implementation instead of behavior and rewrites from the contract. |
+| **Starter Test** | Primeiro teste para uma nova capability; verifica o resultado observável mais simples possível. |
+| **One Step Test** | Um incremento de comportamento por teste; evita dar saltos à frente. |
+| **Explanation Test** | Esclarece comportamento esperado para uma spec ambígua ou pouco documentada. |
+| **Learning Test** | Explora o comportamento de uma dependência de terceiros antes de integrá-la. |
+| **Another Test** | Captura uma nova ideia que surgiu durante a escrita do teste atual; adicioná-la à lista para não perdê-la. |
+| **Triangulation Test** | Adiciona um segundo cenário para forçar a generalização quando Fake It foi usado primeiro. |
+| **Regression Test** | Escrito antes de corrigir um defeito confirmado; garante que o defeito não possa recorrer. |
+| **Break Test** | Verifica condições de fronteira: entrada vazia, valores máximos, estados inválidos. |
+| **Do Over** | Exclui uma suite de testes que testava implementação em vez de comportamento e a reescreve a partir do contrato. |
 
 ### Green Bar Patterns
 
-| Pattern | When to use |
+| Pattern | Quando usar |
 |---|---|
-| **Fake It** | Returns a hard-coded value to get to green fast; followed by Triangulate to generalize. |
-| **Triangulate** | Adds a second scenario that forces the Fake It to become a real implementation. |
-| **Obvious Implementation** | Used when the correct implementation is obvious and short; skips Fake It. |
-| **One-to-Many** | Drives a collection-aware implementation from a single-item test, then adds the multi-item test. |
+| **Fake It** | Retorna um valor hardcoded para chegar ao verde rapidamente; seguido de Triangulate para generalizar. |
+| **Triangulate** | Adiciona um segundo cenário que força o Fake It a se tornar uma implementação real. |
+| **Obvious Implementation** | Usado quando a implementação correta é óbvia e curta; pula o Fake It. |
+| **One-to-Many** | Conduz uma implementação consciente de coleção a partir de um teste de item único, depois adiciona o teste multi-item. |
 
 ### Yellow Bar Patterns
 
-Yellow Bar patterns manage test complexity. They are **not a license to mock business logic.**
+Yellow Bar patterns gerenciam a complexidade dos testes. **Não são licença para mockar lógica de negócio.**
 
-| Pattern | Acceptable use | Not acceptable |
+| Pattern | Uso aceitável | Não aceitável |
 |---|---|---|
-| **Mock Object** | Technical dependencies: logger, clock, UUID generator, telemetry adapter, e-mail adapter, external HTTP client when no contract exists and the integration is expensive/unpredictable. | Owned services, repositories, domain rules, or any component that carries business behavior. |
-| **Self Shunt** | Test class implements a listener interface to observe internal events. | — |
-| **Log String** | Captures log output to assert that observability behavior is correct. | — |
-| **Child Test** | Splits a failing test into a smaller test when the parent test is too complex to debug. | — |
-| **Crash Test Dummy** | Simulates a catastrophic failure (OOM, fatal error) that cannot be triggered in a real environment. | Simulating predictable business errors that the real system can produce. |
-| **Broken Test** | Leaves a test failing intentionally with a clear comment when work is in progress and a commit is needed. | — |
-| **Clear Check-in** | Ensures all tests pass before committing, even if it means reverting a broken change. | — |
+| **Mock Object** | Dependências técnicas: logger, clock, gerador de UUID, adaptador de telemetria, adaptador de e-mail, cliente HTTP externo quando não existe contrato e a integração é cara/imprevisível. | Serviços próprios, repositórios, regras de domínio ou qualquer componente que carrega comportamento de negócio. |
+| **Self Shunt** | Classe de teste implementa interface de listener para observar eventos internos. | — |
+| **Log String** | Captura saída de log para verificar que o comportamento de observabilidade está correto. | — |
+| **Child Test** | Divide um teste com falha em um teste menor quando o teste pai é complexo demais para depurar. | — |
+| **Crash Test Dummy** | Simula uma falha catastrófica (OOM, erro fatal) que não pode ser acionada em ambiente real. | Simular erros de negócio previsíveis que o sistema real consegue produzir. |
+| **Broken Test** | Deixa um teste falhando intencionalmente com comentário claro quando o trabalho está em progresso e um commit é necessário. | — |
+| **Clear Check-in** | Garante que todos os testes passam antes de commitar, mesmo que isso signifique reverter uma mudança quebrada. | — |
 
-**Rule:** a Mock Object is acceptable only when it does not hide business behavior. If the mock substitutes logic that the real code would execute differently, it is hiding a defect.
+**Regra:** um Mock Object é aceitável apenas quando não oculta comportamento de negócio. Se o mock substitui lógica que o código real executaria de forma diferente, está ocultando um defeito.
 
 ---
 
-## What ProdOps TDD is not
+## O que ProdOps TDD não é
 
-- It is not a reason to skip acceptance tests.
-- It is not a reason to use mocks as the default approach.
-- It is not a separate flow from Hack Flow.
-- It is not permission to add test-only branches in production code.
-- It is not a substitute for observability validation.
+- Não é motivo para pular testes de aceitação.
+- Não é motivo para usar mocks como abordagem padrão.
+- Não é um fluxo separado do Hack Flow.
+- Não é permissão para adicionar branches exclusivos de teste no código de produção.
+- Não é substituto para validação de observabilidade.

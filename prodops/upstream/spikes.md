@@ -1,6 +1,5 @@
 # Spikes
 
-Record technical spikes here.
+Registrar spikes técnicos aqui.
 
-Each spike should state the question, what was tried, evidence found, and
-whether the result should move Downstream.
+Cada spike deve indicar a pergunta, o que foi tentado, as evidências encontradas e se o resultado deve avançar para Downstream.

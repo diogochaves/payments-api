@@ -1,32 +1,32 @@
 # Reliability Policy
 
-Reliability is planned before implementation and validated before promotion.
+Confiabilidade é planejada antes da implementação e validada antes da promoção.
 
 ## Reliability Plan
 
-Every Downstream capability requires a Reliability Plan entry. The plan defines:
-- Risks and mitigations
-- OBCs (Outcome-Based Criteria) with measurable success thresholds
-- SLO suggestions for critical-path events
+Toda capability Downstream requer uma entrada no Reliability Plan. O plano define:
+- Riscos e mitigações
+- OBCs (Outcome-Based Criteria) com thresholds de sucesso mensuráveis
+- Sugestões de SLO para eventos no caminho crítico
 
-Reliability Plan lives in: `prodops/assessment/reliability-plan/`
+O Reliability Plan fica em: `prodops/assessment/reliability-plan/`
 
 ## OBCs
 
-An OBC anchors implementation to a business outcome. It defines what "done" means in observable, measurable terms. OBCs must exist before code is written for a Downstream item.
+Um OBC ancora a implementação a um resultado de negócio. Define o que "pronto" significa em termos observáveis e mensuráveis. OBCs devem existir antes de qualquer código ser escrito para um item Downstream.
 
-OBC files: `prodops/assessment/obcs/`
+Arquivos de OBC: `prodops/assessment/obcs/`
 
 ## Definition of Done
 
-A capability is not complete until the [Definition of Done](definition-of-done.md) is satisfied, including reliability criteria.
+Uma capability não está completa até que o [Definition of Done](definition-of-done.md) seja satisfeito, incluindo os critérios de confiabilidade.
 
-## Failure modes
+## Modos de falha
 
-Known failure modes must be documented in the Reliability Plan (`risks.md`) before the capability ships. For each failure mode:
-- Define the trigger condition.
-- Define the expected system behavior (graceful degradation, error response, retry).
-- Define the observable signal (log entry, metric, alert).
+Modos de falha conhecidos devem ser documentados no Reliability Plan (`risks.md`) antes de a capability entrar em produção. Para cada modo de falha:
+- Definir a condição de acionamento.
+- Definir o comportamento esperado do sistema (degradação controlada, resposta de erro, retry).
+- Definir o sinal observável (entrada de log, métrica, alerta).
 
 ## Requisitos de confiabilidade por comportamento
 
@@ -46,6 +46,6 @@ Esses requisitos são verificados no [Definition of Done](definition-of-done.md)
 
 Para detalhes sobre como aplicar durante o TDD cycle: [ProdOps TDD — Confiabilidade no ciclo](../delivery/practices/prodops-tdd.md).
 
-## Post-deploy validation
+## Validação pós-deploy
 
-After deploy, validate the reliability criteria defined in the OBC. Record evidence in `prodops/downstream/release-trail.md` and `prodops/operation/operational-trail.md`.
+Após o deploy, validar os critérios de confiabilidade definidos no OBC. Registrar evidências em `prodops/downstream/release-trail.md` e `prodops/operation/operational-trail.md`.

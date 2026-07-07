@@ -1,6 +1,5 @@
 # Operational Trail
 
-Append operational events, checks, incidents, mitigations, and release support
-notes here.
+Acrescentar aqui eventos operacionais, verificações, incidentes, mitigações e notas de suporte à release.
 
-Do not rewrite previous entries.
+Não reescrever entradas anteriores.

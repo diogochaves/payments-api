@@ -14,28 +14,28 @@ Para mecânica de execução, veja [`skills/sync/`](../../../skills/sync/) e [`s
 
 ## Sync
 
-Goal: confirm that all artifacts touched by the Hack implementation are consistent with each other.
+Objetivo: confirmar que todos os artefatos tocados pela implementação do Hack estão consistentes entre si.
 
 Checklist:
-- [ ] BDD Feature reflects implemented behavior.
-- [ ] OBC acceptance criteria are met by the tests.
-- [ ] Architecture diagram updated if the change was structural.
-- [ ] Event Storming plan updated if events were added, removed, or renamed.
-- [ ] Release Trail entry drafted with evidence.
+- [ ] BDD Feature reflete o comportamento implementado.
+- [ ] Critérios de aceite do OBC estão satisfeitos pelos testes.
+- [ ] Diagrama de arquitetura atualizado se a mudança foi estrutural.
+- [ ] Event Storming atualizado se eventos foram adicionados, removidos ou renomeados.
+- [ ] Entrada no Release Trail redigida com evidências.
 
 ## Finish
 
-Goal: confirm all quality gates pass before marking the work ready to ship.
+Objetivo: confirmar que todos os Quality Gates passam antes de marcar o trabalho como pronto para ship.
 
 Checklist:
-- [ ] Lint passes (`npm run lint` exits 0).
-- [ ] All tests pass (unit + acceptance).
-- [ ] Build passes.
-- [ ] No unresolved TODOs or FIXMEs introduced in this change.
-- [ ] Definition of Done satisfied. See [definition-of-done.md](../../engineering/definition-of-done.md).
-- [ ] Evidence appended to release trail.
+- [ ] Lint passa (`npm run lint` exit 0).
+- [ ] Todos os testes passam (unit + acceptance).
+- [ ] Build passa.
+- [ ] Nenhum TODO ou FIXME não resolvido introduzido nesta mudança.
+- [ ] Definition of Done satisfeita. Ver [definition-of-done.md](../../engineering/definition-of-done.md).
+- [ ] Evidência acrescentada ao Release Trail.
 
-An implementation does not leave Finish until all boxes are checked.
+Uma implementação não sai do Finish até que todos os itens estejam marcados.
 
 ---
 

@@ -1,19 +1,19 @@
 # Integration Testing Policy
 
-Integration and acceptance tests in this repository exercise the full application stack:
-- Real NestJS application (all modules wired)
-- Real DynamoDB via LocalStack
-- Real service instances (no substitutions)
-- Real HTTP via supertest
+Testes de integração e aceitação neste repositório exercitam o stack completo da aplicação:
+- Aplicação NestJS real (todos os módulos conectados)
+- DynamoDB real via LocalStack
+- Instâncias de serviço reais (sem substituições)
+- HTTP real via supertest
 
-## Acceptance test location
+## Localização dos testes de aceitação
 
-`api/test/` — one file per domain behavior (`criar-invoice`, `cancelar-invoice`, `confirmar-pagamento`, `api-token`).
+`api/test/` — um arquivo por comportamento de domínio (`criar-invoice`, `cancelar-invoice`, `confirmar-pagamento`, `api-token`).
 
-## Test structure
+## Estrutura dos testes
 
 ```typescript
-// One app per file — created in beforeAll, torn down in afterAll
+// Uma app por arquivo — criada no beforeAll, encerrada no afterAll
 beforeAll(async () => {
   fixture = await buildTestFixture();
   app = fixture.app;
@@ -23,7 +23,7 @@ afterAll(async () => {
   await teardownFixture(fixture);
 });
 
-// Tables truncated between tests
+// Tabelas truncadas entre testes
 beforeEach(async () => {
   await truncateAllTables();
 });
@@ -31,18 +31,18 @@ beforeEach(async () => {
 
 ## LocalStack
 
-Required services: `dynamodb`, `sqs`.
+Serviços obrigatórios: `dynamodb`, `sqs`.
 
-Start and health-check via `./scripts/test-acceptance.sh`. The script detects whether LocalStack is running and starts it if needed.
+Inicializar e verificar via `./scripts/test-acceptance.sh`. O script detecta se o LocalStack está rodando e o inicia se necessário.
 
-## DynamoDB client in tests
+## Cliente DynamoDB em testes
 
-`api/test/dynamo-test-utils.ts` provides a singleton DynamoDB client with connection management. Use `truncateAllTables()` and `resetTestClient()` from this module — do not create ad-hoc clients in test files.
+`api/test/dynamo-test-utils.ts` fornece um cliente DynamoDB singleton com gerenciamento de conexão. Usar `truncateAllTables()` e `resetTestClient()` deste módulo — não criar clientes ad-hoc em arquivos de teste.
 
 ## Progressive Substitution
 
-Tests that currently rely on `ASAAS_MOCK=true` must pass without modification when `ASAAS_MOCK` is removed and the sandbox integration is substituted. The test verifies observable HTTP behavior; the provider's internal mode is configuration.
+Testes que atualmente dependem de `ASAAS_MOCK=true` devem passar sem modificação quando `ASAAS_MOCK` for removido e a integração com sandbox for substituída. O teste verifica comportamento HTTP observável; o modo interno do provedor é configuração.
 
-## Contract alignment
+## Alinhamento com contratos
 
-Acceptance tests must align with the BDD Feature file for the same behavior. If the Feature file and the test diverge, update the Feature file first and treat the divergence as a gap.
+Testes de aceitação devem estar alinhados com o arquivo BDD Feature para o mesmo comportamento. Se o arquivo Feature e o teste divergirem, atualizar o arquivo Feature primeiro e tratar a divergência como gap.

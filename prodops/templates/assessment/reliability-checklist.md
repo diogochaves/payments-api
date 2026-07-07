@@ -1,28 +1,28 @@
 # Reliability Checklist
 
-Use before promoting a capability from Upstream to Downstream, or before shipping a Downstream item.
+Usar antes de promover uma capability de Upstream para Downstream, ou antes de fazer o ship de um item Downstream.
 
-## Behavior coverage
+## Cobertura de comportamento
 
-- [ ] OBC defined and measurable.
-- [ ] All acceptance criteria covered by tests.
-- [ ] Failure modes documented in `prodops/assessment/risks.md`.
+- [ ] OBC definido e mensurável.
+- [ ] Todos os critérios de aceite cobertos por testes.
+- [ ] Modos de falha documentados em `prodops/assessment/risks.md`.
 
-## Observability
+## Observabilidade
 
-- [ ] Critical path operations emit structured logs.
-- [ ] Error responses carry correlation IDs.
-- [ ] No secrets or PII in logs.
-- [ ] SLO signal identified (metric or log-based).
+- [ ] Operações no caminho crítico emitem logs estruturados.
+- [ ] Respostas de erro têm correlation IDs.
+- [ ] Nenhum secret ou PII nos logs.
+- [ ] Sinal de SLO identificado (baseado em métrica ou log).
 
-## Operational readiness
+## Prontidão operacional
 
-- [ ] Runbook exists or updated in `prodops/operation/runbooks.md`.
-- [ ] On-call team notified of new failure mode.
-- [ ] Rollback plan defined.
+- [ ] Runbook existe ou foi atualizado em `prodops/operation/runbooks.md`.
+- [ ] Time de on-call notificado sobre novo modo de falha.
+- [ ] Plano de rollback definido.
 
-## Evidence
+## Evidência
 
-- [ ] Pre-deploy test run recorded.
-- [ ] Post-deploy validation completed.
-- [ ] Entry added to `prodops/downstream/release-trail.md`.
+- [ ] Execução de testes pré-deploy registrada.
+- [ ] Validação pós-deploy concluída.
+- [ ] Entrada adicionada em `prodops/downstream/release-trail.md`.

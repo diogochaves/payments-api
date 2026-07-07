@@ -1,27 +1,27 @@
 # Observability Policy
 
-Observability is a first-class deliverable. Code that changes observable behavior must validate log output, error structure, and traceability before the change is considered complete.
+Observabilidade é um entregável de primeira classe. Código que altera comportamento observável deve validar saída de logs, estrutura de erros e rastreabilidade antes de ser considerado completo.
 
-## Logging rules
+## Regras de logging
 
-- Use structured JSON logging (pino). Do not use `console.log`.
-- Every request must carry `correlationId` and `tenantId` in log context.
-- Log at `info` level: request received, provider call initiated, result persisted.
-- Log at `warn` level: retries, degraded provider response, fallback activated.
-- Log at `error` level: unhandled exceptions, provider errors that affect the customer.
-- Never log secrets, tokens, or PII. `X-Api-Token` and `ADMIN_SECRET` must be in pino redact paths.
+- Usar log JSON estruturado (pino). Não usar `console.log`.
+- Toda requisição deve carregar `correlationId` e `tenantId` no contexto de log.
+- Logar no nível `info`: requisição recebida, chamada ao provedor iniciada, resultado persistido.
+- Logar no nível `warn`: retentativas, resposta degradada do provedor, fallback ativado.
+- Logar no nível `error`: exceções não tratadas, erros do provedor que afetam o cliente.
+- Nunca logar secrets, tokens ou PII. `X-Api-Token` e `ADMIN_SECRET` devem estar nos redact paths do pino.
 
-## Error responses
+## Respostas de erro
 
-- HTTP 4xx errors must return a `message` field with a human-readable description.
-- HTTP 5xx errors must not expose internal stack traces or provider internals.
-- All error responses must include the `correlationId` for support traceability.
+- Erros HTTP 4xx devem retornar um campo `message` com descrição legível por humanos.
+- Erros HTTP 5xx não devem expor stack traces internos ou detalhes do provedor.
+- Todas as respostas de erro devem incluir o `correlationId` para rastreabilidade de suporte.
 
-## Traceability
+## Rastreabilidade
 
-- `X-Correlation-Id` header must propagate from the request to all downstream calls and log entries.
-- `tenantId` must be present in every log line that records a business action.
-- Provider payment IDs (`providerPaymentId`) must be logged when known.
+- O header `X-Correlation-Id` deve ser propagado da requisição para todas as chamadas downstream e entradas de log.
+- `tenantId` deve estar presente em toda linha de log que registra uma ação de negócio.
+- IDs de pagamento do provedor (`providerPaymentId`) devem ser logados quando conhecidos.
 
 ## Metrics
 
@@ -43,9 +43,9 @@ Antes de implementar, definir:
 
 Observabilidade não é um passo pós-implementação. É planejada junto com o contrato. Ver [ProdOps TDD — Observability First](../delivery/practices/prodops-tdd.md).
 
-## Validation in tests
+## Validação em testes
 
-Observability validation is part of the [Hack Flow](../delivery/flows/hack.md). After the green bar, verify that:
-- Expected log entries are emitted (use Log String pattern).
-- Error responses carry the expected `message` and structure.
-- No sensitive data appears in logs.
+A validação de observabilidade faz parte do [Hack Flow](../delivery/flows/hack.md). Após o Green Bar, verificar que:
+- As entradas de log esperadas são emitidas (usar o padrão Log String).
+- Respostas de erro têm o `message` e a estrutura esperados.
+- Nenhum dado sensível aparece nos logs.

@@ -1,8 +1,5 @@
 # OBCs
 
-Store release-specific Observable Business Contracts here when they are split
-out of Product Deck or Service Deck material.
+Armazenar aqui OBCs específicos da release quando separados do material do Product Deck ou Service Deck.
 
-Do not duplicate OBC content across files. Link back to the canonical Product
-Deck, Service Deck, BDD Feature, or Reliability Plan section when an OBC remains
-defined there.
+Não duplicar conteúdo de OBC entre arquivos. Quando um OBC permanecer definido no Product Deck, Service Deck, BDD Feature ou Reliability Plan, criar apenas um link para o documento canônico.

@@ -1,37 +1,37 @@
 # Testing Policy
 
-## Test pyramid
+## Pirâmide de testes
 
-This repository prioritizes tests in this order:
+Este repositório prioriza testes na seguinte ordem:
 
-1. **Acceptance / E2E tests** — HTTP boundary, real DynamoDB (LocalStack), real service instances. Live in `api/test/`.
-2. **Integration tests** — module-level, cross-service interactions.
-3. **Unit tests** — isolated, single-function behavior. Used for edge cases and error paths that cannot be reached through the HTTP boundary.
+1. **Testes de aceitação / E2E** — fronteira HTTP, DynamoDB real (LocalStack), instâncias de serviço reais. Ficam em `api/test/`.
+2. **Testes de integração** — interações entre módulos e entre serviços.
+3. **Unit tests** — comportamento isolado de função única. Usados para casos de borda e caminhos de erro que não alcançam a fronteira HTTP.
 
-Unit tests are not a substitute for acceptance tests on functional behavior.
+Unit tests não substituem testes de aceitação para comportamento funcional.
 
-## Tooling
+## Ferramentas
 
-- Test runner: Jest (configured in `api/test/jest-e2e.json`)
-- HTTP assertions: supertest
-- Local infrastructure: LocalStack (DynamoDB, SQS)
-- Acceptance test runner: `./scripts/test-acceptance.sh`
+- Test runner: Jest (configurado em `api/test/jest-e2e.json`)
+- Asserções HTTP: supertest
+- Infraestrutura local: LocalStack (DynamoDB, SQS)
+- Runner de testes de aceitação: `./scripts/test-acceptance.sh`
 
 ## No Mocks Rule
 
-The prohibition on test doubles in acceptance tests is enforced as a merge-blocking quality gate.
+A proibição de test doubles em testes de aceitação é aplicada como Quality Gate que bloqueia merge.
 
-- Definition técnica completa: [`skills/hack/references/workflow.md § No Mocks Rule`](../../skills/hack/references/workflow.md)
+- Definição técnica completa: [`skills/hack/references/workflow.md § No Mocks Rule`](../../skills/hack/references/workflow.md)
 - Enforcement gate (o que bloqueia merge): [`prodops/downstream/quality-gates.md § Test Quality Gates`](../downstream/quality-gates.md)
 
-## Error path testing
+## Testes de caminhos de erro
 
-Error paths that require external system failure belong in unit or service-layer tests, not acceptance tests. See [ProdOps TDD — Yellow Bar Patterns](../delivery/practices/prodops-tdd.md).
+Caminhos de erro que exigem falha de sistema externo pertencem a unit tests ou testes de camada de serviço, não a testes de aceitação. Ver [ProdOps TDD — Yellow Bar Patterns](../delivery/practices/prodops-tdd.md).
 
-## Shared app per file
+## App compartilhado por arquivo
 
-Each acceptance test file creates the NestJS app once in `beforeAll` and tears it down in `afterAll`. Tables are truncated in `beforeEach`. App recreation per test is prohibited.
+Cada arquivo de teste de aceitação cria a aplicação NestJS uma vez no `beforeAll` e a encerra no `afterAll`. Tabelas são truncadas no `beforeEach`. Recriar a app por teste é proibido.
 
-## Coverage
+## Cobertura
 
-Coverage thresholds (when configured in `jest.config.*`) must not be reduced without a recorded justification in a [Decision Trail](../templates/decision-trail.md).
+Thresholds de cobertura (quando configurados em `jest.config.*`) não devem ser reduzidos sem uma justificativa registrada em um [Decision Trail](../templates/decision-trail.md).

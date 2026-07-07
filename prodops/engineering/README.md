@@ -1,13 +1,13 @@
 # Engineering Policies
 
-Technical standards that apply to all implementation work in this repository, regardless of Upstream or Downstream path.
+Padrões técnicos aplicáveis a todo trabalho de implementação neste repositório, independentemente do caminho Upstream ou Downstream.
 
-| Policy | Scope |
+| Política | Escopo |
 |---|---|
-| [Testing Policy](testing-policy.md) | Test types, priorities, and tooling |
-| [Integration Testing Policy](integration-testing-policy.md) | Acceptance and integration test rules |
-| [Observability Policy](observability-policy.md) | Logs, errors, metrics, and traceability |
-| [Reliability Policy](reliability-policy.md) | SLOs, OBCs, and reliability criteria |
-| [Definition of Done](definition-of-done.md) | Completion criteria for any implementation |
+| [Testing Policy](testing-policy.md) | Tipos de teste, prioridades e ferramentas |
+| [Integration Testing Policy](integration-testing-policy.md) | Regras de testes de aceitação e integração |
+| [Observability Policy](observability-policy.md) | Logs, erros, métricas e rastreabilidade |
+| [Reliability Policy](reliability-policy.md) | SLOs, OBCs e critérios de confiabilidade |
+| [Definition of Done](definition-of-done.md) | Critérios de conclusão para qualquer implementação |
 
-These policies complement the execution mechanics in [`skills/`](../../skills/) and the product context in [`prodops/`](../).
+Estas políticas complementam a mecânica de execução em [`skills/`](../../skills/) e o contexto de produto em [`prodops/`](../).

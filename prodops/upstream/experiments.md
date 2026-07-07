@@ -1,35 +1,35 @@
 # Upstream Experiments
 
-## Purpose
+## Propósito
 
-This document indexes every Upstream experiment executed for this product.
+Este documento indexa todos os experimentos Upstream executados para este produto.
 
-Experiments reduce uncertainty before implementation moves to Downstream.
+Experimentos reduzem incerteza antes de a implementação avançar para Downstream.
 
-Each experiment should answer one primary question.
+Cada experimento deve responder a uma pergunta principal.
 
-Do not duplicate experiment content here.
+Não duplicar conteúdo de experimento aqui.
 
-Reference the experiment directory instead.
+Referenciar o diretório do experimento.
 
 ---
 
 # Workflow
 
 ```text
-Business Question
+Pergunta de Negócio
 
 ↓
 
-Experiment
+Experimento
 
 ↓
 
-Learning
+Aprendizado
 
 ↓
 
-Decision
+Decisão
 
 ↓
 
@@ -42,95 +42,95 @@ Downstream
 
 ---
 
-# Experiment Status
+# Status dos Experimentos
 
-| ID | Capability | Status | Recommendation | Next Step |
-|----|------------|--------|----------------|-----------|
-| 001 | Credit Card Lifecycle | 🟡 In Progress | Hosted subset to Assessment; saved/new card need decisions | Decide token storage and PCI boundary |
-| 002 | Sandbox Funding | 🟡 In Progress | Wait for External Dependency | Collect Asaas Sandbox evidence |
-| 003 | Hosted vs Tokenized | 🟡 In Progress | Move Downstream | Prepare hosted card Downstream intake |
-| 004 | Checkout Gateway Feature Flag Readiness | 🟡 In Progress | Wait for External Dependency | Collect Checkout Feature Flag evidence |
-| 005 | Datadog Native AWS Instrumentation | ✅ Completed | Move Downstream after AWS pipeline parameters are confirmed | Validate SAM deploy with Datadog Extension layer and Secrets Manager secret |
-| 006 | Upstream Trail per Experiment | ✅ Completed | Keep as Upstream operating standard | Use directory layout for new experiments |
-
----
-
-# Status Legend
-
-| Icon | Meaning |
-|------|---------|
-| ⏳ | Planned |
-| 🟡 | In Progress |
-| ✅ | Completed |
-| 🚀 | Promoted to Downstream |
-| ❌ | Cancelled |
+| ID | Capability | Status | Recomendação | Próximo Passo |
+|----|------------|--------|--------------|---------------|
+| 001 | Credit Card Lifecycle | 🟡 Em andamento | Subconjunto hospedado para Assessment; cartão salvo/novo precisam de decisões | Decidir armazenamento de token e fronteira PCI |
+| 002 | Sandbox Funding | 🟡 Em andamento | Aguardar dependência externa | Coletar evidência do Sandbox Asaas |
+| 003 | Hosted vs Tokenized | 🟡 Em andamento | Avançar para Downstream | Preparar intake Downstream para cartão hospedado |
+| 004 | Checkout Gateway Feature Flag Readiness | 🟡 Em andamento | Aguardar dependência externa | Coletar evidência de Feature Flag do Checkout |
+| 005 | Datadog Native AWS Instrumentation | ✅ Concluído | Avançar para Downstream após confirmar parâmetros do pipeline AWS | Validar deploy SAM com Datadog Extension layer e Secrets Manager secret |
+| 006 | Upstream Trail per Experiment | ✅ Concluído | Manter como padrão operacional Upstream | Usar layout de diretório para novos experimentos |
 
 ---
 
-# Recommendations
+# Legenda de Status
 
-Each completed experiment should end with exactly one recommendation.
-
-Possible recommendations:
-
-- Move Downstream
-- Run another Upstream experiment
-- Wait for Business Decision
-- Wait for External Dependency
-- Discard Capability
+| Ícone | Significado |
+|-------|-------------|
+| ⏳ | Planejado |
+| 🟡 | Em andamento |
+| ✅ | Concluído |
+| 🚀 | Promovido para Downstream |
+| ❌ | Cancelado |
 
 ---
 
-# Promotion Rules
+# Recomendações
 
-A capability may move to Downstream only when:
+Cada experimento concluído deve terminar com exatamente uma recomendação.
 
-- Business behavior is understood.
-- Main technical uncertainties are resolved.
-- Reliability impacts are documented.
-- OBC is sufficiently defined.
-- BDD scenarios are defined.
-- Validation Workbench demonstrates the expected business flow.
-- Assessment approves the capability.
+Recomendações possíveis:
+
+- Avançar para Downstream
+- Executar outro experimento Upstream
+- Aguardar decisão de negócio
+- Aguardar dependência externa
+- Descartar capability
 
 ---
 
-# Current Focus
+# Regras de Promoção
 
-Current capability under investigation:
+Uma capability pode avançar para Downstream apenas quando:
 
-**Credit Card Payment with Asaas**
+- O comportamento de negócio está compreendido.
+- As principais incertezas técnicas estão resolvidas.
+- Os impactos no Reliability Plan estão documentados.
+- O OBC está suficientemente definido.
+- Os cenários BDD estão definidos.
+- O Validation Workbench demonstra o fluxo de negócio esperado.
+- O Assessment aprova a capability.
 
-Current experiment:
+---
+
+# Foco Atual
+
+Capability em investigação atual:
+
+**Pagamento com Cartão de Crédito via Asaas**
+
+Experimento atual:
 
 **001 - Credit Card Payment Lifecycle with Asaas**
 
-Next planned experiments:
+Próximos experimentos planejados:
 
-- Continue 002 with Asaas Sandbox evidence
-- Prepare Downstream intake for hosted card payment after Product and Tech Lead approval
-- Run focused saved-card token storage experiment after Security/Architecture input
+- Continuar 002 com evidência do Sandbox Asaas
+- Preparar intake Downstream para pagamento com cartão hospedado após aprovação de Produto e Tech Lead
+- Executar experimento focado em armazenamento de token de cartão salvo após contribuição de Segurança/Arquitetura
 
 ---
 
-# Completed Experiments
+# Experimentos Concluídos
 
-Move completed experiments here after promotion.
+Mover experimentos concluídos aqui após a promoção.
 
-| ID | Capability | Downstream Release |
+| ID | Capability | Release Downstream |
 |----|------------|--------------------|
 
 ---
 
-# Notes
+# Notas
 
-Experiments are intentionally small.
+Experimentos são intencionalmente pequenos.
 
-When a new question arises, create a new experiment instead of expanding an existing one.
+Quando uma nova pergunta surgir, criar um novo experimento em vez de expandir um existente.
 
-The objective is to keep every experiment focused on reducing a single uncertainty.
+O objetivo é manter cada experimento focado em reduzir uma única incerteza.
 
-New experiments must use this structure:
+Novos experimentos devem usar esta estrutura:
 
 ```text
 prodops/upstream/experiments/NNN-short-slug/
@@ -139,5 +139,4 @@ prodops/upstream/experiments/NNN-short-slug/
   evidence/
 ```
 
-Flat files directly under `prodops/upstream/experiments/*.md` are legacy
-artifacts. Keep them readable, but do not create new experiments in that shape.
+Arquivos planos diretamente em `prodops/upstream/experiments/*.md` são artefatos legados. Mantê-los legíveis, mas não criar novos experimentos nesse formato.

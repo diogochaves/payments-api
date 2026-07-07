@@ -1,5 +1,5 @@
 # Postmortems
 
-Record postmortems for incidents that require follow-up analysis.
+Registrar aqui postmortems de incidentes que exigem análise de acompanhamento.
 
-No postmortems are currently versioned for this release.
+Nenhum postmortem foi registrado para esta release.

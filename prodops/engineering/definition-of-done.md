@@ -1,37 +1,37 @@
 # Definition of Done
 
-An implementation is done when all of the following are true:
+Uma implementação está pronta quando todos os itens abaixo são verdadeiros:
 
-## Behavior
+## Comportamento
 
-- [ ] The expected behavior is covered by a test that was red before implementation.
-- [ ] The test verifies behavior at the HTTP or event boundary (not internal implementation).
-- [ ] Relevant integration and acceptance tests pass.
-- [ ] No mocks substitute owned services or business rules.
+- [ ] O comportamento esperado está coberto por um teste que estava vermelho antes da implementação.
+- [ ] O teste verifica comportamento na fronteira HTTP ou de evento (não implementação interna).
+- [ ] Testes de integração e aceitação relevantes passam.
+- [ ] Nenhum mock substitui serviços próprios ou regras de negócio.
 
-## Contracts
+## Contratos
 
-- [ ] The BDD Feature for this behavior reflects the implemented contract.
-- [ ] OpenAPI or AsyncAPI spec is updated if a route or event was added, changed, or removed.
-- [ ] The OBC acceptance criteria are met by the evidence.
+- [ ] A BDD Feature para este comportamento reflete o contrato implementado.
+- [ ] A spec OpenAPI ou AsyncAPI está atualizada se uma rota ou evento foi adicionado, alterado ou removido.
+- [ ] Os critérios de aceite do OBC estão satisfeitos pelas evidências.
 
-## Code quality
+## Qualidade de código
 
-- [ ] No test-only branches exist in production code.
+- [ ] Nenhum branch exclusivo de teste existe no código de produção.
 - [ ] Formatter executado (`npm run lint` com `--fix` aplicado).
 - [ ] Lint passa (`npm run lint` exit 0 em `api/`).
 - [ ] Build passa.
-- [ ] No new TypeScript errors introduced.
+- [ ] Nenhum erro TypeScript novo introduzido.
 - [ ] Commits seguem Conventional Commits (`<type>(<scope>): <summary>`).
 
-## Observability
+## Observabilidade
 
 - [ ] Comportamento observável definido antes de implementar (qual log, qual métrica, qual correlationId).
-- [ ] Relevant logs are emitted with correct structure (correlationId, tenantId).
-- [ ] Error responses carry meaningful messages.
-- [ ] No secrets or PII appear in logs.
+- [ ] Logs relevantes são emitidos com estrutura correta (correlationId, tenantId).
+- [ ] Respostas de erro têm mensagens significativas.
+- [ ] Nenhum secret ou PII aparece nos logs.
 
-## Reliability
+## Confiabilidade
 
 - [ ] Timeout configurado para chamadas ao provedor externo.
 - [ ] Idempotência verificada: mesma operação repetida retorna o mesmo estado.
@@ -39,17 +39,17 @@ An implementation is done when all of the following are true:
 - [ ] Degradação controlada: falha de dependência externa não derruba o sistema.
 - [ ] Códigos HTTP correspondem ao comportamento semântico (201, 400, 404, 409).
 
-## Architecture
+## Arquitetura
 
-- [ ] Architecture diagram updated if the change was structural (new module, route, table, event topic).
-- [ ] Event Storming plan updated if events were added, removed, or renamed.
+- [ ] Diagrama de arquitetura atualizado se a mudança foi estrutural (novo módulo, rota, tabela, tópico de evento).
+- [ ] Event Storming atualizado se eventos foram adicionados, removidos ou renomeados.
 
-## Evidence
+## Evidência
 
-- [ ] Evidence appended to `prodops/downstream/release-trail.md` (Downstream) or experiment trail (Upstream).
-- [ ] Evidence includes: test output, lint output, summary of change.
+- [ ] Evidência acrescentada em `prodops/downstream/release-trail.md` (Downstream) ou no trail do experimento (Upstream).
+- [ ] Evidência inclui: saída dos testes, saída do lint e resumo do que mudou.
 
-## Ready for Sync + Finish
+## Pronto para Sync + Finish
 
-- [ ] All boxes above are checked.
-- [ ] The change is ready to enter [Sync + Finish Flow](../delivery/flows/sync-finish.md).
+- [ ] Todos os itens acima estão marcados.
+- [ ] A mudança está pronta para entrar no [Sync + Finish Flow](../delivery/flows/sync-finish.md).

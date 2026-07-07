@@ -30,19 +30,19 @@ A Feature Flag que habilita o novo Gateway permanece desativada devido a um bug 
 - Testes automatizados sobre a Feature Flag
 - War Room durante a ativação
 
-## Evidencia Upstream requerida
+## Evidência Upstream requerida
 
 O experimento `prodops/upstream/experiments/004-feature-flag-readiness/experiment.md`
-classifica esta incerteza como P0 e requer evidencias de Checkout antes de
-promocao final:
+classifica esta incerteza como P0 e requer evidências de Checkout antes da
+promoção final:
 
-- bug exato que mantem a flag desligada;
-- dono e status da correcao;
+- bug exato que mantém a flag desligada;
+- dono e status da correção;
 - regra de targeting e rollout gradual;
-- auditoria de ativacao/desativacao;
+- auditoria de ativação/desativação;
 - telemetria que distingue gateway antigo e novo por pedido;
-- criterio de pausa e rollback;
-- politica para pedidos ja iniciados no Payments quando a flag for desligada.
+- critério de pausa e rollback;
+- política para pedidos já iniciados no Payments quando a flag for desligada.
 
 ---
 
@@ -100,33 +100,33 @@ Incidentes já ocorreram anteriormente e podem voltar a acontecer sem detecção
 - Integração ao processo corporativo de gestão de incidentes.
 - Dependências entre Ecommerce, Payments, Marketing, Vendas, Infraestrutura e Arquitetura.
 
-## Riscos Upstream - Cartao de credito Asaas
+## Riscos Upstream - Cartão de crédito Asaas
 
-- Checkout hospedado no Asaas reduz risco de PCI porque Payments API nao
-  trafega dados sensiveis de cartao, mas depende da experiencia de pagamento
+- Checkout hospedado no Asaas reduz risco de PCI porque Payments API não
+  trafega dados sensíveis de cartão, mas depende da experiência de pagamento
   hospedada e da URL de invoice retornada pelo provedor.
-- Pagamento tokenizado exige contrato explicito para `creditCardToken`,
-  `remoteIp`, timeout minimo de 60 segundos, estados de autorizacao, analise de
+- Pagamento tokenizado exige contrato explícito para `creditCardToken`,
+  `remoteIp`, timeout mínimo de 60 segundos, estados de autorização, análise de
   risco e recusa de captura.
-- Captura direta de dados de cartao aumenta a superficie de seguranca e nao deve
-  entrar em Downstream sem decisao formal de compliance, UX e antifraude.
+- Captura direta de dados de cartão aumenta a superfície de segurança e não deve
+  entrar em Downstream sem decisão formal de compliance, UX e antifraude.
 - Eventos `PAYMENT_AUTHORIZED`, `PAYMENT_AWAITING_RISK_ANALYSIS`,
   `PAYMENT_REPROVED_BY_RISK_ANALYSIS` e
-  `PAYMENT_CREDIT_CARD_CAPTURE_REFUSED` ainda nao possuem estados internos
+  `PAYMENT_CREDIT_CARD_CAPTURE_REFUSED` ainda não possuem estados internos
   completos nem SLOs aceitos.
-- Cancelar cobranca aberta por `DELETE /v3/payments` nao cobre estorno de
-  pagamento confirmado; cartao confirmado exige fronteira de refund/reversal.
-- Listagem de cartoes salvos exige validacao forte de tenant, usuario e
-  ownership; erro nesse ponto pode expor cartao/token de outro cliente.
-- Token de cartao deve ser tratado como material sensivel: nao pode aparecer em
+- Cancelar cobrança aberta por `DELETE /v3/payments` não cobre estorno de
+  pagamento confirmado; cartão confirmado exige fronteira de refund/reversal.
+- Listagem de cartões salvos exige validação forte de tenant, usuário e
+  ownership; erro nesse ponto pode expor cartão/token de outro cliente.
+- Token de cartão deve ser tratado como material sensível: não pode aparecer em
   logs, traces, analytics, payloads de erro ou dead-letter queues.
 - `remoteIp` precisa representar o IP do pagador; usar IP do servidor Payments
   reduz qualidade antifraude e pode divergir do modelo da Asaas.
-- Cadastro de novo cartao amplia a fronteira PCI porque `creditCard` e
-  `creditCardHolderInfo` passam pela Payments API mesmo que nao sejam
+- Cadastro de novo cartão amplia a fronteira PCI porque `creditCard` e
+  `creditCardHolderInfo` passam pela Payments API mesmo que não sejam
   persistidos.
-- Estorno de cartao confirmado precisa de contrato proprio, idempotencia e
-  evidencia do provedor; nao deve ser tratado como cancelamento simples.
+- Estorno de cartão confirmado precisa de contrato próprio, idempotência e
+  evidência do provedor; não deve ser tratado como cancelamento simples.
 
 ---
 
