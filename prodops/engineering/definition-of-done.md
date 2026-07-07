@@ -52,4 +52,4 @@ An implementation is done when all of the following are true:
 ## Ready for Sync + Finish
 
 - [ ] All boxes above are checked.
-- [ ] The change is ready to enter [Sync + Finish Flow](../delivery/sync-finish-flow.md).
+- [ ] The change is ready to enter [Sync + Finish Flow](../delivery/flows/sync-finish.md).

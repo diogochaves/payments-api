@@ -16,10 +16,10 @@ Read before editing:
 
 - `AGENTS.md`
 - ProdOps artifacts directly related to the requested capability in
-  `prodops/current-state/`
+  `prodops/product/`
 - Reliability Plan sections directly related to the requested capability in
   `prodops/assessment/reliability-plan/`
-- Relevant BDD Feature in `prodops/current-state/features/` (committed) or
+- Relevant BDD Feature in `prodops/product/features/` (committed) or
   `prodops/upstream/features/` (exploratory)
 
 Do not read the whole repository or the whole codebase by default. Read only:

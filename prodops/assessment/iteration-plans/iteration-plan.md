@@ -23,7 +23,7 @@ A decisao principal e reduzir o lote: entregar uma jornada menor, completa e com
 
 | Risco | Impacto no negocio | Probabilidade | Influencia sobre o escopo |
 | --- | --- | --- | --- |
-| Novo gateway ainda desabilitado por Feature Flag devido a bug localizado. | Muito alto: impede ativacao da Release e, segundo `prodops/assessment/reliability-plan/risks.md`, existe risco contratual relevante. | Alta | Reduzir escopo para a jornada mais importante, evitando incluir funcionalidades paralelas que desviem foco da ativacao. |
+| Novo gateway ainda desabilitado por Feature Flag devido a bug localizado. | Muito alto: impede ativacao da Release e, segundo `prodops/assessment/risks.md`, existe risco contratual relevante. | Alta | Reduzir escopo para a jornada mais importante, evitando incluir funcionalidades paralelas que desviem foco da ativacao. |
 | Notification Service ja teve incidentes que afetaram confirmacao ao cliente. | Alto: cliente pode pagar e nao receber informacao confiavel. | Alta | Manter notificacao de status dentro da Release, mas apenas como parte da jornada principal, nao como plataforma completa de comunicacao. |
 | Desacoplamento do monolito aumenta complexidade entre times e servicos. | Alto: falhas de integracao podem impedir a experiencia ponta a ponta. | Alta | Preferir uma jornada completa menor em vez de multiplas jornadas incompletas. |
 | Pix e Boleto possuem regras e expectativas diferentes. | Medio/alto: tratar ambos como variacao simples pode aumentar erro de negocio. | Media | Dividir Boleto e nao comprometer a Release principal com todas as variacoes do meio de pagamento. |
@@ -47,12 +47,12 @@ A decisao principal e reduzir o lote: entregar uma jornada menor, completa e com
 | Feature | Valor esperado | Dependencias | Estado atual |
 | --- | --- | --- | --- |
 | Criar invoice via Pix | Permite ao Checkout iniciar a jornada de pagamento de maior prioridade para a Release. | Checkout, Payments, provedor Asaas, Feature Flag. | Documentada em feature file e parcialmente implementada no codigo. |
-| Criar invoice via Boleto | Amplia meios de pagamento atendidos pelo novo gateway. | Checkout, Payments, regras de Boleto, provedor Asaas, notificacao. | OBC criado em `prodops/assessment/reliability-plan/obcs/create-invoice-boleto.md`. BDD Feature criada em `prodops/current-state/features/create-invoice-boleto.feature`. Riscos documentados em `risks.md`. Pronta para entrar no fluxo Downstream. |
+| Criar invoice via Boleto | Amplia meios de pagamento atendidos pelo novo gateway. | Checkout, Payments, regras de Boleto, provedor Asaas, notificacao. | OBC criado em `prodops/assessment/obcs/create-invoice-boleto.md`. BDD Feature criada em `prodops/product/features/create-invoice-boleto.feature`. Riscos documentados em `risks.md`. Pronta para entrar no fluxo Downstream. |
 | Confirmacao de pagamento | Permite ao Ecommerce reconhecer pagamento aprovado e seguir a jornada do cliente. | Payments, webhook do provedor, Ecommerce/Orders, Notification Service. | Documentada e implementada no codigo para eventos principais. |
 | Notificacao de status de pagamento | Fecha o ciclo de comunicacao com o cliente e reduz incerteza pos-pagamento. | Ecommerce, Notification Service, Payments. | Documentada como necessidade critica; integracao final nao aparece como funcionalidade completa neste repositorio. |
 | Cancelar invoice pendente | Evita que cobrancas indevidas continuem ativas. | Payments, provedor Asaas, regras de estado da invoice. | Documentada e implementada no codigo. |
 | Habilitar novo gateway para o Checkout | Permite que a Release gere valor real em producao. | Checkout, Feature Flag, Payments. | Documentada no premortem como preparada, mas bloqueada por bug localizado. |
-| Validação de acesso por token de API | Garante que apenas sistemas autorizados consumam a Payments API, com rastreabilidade por tenant e chave local para desenvolvimento. | Payments API, variáveis de ambiente, time de Checkout e integrações. | Implementado. OBC e BDD em `prodops/current-state/`. |
+| Validação de acesso por token de API | Garante que apenas sistemas autorizados consumam a Payments API, com rastreabilidade por tenant e chave local para desenvolvimento. | Payments API, variáveis de ambiente, time de Checkout e integrações. | Implementado. OBC e BDD em `prodops/product/`. |
 | Configuração de webhook por token de API | Permite que consumidores recebam notificações automáticas de mudança de status de pagamento sem polling. | Payments API, token de API, DynamoDB WebhooksTable. | Novo item; OBC e BDD criados. |
 
 ## Iteration Plan recomendado
@@ -93,15 +93,15 @@ Fallback/Itau ficou fora porque aumentaria muito o tamanho da Release. A oportun
 
 ## Fontes consultadas
 
-- `prodops/current-state/product-deck.md`
-- `prodops/current-state/service-decks/compra-com-pix.md`
-- `prodops/current-state/icebox-backlog.md`
-- `prodops/current-state/features/create-invoice.feature`
-- `prodops/current-state/features/payment-confirmation.feature`
-- `prodops/current-state/features/cancel-invoice.feature`
+- `prodops/product/product-deck.md`
+- `prodops/product/service-decks/compra-com-pix.md`
+- `prodops/product/icebox-backlog.md`
+- `prodops/product/features/create-invoice.feature`
+- `prodops/product/features/payment-confirmation.feature`
+- `prodops/product/features/cancel-invoice.feature`
 - `prodops/assessment/premortem.md`
-- `prodops/assessment/reliability-plan/risks.md`
-- `prodops/assessment/reliability-plan/opportunities.md`
+- `prodops/assessment/risks.md`
+- `prodops/assessment/opportunities.md`
 - `prodops/assessment/reliability-plan/iteration-backlog.md`
 - `prodops/assessment/event-storming/plan.json`
 - `api/src/modules/invoices`

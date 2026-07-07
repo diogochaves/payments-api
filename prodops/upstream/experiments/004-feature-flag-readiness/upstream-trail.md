@@ -34,8 +34,8 @@ release-blocking dependency, so a new Upstream experiment was created.
 
 - `prodops/upstream/experiments/004-feature-flag-readiness/experiment.md`
 - `prodops/upstream/experiments.md`
-- `prodops/current-state/tracking-list.md`
-- `prodops/assessment/reliability-plan/risks.md`
+- `prodops/product/tracking-list.md`
+- `prodops/assessment/risks.md`
 - `prodops/upstream/learnings.md`
 
 ### Evidence

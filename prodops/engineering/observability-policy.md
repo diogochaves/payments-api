@@ -41,11 +41,11 @@ Antes de implementar, definir:
 - Qual `correlationId` propagará pela cadeia de chamadas.
 - Quais métricas serão registradas.
 
-Observabilidade não é um passo pós-implementação. É planejada junto com o contrato. Ver [ProdOps TDD — Observability First](../delivery/practices/tdd-prodops.md).
+Observabilidade não é um passo pós-implementação. É planejada junto com o contrato. Ver [ProdOps TDD — Observability First](../delivery/practices/prodops-tdd.md).
 
 ## Validation in tests
 
-Observability validation is part of the [Hack Flow](../delivery/hack-flow.md). After the green bar, verify that:
+Observability validation is part of the [Hack Flow](../delivery/flows/hack.md). After the green bar, verify that:
 - Expected log entries are emitted (use Log String pattern).
 - Error responses carry the expected `message` and structure.
 - No sensitive data appears in logs.

@@ -2,279 +2,168 @@
 
 ProdOps is the single source of product context for this repository. Agents must use the ProdOps artifacts as the decision base and must not invent missing business context.
 
-## Como ler o ProdOps neste repositório
+---
 
-Leia nesta ordem para qualquer tarefa:
+## Ordem de leitura
 
-1. `prodops/README.md` — índice e mapa de navegação do framework
-2. `prodops/framework/principles.md` — princípios do framework
-3. `prodops/delivery/README.md` — visão geral do ProdOps Delivery (CI Sync / CI Async)
-4. Identifique se a tarefa pertence ao **CI Sync** (implementação) ou **CI Async** (pipeline/deploy)
-5. Se for implementação → `prodops/delivery/hack-flow.md`
-6. Durante Hack → `prodops/delivery/practices/tdd-prodops.md`
-7. Durante Hack, Sync e Finish → `prodops/commit-workflow/README.md`
-8. Se for pipeline/deploy → `prodops/delivery/ship-validate-promote-flow.md`
+Para qualquer tarefa, leia nesta ordem:
+
+1. `prodops/README.md` — portal do framework (mapa de navegação)
+2. `prodops/framework/principles.md` — princípios obrigatórios
+3. `prodops/framework/glossary.md` — termos canônicos
+4. `prodops/delivery/README.md` — CI Sync e CI Async
+5. Identifique o path: **Upstream** (exploração) ou **Downstream** (entrega comprometida)
+6. Se CI Sync → leia o flow correspondente em `prodops/delivery/flows/`
+7. Se Hack → aplique `prodops/delivery/practices/prodops-tdd.md`
+8. Em todo commit → aplique `prodops/commit-workflow/README.md`
+9. Se CI Async → leia `prodops/delivery/flows/ship-validate-promote.md`
 
 ---
 
-## Source Of Truth
+## Source of Truth
 
-- Product context: `prodops/current-state/`
-- Release assessment: `prodops/assessment/`
-- Upstream exploration: `prodops/upstream/`
-- Downstream delivery: `prodops/downstream/`
-- Execution contract: `prodops/assessment/reliability-plan/`
-- Operational evidence: `prodops/operation/`
+| Assunto | Localização |
+|---|---|
+| Contexto de produto | `prodops/product/` |
+| BDD Features (committed) | `prodops/product/features/` |
+| OBCs | `prodops/assessment/obcs/` |
+| Riscos | `prodops/assessment/risks.md` |
+| Iteration Plan | `prodops/assessment/iteration-plans/iteration-plan.md` |
+| Reliability Plans | `prodops/assessment/reliability-plans/` |
+| Upstream | `prodops/upstream/` |
+| Downstream | `prodops/downstream/` |
+| Operação | `prodops/operation/` |
+
+---
 
 ## Upstream Path
 
-Use Upstream when the task is to:
+Use Upstream para: explorar, experimentar, prototipar, validar hipóteses, preparar BDD/OBC antes do compromisso.
 
-- explore;
-- experiment;
-- implement quickly;
-- prototype;
-- investigate;
-- validate a hypothesis;
-- refine an OBC;
-- prepare a BDD;
-- investigate a technical solution;
-- understand impact before taking delivery commitment.
+- Sem compromisso de entrega — apenas compromisso de aprendizado
+- Registrar no trail do experimento ativo: `prodops/upstream/experiments/<id>-<slug>/upstream-trail.md`
+- Novos experimentos: diretório `prodops/upstream/experiments/<id>-<slug>/` com `experiment.md`, `upstream-trail.md`, `evidence/`
 
-Upstream is a complete exploratory engineering path. Its goal is to transform hypotheses into validated knowledge before a capability is promoted to Downstream.
+→ [prodops/upstream/README.md](prodops/upstream/README.md)
 
-During Upstream, agents may:
-
-- implement code;
-- create endpoints;
-- create integrations;
-- update OpenAPI contracts;
-- update AsyncAPI contracts;
-- create or update BDD Features;
-- create automated tests when useful;
-- create functional validation interfaces;
-- update documentation;
-- evolve OBCs;
-- update the Reliability Plan;
-- update Event Storming;
-- update the Tracking List;
-- produce evidence for a delivery decision.
-
-Upstream has no delivery commitment. It has a learning commitment. Code produced in Upstream is disposable until promoted to Downstream, but successful code may be reused, refactored, or promoted during the Downstream flow.
-
-The `validation-workbench/` is part of Upstream. Use it to validate functional flows, OBC behavior,integrations, BDD scenarios, UX, and contracts before promotion to Downstream.
-
-Upstream does not need to follow the full flow:
-
-```text
-Bootstrap -> Hack -> Sync -> Finish -> Ship -> Validate -> Promote
-```
-
-Upstream work should turn uncertainty into clearer demand, executable evidence, OBC input, BDD input, Reliability Plan input, Event Storming updates, or a Downstream candidate.
-
-Record Upstream work in the trail owned by the active experiment:
-
-```text
-prodops/upstream/experiments/<id>-<slug>/upstream-trail.md
-```
-
-Use this format for the experiment trail:
-
-```text
-templates/upstream-trail.md
-```
-
-New Upstream experiments must use a directory:
-
-```text
-prodops/upstream/experiments/<id>-<slug>/experiment.md
-prodops/upstream/experiments/<id>-<slug>/upstream-trail.md
-prodops/upstream/experiments/<id>-<slug>/evidence/
-```
-
-Keep `prodops/upstream/experiments.md` as the index of experiments. Keep
-`prodops/upstream/upstream-trail.md` only as a global chronological index for
-cross-experiment milestones, migrations, promotions, or repository-wide
-Upstream process changes. Do not overwrite previous entries.
+---
 
 ## Downstream Path
 
-Use Downstream when the task is to:
+Use Downstream para implementar itens aprovados do Iteration Backlog.
 
-- implement an approved Iteration Backlog item;
-- follow the Reliability Plan;
-- apply TDD from BDD Features;
-- update OBCs;
-- execute Quality Gates;
-- register Release Trail evidence;
-- validate observability, metrics, or SLOs;
-- prepare standardized delivery.
+Pré-condições obrigatórias:
+- OBC em `prodops/assessment/obcs/`
+- BDD Feature em `prodops/product/features/`
+- Entrada no Iteration Plan com status `Entrou`
+- Riscos documentados em `prodops/assessment/risks.md`
 
-Every Downstream item must have:
+Sequência obrigatória:
 
-- OBC — placed in `prodops/assessment/reliability-plan/obcs/`;
-- BDD Feature — placed in `prodops/current-state/features/`;
-- Reliability Plan entry;
-- Iteration Backlog entry.
-
-`prodops/upstream/features/` and `prodops/upstream/obcs/` are for exploratory
-capabilities tied to active experiments only. Do not create Downstream BDD
-Features or OBCs there, even as drafts.
-
-Downstream follows the full governed flow, organized in two groups:
-
-```text
-CI Sync (trabalho local, síncrono)
-  Bootstrap → Hack → Sync → Finish
-
-CI Async (plataforma, pipelines, ambientes)
-  Ship → Validate → Promote
+```
+Bootstrap → Hack → Sync → Finish → Ship → Validate → Promote
 ```
 
-Required Downstream sequence:
+Antes de alterar código de produção, leia:
+1. `prodops/product/` — Product Deck, Service Decks, BDD Features
+2. `prodops/assessment/` — Reliability Plans, OBCs, riscos
+3. O OBC e a BDD Feature da capability sendo implementada
 
-```text
-AGENTS.md
--> Current State
--> Assessment
--> Reliability Plan
--> BDD Feature
--> Bootstrap         (branch + contexto ProdOps)
--> Hack              (ProdOps TDD + Commit Workflow)
--> Sync              (consistência de artefatos)
--> Finish            (Quality Gates + PR)
--> Ship              (Preparation + Deployment)
--> Validate          (runtime + SLO + observabilidade)
--> Promote           (aprovação + Release Trail)
-```
+→ [prodops/downstream/README.md](prodops/downstream/README.md)
 
-Before changing production code or committed product artifacts:
+---
 
-1. Read `prodops/current-state/`, including `product-deck.md`, `service-decks/`, `tracking-list.md`, and `icebox-backlog.md`. Read committed BDD Features in `prodops/current-state/features/` and exploratory features in `prodops/upstream/features/`.
-2. Read `prodops/assessment/`, especially `prodops/assessment/reliability-plan/`.
-3. Treat the Reliability Plan as the release execution contract.
-4. Use BDD Features as the input for TDD whenever behavior changes. If the BDD Feature does not exist yet for a Downstream item, create it in `prodops/current-state/features/` before writing code.
-5. If the OBC does not exist yet for a Downstream item, create it in `prodops/assessment/reliability-plan/obcs/` before writing code.
-6. Select the appropriate execution skill from `skills/`.
-7. Update only artifacts that are actually impacted.
-8. **If the change is structural** — new module, route group, external dependency, database table, or event topic — update `prodops/assessment/architecture/overview.md` before closing the task. Add a row to the History table in that file.
-9. Register every relevant Downstream execution in `prodops/downstream/release-trail.md`.
+## Como executar o Hack
 
-## Event Storming (ODD Plan)
+1. Bootstrap entregou: branch limpa + ambiente + artefatos lidos + contrato verificado
+2. Escrever o teste de integração (Red Bar) — a partir do contrato (BDD Feature / OBC)
+3. Implementar o mínimo para passar (Green Bar)
+4. Refatorar mantendo testes verdes
+5. Commit: `git commit -m "<type>(<scope>): <summary>"`
+6. Validar observabilidade (logs, correlationId, sem PII/secrets em logs)
+7. Verificar confiabilidade (timeout, idempotência, exceções, HTTP codes)
+8. Registrar evidência no trail
 
-The canonical event map lives at:
-
-```text
-prodops/assessment/event-storming/plan.json
-```
-
-Use `prodops/assessment/event-storming/plan-model.json` as the structural
-reference format. The `plan.json` is generated and updated — never edit the
-model file.
-
-**Event naming convention:** `{dominio}.{subdominio}.{touchpoint}.{fato}`
-(all lowercase, dot-separated). Every business event must have a companion
-`{event-key}_exception` variant for failure observability.
-
-**Update `plan.json` when any of the following changes:**
-
-- A new `eventEmitter.emit()` or `@OnEvent()` is added or removed
-- An existing domain event gains or loses fields that change its business meaning
-- A new flow (happy path or alternative path) is identified
-- An existing flow changes sequence or gains/loses steps
-
-**Do not update `plan.json` for:** internal refactors without event contract
-change, new DTO fields that don't affect event payloads, bugfixes that preserve
-existing event semantics.
-
-When updating, follow the band structure: for each new event add widgets to
-`{flow}_negative_kpis`, `{flow}_negative_trends`, `{flow}_positive_kpis`,
-`{flow}_positive_trends` bands and a `customEvents` entry (both success and
-exception variants). Add an `sloSuggestions` entry for events on the critical
-path.
-
-## Architecture Diagram
-
-The canonical architecture diagram lives at:
-
-```text
-prodops/assessment/architecture/overview.md
-```
-
-It is the single source of truth for the system's structural shape. The diagram
-is referenced by `prodops/current-state/product-deck.md` (section 6).
-
-**Structural changes** that require updating the diagram:
-
-- New or removed NestJS module
-- New or removed controller / route group
-- New or removed external dependency (gateway, broker, provider)
-- New or removed database table or GSI
-- New or removed event topic or queue
-- Authentication mechanism change on a route group
-
-**Not** structural: DTO field additions, bug fixes inside an existing service,
-new BDD scenarios without new infrastructure, internal refactors without contract
-change.
-
-## Execution Skills
-
-- `skills/upstream/`: exploration path selection and evidence capture.
-- `skills/downstream/`: governed delivery orchestration.
-- `skills/hack/`: implementation with TDD.
-- `skills/sync/`: review, consistency, and artifact updates.
-- `skills/finish/`: quality gates and technical closure.
-- `skills/ship/`: deploy preparation.
-- `skills/validate/`: validation with evidence, metrics, and SLOs.
-- `skills/promote/`: approval and release closure.
-
-Skills describe how to execute work. They must point to ProdOps artifacts for product context instead of copying business knowledge into the skill.
-
-## Context Rules
-
-- Never invent absent context, requirements, risks, OBCs, SLOs, or acceptance criteria.
-- If a business decision is missing, record the gap and ask for clarification or leave an explicit follow-up.
-- Prefer existing BDD, ODD, OBC, Reliability Plan, and Product Deck language over new terminology.
-- Preserve existing code architecture unless the relevant ProdOps artifact asks for a contract or capability change.
-- Keep Upstream findings reversible until Downstream accepts the work.
-
-## Downstream Release Trail
-
-After each relevant Downstream task, append a concise entry to:
-
-```text
-prodops/downstream/release-trail.md
-```
-
-Use this format:
-
-```text
-templates/downstream-release-entry.md
-```
-
-Do not overwrite previous entries.
-
-## Hack Flow com ProdOps TDD
-
-O Hack é o estágio central do CI Sync. Consome duas capabilities:
-
-- **ProdOps TDD** — como implementar. Sequência completa (3 fases): [prodops/delivery/hack-flow.md](prodops/delivery/hack-flow.md)
-- **Commit Workflow** — como validar, versionar e publicar: [prodops/commit-workflow/README.md](prodops/commit-workflow/README.md)
-
-Referências adicionais: [ProdOps TDD](prodops/delivery/practices/tdd-prodops.md) · [Definition of Done](prodops/engineering/definition-of-done.md) · [Testing Policy](prodops/engineering/testing-policy.md)
+→ [prodops/delivery/flows/hack.md](prodops/delivery/flows/hack.md)
 
 ### Checklist de fechamento do Hack
 
-1. [ ] Contrato identificado ou criado.
-2. [ ] Red Bar confirmado.
-3. [ ] Lint passa (`npm run lint` exit 0 em `api/`).
-4. [ ] Formatter executado.
-5. [ ] `./scripts/test-acceptance.sh` — quando comportamento de pagamento ou contratos mudaram.
-6. [ ] Observabilidade validada (logs, correlationId, sem PII).
-7. [ ] Confiabilidade verificada (timeout, idempotência, exceções, HTTP codes).
-8. [ ] Commits seguem Conventional Commits.
-9. [ ] Evidências registradas no trail.
+- [ ] Contrato identificado ou criado
+- [ ] Red Bar confirmado
+- [ ] Lint passa (`npm run lint` exit 0 em `api/`)
+- [ ] Formatter executado
+- [ ] `./scripts/test-acceptance.sh` — quando comportamento de pagamento ou contratos mudaram
+- [ ] Observabilidade validada (logs, correlationId, sem PII)
+- [ ] Confiabilidade verificada (timeout, idempotência, exceções, HTTP codes)
+- [ ] Commits seguem Conventional Commits
+- [ ] Evidências registradas no trail
 
-### Handling conflicts
+---
 
-When a new guideline conflicts with an existing rule in this repository (lint config, CI/CD workflow, test structure, architecture boundary), **preserve the existing rule** and record the conflict in a [Decision Trail](prodops/templates/decision-trail.md) entry. Do not silently override existing constraints.
+## ProdOps TDD
+
+Princípios: Contract First · Integration First · Observability First · Progressive Substitution · Non Intrusive Testing
+
+→ [prodops/delivery/practices/prodops-tdd.md](prodops/delivery/practices/prodops-tdd.md)
+
+---
+
+## Commit Workflow
+
+Hooks Git nativos. Executa automaticamente no commit se configurado:
+
+```bash
+git config core.hooksPath prodops/commit-workflow/hooks
+```
+
+Conventional Commits obrigatório: `<type>(<scope>): <summary>`
+
+→ [prodops/commit-workflow/README.md](prodops/commit-workflow/README.md)
+
+---
+
+## Event Storming
+
+Mapa canônico: `prodops/assessment/event-storming/plan.json`
+
+**Atualizar quando:** novo `eventEmitter.emit()` ou `@OnEvent()`, mudança de payload com impacto de negócio, novo flow identificado.
+
+**Não atualizar para:** refactor sem mudança de contrato, bugfixes que preservam semântica de evento.
+
+---
+
+## Arquitetura
+
+Diagrama canônico: `prodops/assessment/architecture/overview.md`
+
+**Atualizar quando:** novo módulo NestJS, nova rota, nova dependência externa, novo DynamoDB table, novo event topic.
+
+---
+
+## Downstream Release Trail
+
+Após cada tarefa Downstream relevante, append em:
+
+```
+prodops/downstream/release-trail.md
+```
+
+---
+
+## Context Rules
+
+- Nunca inventar contexto, OBCs, SLOs, riscos ou critérios de aceite ausentes
+- Se decisão de negócio está faltando: registrar o gap e pedir clarificação
+- Preservar arquitetura existente a menos que o artefato ProdOps peça mudança
+- Conflito entre nova diretriz e regra existente: preservar a existente e registrar em Decision Trail
+
+→ [prodops/templates/assessment/decision-trail.md](prodops/templates/assessment/decision-trail.md)
+
+---
+
+## Execution Skills
+
+- `skills/hack/` — implementação com TDD
+- `skills/sync/` — revisão e sync de artefatos
+- `skills/ship/` — deploy preparation
+- `skills/validate/` — validação com evidências

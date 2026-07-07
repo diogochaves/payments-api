@@ -1,107 +1,57 @@
 # ProdOps Delivery
 
-ProdOps Delivery organiza o trabalho de implementação em dois agrupamentos dentro de um fluxo contínuo:
+ProdOps Delivery organiza o trabalho em duas faixas dentro de um fluxo contínuo:
 
 ```
-Continuous Integration
-├── CI Sync                     → trabalho local, síncrono, colaborativo
-│   ├── Bootstrap
-│   ├── Hack
-│   ├── Sync
-│   └── Finish
-│
-└── CI Async                    → trabalho assíncrono, plataforma, pipelines
-    ├── Ship
-    ├── Validate
-    └── Promote
+CI Sync: Bootstrap → Hack → Sync → Finish     (trabalho local, síncrono)
+CI Async: Ship → Validate → Promote            (plataforma, pipelines, ambientes)
 ```
 
-O fluxo principal segue a sequência:
+## CI Sync — trabalho do engenheiro
 
-```
-Bootstrap → Hack → Sync → Finish → Ship → Validate → Promote
-```
+→ [ci-sync.md](ci-sync.md)
 
----
+## CI Async — trabalho da plataforma
 
-## CI Sync
+→ [ci-async.md](ci-async.md)
 
-O CI Sync representa o trabalho **síncrono, local e colaborativo** da engenharia.
+## Flows
 
-**Resultado esperado:**
-- Task fechada
-- PR criado com narrativa da implementação
-- Evidências anexadas
-- Commits organizados seguindo Conventional Commits
-- Validações locais executadas (lint, testes, build)
+| Flow | Descrição | Link |
+|---|---|---|
+| Bootstrap | Branch + ambiente + contexto ProdOps | [flows/bootstrap.md](flows/bootstrap.md) |
+| Hack | Implementação via ProdOps TDD | [flows/hack.md](flows/hack.md) |
+| Sync | Consistência de artefatos | [flows/sync-finish.md](flows/sync-finish.md#sync) |
+| Finish | Quality Gates + PR | [flows/sync-finish.md](flows/sync-finish.md#finish) |
+| Ship | Preparation + Deployment | [flows/ship-validate-promote.md](flows/ship-validate-promote.md#ship) |
+| Validate | Runtime + observabilidade + SLO | [flows/ship-validate-promote.md](flows/ship-validate-promote.md#validate) |
+| Promote | Aprovação formal + Release Trail | [flows/ship-validate-promote.md](flows/ship-validate-promote.md#promote) |
 
-| Passo | Responsabilidade |
-|---|---|
-| **Bootstrap** | Preparar o ambiente, criar a branch, ler os artefatos ProdOps |
-| **Hack** | Implementar com ProdOps TDD (Contract First, Integration First, Observability First) |
-| **Sync** | Confirmar consistência entre implementação e artefatos ProdOps |
-| **Finish** | Fechar a task, executar Quality Gates, criar PR com evidências |
+## Practices
 
-Documentação:
-- [Bootstrap Flow](bootstrap-flow.md)
-- [Hack Flow](hack-flow.md) — coding com ProdOps TDD integrado
-- [Sync + Finish Flow](sync-finish-flow.md) — revisão, consistência, fechamento de task
+| Practice | Usado em | Link |
+|---|---|---|
+| ProdOps TDD | Hack | [practices/prodops-tdd.md](practices/prodops-tdd.md) |
 
----
+## Capabilities
 
-## CI Async
+→ [capabilities/](capabilities/)
 
-O CI Async representa o trabalho **assíncrono executado pela plataforma**, pipelines, automações e ambientes.
-
-**Resultado esperado:**
-- Artefato produzido e publicado
-- Deploy realizado no ambiente alvo
-- Validação em runtime executada
-- Promoção controlada com evidência registrada
-
-| Passo | Responsabilidade |
-|---|---|
-| **Ship** | Transformar a implementação em artefato executável (Preparation) e conduzir o deploy (Deployment) |
-| **Validate** | Verificar a entrega em execução no ambiente alvo |
-| **Promote** | Oficializar a evolução da versão com aprovação formal e evidência |
-
-Documentação:
-- [Ship → Validate → Promote Flow](ship-validate-promote-flow.md)
-
----
-
-## Capabilities transversais
-
-Capabilities consumidas em múltiplos estágios do fluxo:
-
-| Capability | Estágios |
-|---|---|
-| **ProdOps TDD** | Hack |
-| **Commit Workflow** | Hack, Sync, Finish |
-| **Quality Gates** | Finish, Promote |
-| **Evidence Management** | Finish, Validate, Promote |
-
-- [ProdOps TDD](practices/tdd-prodops.md)
-- [Commit Workflow](../commit-workflow/README.md)
-
----
+| Capability | Flows | Link |
+|---|---|---|
+| Commit Workflow | Hack, Sync, Finish | [capabilities/commit-workflow.md](capabilities/commit-workflow.md) |
+| Contract Management | Bootstrap, Hack, Sync, Validate | [capabilities/contract-management.md](capabilities/contract-management.md) |
+| Evidence Management | Finish, Validate, Promote | [capabilities/evidence-management.md](capabilities/evidence-management.md) |
+| Observability | Hack, Validate | [capabilities/observability.md](capabilities/observability.md) |
+| Reliability | Bootstrap, Hack, Finish, Promote | [capabilities/reliability.md](capabilities/reliability.md) |
 
 ## Paths de trabalho
 
 | Path | Descrição | Sequência |
 |---|---|---|
-| **Downstream** | Entrega governada, com compromisso e OBC | Sequência completa obrigatória |
-| **Upstream** | Exploração, experimentos, validação de hipóteses | Seleciona etapas conforme necessidade |
-
-Downstream requer a sequência completa. Upstream seleciona as etapas necessárias para o experimento. Um ciclo Upstream típico usa Bootstrap + Hack + Sync; Ship, Validate e Promote são adicionados apenas quando o experimento requer validação em staging ou uma decisão de promoção.
-
----
+| Downstream | Entrega governada, com OBC + BDD + Reliability Plan | Sequência completa obrigatória |
+| Upstream | Exploração, experimentos, validação de hipóteses | Seleciona etapas conforme necessidade |
 
 ## Execution skills
 
-Para mecânica de execução (branching, comandos, lint, testes, commit):
-- [`skills/hack/`](../../skills/hack/) — implementação
-- [`skills/sync/`](../../skills/sync/) — revisão e sync de artefatos
-- [`skills/finish/`](../../skills/finish/) — fechamento de quality gates
-- [`skills/ship/`](../../skills/ship/) — deploy preparation
-- [`skills/validate/`](../../skills/validate/) — validação pós-deploy
+→ [`skills/hack/`](../../skills/hack/) · [`skills/sync/`](../../skills/sync/) · [`skills/ship/`](../../skills/ship/) · [`skills/validate/`](../../skills/validate/)

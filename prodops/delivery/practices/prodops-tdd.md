@@ -2,7 +2,7 @@
 
 ProdOps TDD is the evolution of classical TDD for the context of observable, reliable digital products. It combines TDD, contracts, integration testing, observability, reliability, and operational evidence into a single coding practice.
 
-**ProdOps TDD is not a separate flow.** It is the practice used inside [Hack Flow](../hack-flow.md).
+**ProdOps TDD is not a separate flow.** It is the practice used inside [Hack Flow](../flows/hack.md).
 
 ---
 

@@ -254,7 +254,7 @@ Independente da saída, registrar no `upstream-trail.md` do experimento:
 - Decisão tomada
 - Próximos passos
 
-Se a saída gerar mudança no Reliability Plan, atualizar `prodops/assessment/reliability-plan/risks.md` ou `opportunities.md` antes de fechar o ciclo.
+Se a saída gerar mudança no Reliability Plan, atualizar `prodops/assessment/risks.md` ou `opportunities.md` antes de fechar o ciclo.
 
 ---
 
@@ -285,8 +285,8 @@ A decisão de promover é do Product Manager + Tech Lead responsáveis pela capa
 Antes de promover, confirmar que:
 
 1. O Decision Package do experimento tem recomendação clara (`Promover` ou `Promover com restrição`).
-2. O comportamento esperado está descrito em um BDD Feature em `prodops/upstream/features/` pronto para ser movido para `prodops/current-state/features/`.
-3. O OBC draft em `prodops/upstream/obcs/` tem critérios mensuráveis e pode ser movido para `prodops/assessment/reliability-plan/obcs/`.
+2. O comportamento esperado está descrito em um BDD Feature em `prodops/upstream/features/` pronto para ser movido para `prodops/product/features/`.
+3. O OBC draft em `prodops/upstream/obcs/` tem critérios mensuráveis e pode ser movido para `prodops/assessment/obcs/`.
 4. O Reliability Plan foi atualizado com os riscos e mitigation actions identificados no experimento.
 5. A incerteza remanescente é aceitável para entrar em Downstream com compromisso de entrega.
 
@@ -295,19 +295,19 @@ Antes de promover, confirmar que:
 ```
 1. Mover BDD Feature:
    prodops/upstream/features/<slug>.feature
-   → prodops/current-state/features/<slug>.feature
+   → prodops/product/features/<slug>.feature
 
 2. Mover OBC:
    prodops/upstream/obcs/<slug>.md
-   → prodops/assessment/reliability-plan/obcs/<slug>.md
+   → prodops/assessment/obcs/<slug>.md
    (remover marcação "Upstream draft only")
 
 3. Criar ou atualizar entrada no Iteration Plan:
-   prodops/assessment/iteration-plan.md
+   prodops/assessment/iteration-plans/iteration-plan.md
    (adicionar à tabela "Iteration Backlog identificado")
 
 4. Atualizar Tracking List se o item estava lá:
-   prodops/current-state/tracking-list.md
+   prodops/product/tracking-list.md
    (mudar status para "Promovido para Downstream")
 
 5. Registrar a promoção no upstream-trail do experimento:
@@ -322,7 +322,7 @@ Antes de promover, confirmar que:
 
 - Mover código para produção sem mover os artefatos ProdOps.
 - Criar um OBC committed sem BDD Feature correspondente.
-- Iniciar implementação Downstream antes de o OBC estar em `assessment/reliability-plan/obcs/`.
+- Iniciar implementação Downstream antes de o OBC estar em `assessment/obcs/`.
 - Promover com recomendação `Não promover` ou `Requer outro experimento` no Decision Package.
 
 ---

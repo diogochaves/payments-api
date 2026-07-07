@@ -43,7 +43,7 @@ in the global trail.
 - `prodops/upstream/experiments/005-datadog-native-aws-instrumentation/upstream-trail.md`
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/upstream-trail.md`
-- `prodops/assessment/reliability-plan/risks.md`
+- `prodops/assessment/risks.md`
 - `prodops/upstream/features/README.md`
 
 ### Evidence

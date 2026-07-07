@@ -26,7 +26,7 @@ The prohibition on test doubles in acceptance tests is enforced as a merge-block
 
 ## Error path testing
 
-Error paths that require external system failure belong in unit or service-layer tests, not acceptance tests. See [ProdOps TDD — Yellow Bar Patterns](../delivery/practices/tdd-prodops.md).
+Error paths that require external system failure belong in unit or service-layer tests, not acceptance tests. See [ProdOps TDD — Yellow Bar Patterns](../delivery/practices/prodops-tdd.md).
 
 ## Shared app per file
 

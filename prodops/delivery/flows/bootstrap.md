@@ -16,8 +16,8 @@ O Bootstrap não produz código, não escreve testes, não lê código-fonte. Pr
 
 **Downstream:**
 - Item presente no Iteration Backlog (`prodops/downstream/iteration-backlog.md`)
-- OBC criado em `prodops/assessment/reliability-plan/obcs/`
-- BDD Feature presente em `prodops/current-state/features/`
+- OBC criado em `prodops/assessment/obcs/`
+- BDD Feature presente em `prodops/product/features/`
 
 **Upstream:**
 - Experimento criado em `prodops/upstream/experiments/`
@@ -54,10 +54,10 @@ Antes de qualquer teste ou código, ler:
 
 | Artefato | Localização |
 |---|---|
-| OBC da capability | `prodops/assessment/reliability-plan/obcs/<capability>.md` |
-| BDD Feature | `prodops/current-state/features/<capability>.feature` |
-| Riscos e mitigações | `prodops/assessment/reliability-plan/risks.md` |
-| Iteration Plan | `prodops/assessment/iteration-plan.md` |
+| OBC da capability | `prodops/assessment/obcs/<capability>.md` |
+| BDD Feature | `prodops/product/features/<capability>.feature` |
+| Riscos e mitigações | `prodops/assessment/risks.md` |
+| Iteration Plan | `prodops/assessment/iteration-plans/iteration-plan.md` |
 
 Para Upstream: ler `prodops/upstream/experiments/<id>-<slug>/experiment.md`.
 
@@ -104,4 +104,4 @@ O Hack não re-lê artefatos. O Hack não verifica ambiente. O Hack começa no R
 
 ## Próximo estágio
 
-→ [Hack Flow](hack-flow.md)
+→ [Hack Flow](hack.md)

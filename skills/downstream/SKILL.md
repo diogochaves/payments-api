@@ -10,19 +10,19 @@ Use this skill for standardized, traceable delivery.
 ## Inputs
 
 - `AGENTS.md`
-- `prodops/current-state/`
+- `prodops/product/`
 - `prodops/assessment/reliability-plan/`
 - `prodops/downstream/iteration-backlog.md`
-- Relevant BDD Feature in `prodops/current-state/features/`
-- Relevant OBC in `prodops/assessment/reliability-plan/obcs/`
+- Relevant BDD Feature in `prodops/product/features/`
+- Relevant OBC in `prodops/assessment/obcs/`
 - Relevant quality gates in `prodops/downstream/quality-gates.md`
 
 ## Artifact placement rules
 
 Before coding, ensure these artifacts exist in the correct locations:
 
-- **BDD Feature** → `prodops/current-state/features/<capability>.feature`
-- **OBC** → `prodops/assessment/reliability-plan/obcs/<capability>.md`
+- **BDD Feature** → `prodops/product/features/<capability>.feature`
+- **OBC** → `prodops/assessment/obcs/<capability>.md`
 
 Do not create Downstream BDD Features in `prodops/upstream/features/`. That
 directory is reserved for exploratory features tied to active Upstream experiments.

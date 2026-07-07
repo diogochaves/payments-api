@@ -830,8 +830,8 @@ The Reliability Plan should include:
 - `prodops/upstream/upstream-trail.md`
 - `prodops/upstream/learnings.md`
 - `prodops/upstream/features/credit-card-payment.feature`
-- `prodops/current-state/tracking-list.md`
-- `prodops/assessment/reliability-plan/risks.md`
+- `prodops/product/tracking-list.md`
+- `prodops/assessment/risks.md`
 - `prodops/upstream/obcs/credit-card-authorization-confirmation.md`
 - `validation-workbench/src/App.tsx`
 - `validation-workbench/src/styles.css`

@@ -113,7 +113,7 @@ experiment file was not present in the workspace.
 - `prodops/upstream/experiments/005-datadog-native-aws-instrumentation/upstream-trail.md`
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/upstream-trail.md`
-- `prodops/assessment/reliability-plan/risks.md`
+- `prodops/assessment/risks.md`
 - `prodops/upstream/features/README.md`
 
 ### Decision
@@ -393,8 +393,8 @@ release-blocking dependency, so a new Upstream experiment was created.
 
 - `prodops/upstream/experiments/004-feature-flag-readiness/experiment.md`
 - `prodops/upstream/experiments.md`
-- `prodops/current-state/tracking-list.md`
-- `prodops/assessment/reliability-plan/risks.md`
+- `prodops/product/tracking-list.md`
+- `prodops/assessment/risks.md`
 - `prodops/upstream/learnings.md`
 
 ### Decision
@@ -521,8 +521,8 @@ confirmation, refusal, cancellation and refund.
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/learnings.md`
 - `prodops/upstream/features/credit-card-payment.feature`
-- `prodops/current-state/tracking-list.md`
-- `prodops/assessment/reliability-plan/risks.md`
+- `prodops/product/tracking-list.md`
+- `prodops/assessment/risks.md`
 - `prodops/upstream/obcs/credit-card-authorization-confirmation.md`
 - `validation-workbench/src/App.tsx`
 - `validation-workbench/src/styles.css`

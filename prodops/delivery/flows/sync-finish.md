@@ -8,7 +8,7 @@ CI Sync: Bootstrap → Hack → Sync → Finish
 CI Async:                             Ship → Validate → Promote
 ```
 
-Para mecânica de execução, veja [`skills/sync/`](../../skills/sync/) e [`skills/finish/`](../../skills/finish/).
+Para mecânica de execução, veja [`skills/sync/`](../../../skills/sync/) e [`skills/finish/`](../../../skills/finish/).
 
 ---
 
@@ -32,7 +32,7 @@ Checklist:
 - [ ] All tests pass (unit + acceptance).
 - [ ] Build passes.
 - [ ] No unresolved TODOs or FIXMEs introduced in this change.
-- [ ] Definition of Done satisfied. See [definition-of-done.md](../engineering/definition-of-done.md).
+- [ ] Definition of Done satisfied. See [definition-of-done.md](../../engineering/definition-of-done.md).
 - [ ] Evidence appended to release trail.
 
 An implementation does not leave Finish until all boxes are checked.
@@ -85,8 +85,8 @@ O Finish é responsável por:
 5. Validar contratos (BDD Features, OpenAPI, AsyncAPI).
 6. Preencher o template de PR com evidências.
 7. Publicar o Pull Request.
-8. Marcar a Task como concluída com o template [task-closing.md](../commit-workflow/templates/task-closing.md).
+8. Marcar a Task como concluída com o template [task-closing.md](../../commit-workflow/templates/task-closing.md).
 
-Checklist completo: [commit-workflow/docs/finish-checklist.md](../commit-workflow/docs/finish-checklist.md)
+Checklist completo: [commit-workflow/docs/finish-checklist.md](../../commit-workflow/docs/finish-checklist.md)
 
-Template de PR: [commit-workflow/templates/pull_request.md](../commit-workflow/templates/pull_request.md)
+Template de PR: [commit-workflow/templates/pull_request.md](../../commit-workflow/templates/pull_request.md)

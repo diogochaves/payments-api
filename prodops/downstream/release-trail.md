@@ -6,9 +6,9 @@ Implemented in-repo Reliability Plan P0 hardening for payment confirmation: Dyna
 
 ### Related
 
-- Reliability Plan: `prodops/assessment/reliability-plan/README.md`
+- Reliability Plan: `prodops/assessment/reliability-plans/README.md`
 - OBC: Confirmacao de pagamento confiavel para a jornada Checkout -> Payments
-- BDD Feature: `prodops/current-state/features/payment-confirmation.feature`
+- BDD Feature: `prodops/product/features/payment-confirmation.feature`
 
 ### Code
 
@@ -42,7 +42,7 @@ Updated the repository home in `README.md` to present payments-api as the ProdOp
 
 ### Related
 
-- Reliability Plan: `prodops/assessment/reliability-plan/README.md`
+- Reliability Plan: `prodops/assessment/reliability-plans/README.md`
 - OBC: Product Deck and Service Deck OBC sections referenced in the README
 - BDD Feature: not applicable — repository organization change, no product behavior changed
 
@@ -125,7 +125,7 @@ Not applicable; no product behavior changed.
 
 - Created root `AGENTS.md` flow: Current State -> Assessment -> Reliability Plan -> BDD Feature -> Skill -> Code -> Release Trail.
 - Added generic skills under `skills/`.
-- Moved ProdOps artifacts to canonical paths under `prodops/current-state/`, `prodops/assessment/`, `prodops/downstream/`, and `prodops/operation/`.
+- Moved ProdOps artifacts to canonical paths under `prodops/product/`, `prodops/assessment/`, `prodops/downstream/`, and `prodops/operation/`.
 - Updated old ProdOps path references.
 - Validation executed: expected structure presence check.
 - Validation executed: old path/name reference search.
@@ -186,11 +186,11 @@ the API Token feature delivered earlier in this iteration.
 
 ### Related OBC
 
-`prodops/assessment/reliability-plan/obcs/webhook-configuration.md`
+`prodops/assessment/obcs/webhook-configuration.md`
 
 ### Related BDD
 
-`prodops/current-state/features/webhook-configuration.feature`
+`prodops/product/features/webhook-configuration.feature`
 
 ### Evidence
 
@@ -229,11 +229,11 @@ events from day one of production traffic.
 
 ### Related OBC
 
-`prodops/assessment/reliability-plan/obcs/api-token-validation.md`
+`prodops/assessment/obcs/api-token-validation.md`
 
 ### Related BDD
 
-`prodops/current-state/features/api-token-validation.feature`
+`prodops/product/features/api-token-validation.feature`
 
 ### Evidence
 

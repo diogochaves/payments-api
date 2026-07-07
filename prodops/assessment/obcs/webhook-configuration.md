@@ -2,7 +2,7 @@
 
 ## Status
 
-Downstream. Accepted into `prodops/assessment/iteration-plan.md` Iteration Backlog.
+Downstream. Accepted into `prodops/assessment/iteration-plans/iteration-plan.md` Iteration Backlog.
 
 ## Business Outcome
 
@@ -114,6 +114,6 @@ GSI1SK: WEBHOOK#{webhookId}
 
 ## Related Artifacts
 
-- BDD: `prodops/current-state/features/webhook-configuration.feature`
-- Iteration Plan: `prodops/assessment/iteration-plan.md`
-- OBC relacionado: `prodops/assessment/reliability-plan/obcs/api-token-validation.md`
+- BDD: `prodops/product/features/webhook-configuration.feature`
+- Iteration Plan: `prodops/assessment/iteration-plans/iteration-plan.md`
+- OBC relacionado: `prodops/assessment/obcs/api-token-validation.md`

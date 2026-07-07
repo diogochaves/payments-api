@@ -14,7 +14,7 @@ For detailed Codex branch synchronization mechanics, read
 ## Inputs
 
 - `AGENTS.md`
-- `prodops/current-state/`
+- `prodops/product/`
 - `prodops/assessment/`
 - `prodops/downstream/release-trail.md`
 

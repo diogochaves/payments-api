@@ -2,7 +2,7 @@
 
 ## Status
 
-Downstream. Accepted into `prodops/assessment/iteration-plan.md` Iteration Backlog.
+Downstream. Accepted into `prodops/assessment/iteration-plans/iteration-plan.md` Iteration Backlog.
 
 ## Business Outcome
 
@@ -62,7 +62,7 @@ O gateway deve retornar ao Checkout:
 
 ## Related Artifacts
 
-- BDD: `prodops/current-state/features/create-invoice-boleto.feature`
-- Iteration Plan: `prodops/assessment/iteration-plan.md`
-- OBC relacionado: `prodops/assessment/reliability-plan/obcs/api-token-validation.md`
-- Risks: `prodops/assessment/reliability-plan/risks.md` — seção Riscos Boleto
+- BDD: `prodops/product/features/create-invoice-boleto.feature`
+- Iteration Plan: `prodops/assessment/iteration-plans/iteration-plan.md`
+- OBC relacionado: `prodops/assessment/obcs/api-token-validation.md`
+- Risks: `prodops/assessment/risks.md` — seção Riscos Boleto

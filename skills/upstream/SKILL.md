@@ -32,7 +32,7 @@ Use Upstream when the work is:
 
 Before starting, read:
 
-- `prodops/current-state/`
+- `prodops/product/`
 - `prodops/assessment/reliability-plan/`
 - `prodops/upstream/README.md`
 - `prodops/upstream/experiments.md`
@@ -109,14 +109,14 @@ Whenever new knowledge is produced, update impacted artifacts.
 
 Possible targets:
 
-- `prodops/current-state/product-deck.md`
-- `prodops/current-state/service-decks/`
-- `prodops/current-state/tracking-list.md`
+- `prodops/product/product-deck.md`
+- `prodops/product/service-decks/`
+- `prodops/product/tracking-list.md`
 - `prodops/upstream/features/` (for uncommitted capability features)
 - `prodops/upstream/obcs/` (for draft OBCs from upstream experiments)
 - `prodops/assessment/event-storming/`
 - `prodops/assessment/reliability-plan/`
-- `prodops/assessment/reliability-plan/obcs/` (for committed OBCs)
+- `prodops/assessment/obcs/` (for committed OBCs)
 - `prodops/upstream/learnings.md`
 - `prodops/upstream/experiments/<id>-<slug>/upstream-trail.md`
 - `prodops/upstream/upstream-trail.md` only for global milestones, promotions, migrations, or repository-wide Upstream process changes

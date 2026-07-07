@@ -9,9 +9,9 @@ CI Async:                              Ship → Validate → Promote
 ```
 
 Para mecânica de execução — comandos, PR, deploy, Quality Gates — veja os skills correspondentes:
-- [`skills/ship/`](../../skills/ship/)
-- [`skills/validate/`](../../skills/validate/)
-- [`skills/promote/`](../../skills/promote/)
+- [`skills/ship/`](../../../skills/ship/)
+- [`skills/validate/`](../../../skills/validate/)
+- [`skills/promote/`](../../../skills/promote/)
 
 ---
 
@@ -51,7 +51,7 @@ Capabilities responsáveis por conduzir o artefato até o ambiente:
 
 ### Pré-condição
 
-A fase Finish foi concluída: lint, build, testes e Definition of Done satisfeitos. Ver [sync-finish-flow.md](sync-finish-flow.md).
+A fase Finish foi concluída: lint, build, testes e Definition of Done satisfeitos. Ver [sync-finish.md](sync-finish.md).
 
 ### Sequência no Ship
 
@@ -59,7 +59,7 @@ A fase Finish foi concluída: lint, build, testes e Definition of Done satisfeit
 2. Revisar o diff final como se fosse um code review externo.
 3. Verificar evidência TDD: toda mudança de comportamento precisa de Red Bar confirmado ou justificativa documentada.
 4. Executar security checks: sem secrets, tokens reais, credenciais pessoais ou paths locais.
-5. Preencher o template de PR com evidências. Ver [`commit-workflow/templates/pull_request.md`](../commit-workflow/templates/pull_request.md).
+5. Preencher o template de PR com evidências. Ver [`commit-workflow/templates/pull_request.md`](../../commit-workflow/templates/pull_request.md).
 6. Publicar o Pull Request.
 7. Executar Preparation (Build → Package → Version → Publish Artifact).
 8. Executar Deployment (Deploy → Progressive Delivery conforme estratégia).
@@ -146,12 +146,12 @@ Validação concluída, riscos avaliados, prontidão operacional confirmada.
 
 ### Sequência no Promote
 
-1. Confirmar que todos os Quality Gates estão satisfeitos. Ver [`prodops/downstream/quality-gates.md`](../downstream/quality-gates.md).
+1. Confirmar que todos os Quality Gates estão satisfeitos. Ver [`prodops/downstream/quality-gates.md`](../../downstream/quality-gates.md).
 2. Verificar prontidão operacional: runbooks existem para os novos failure modes, on-call informado.
 3. Executar Release Approval com PM e Tech Lead.
 4. Aceitar formalmente os riscos remanescentes ou movê-los para follow-up documentado.
 5. Executar Environment Promotion (staging → prod).
-6. Fechar a Task com o template. Ver [`commit-workflow/templates/task-closing.md`](../commit-workflow/templates/task-closing.md).
+6. Fechar a Task com o template. Ver [`commit-workflow/templates/task-closing.md`](../../commit-workflow/templates/task-closing.md).
 7. Registrar a promoção no Release Trail: o que foi promovido, evidências, riscos aceitos e próximos passos.
 
 ### Checklist Promote

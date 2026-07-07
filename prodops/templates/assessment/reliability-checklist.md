@@ -6,7 +6,7 @@ Use before promoting a capability from Upstream to Downstream, or before shippin
 
 - [ ] OBC defined and measurable.
 - [ ] All acceptance criteria covered by tests.
-- [ ] Failure modes documented in `prodops/assessment/reliability-plan/risks.md`.
+- [ ] Failure modes documented in `prodops/assessment/risks.md`.
 
 ## Observability
 

@@ -1,108 +1,213 @@
-# Documentation Review
+# Documentation Review — Structural Refactoring
 
-Data: 2026-07-06
+**Data da revisão:** 2026-07-07
 
----
-
-## Arquivos avaliados
-
-| Arquivo | Linhas | Papel |
-|---|---|---|
-| `AGENTS.md` | 323 → ~270 | Regras operacionais para agentes |
-| `CLAUDE.md` | 68 → ~22 | Instruções específicas para Claude Code |
-| `README.md` | 688 | Visão humana do projeto e mapa de navegação |
-| `.github/copilot-instructions.md` | 52 → ~35 | Instruções específicas para GitHub Copilot |
-| `prodops/README.md` | novo | Índice canônico do Framework ProdOps |
-| `prodops/framework/principles.md` | 28 | Sete princípios do framework |
-| `prodops/framework/glossary.md` | 44 | Termos oficiais |
-| `prodops/delivery/README.md` | 108 | Visão geral CI Sync / CI Async |
-| `prodops/delivery/hack-flow.md` | ~155 | Sequência canônica do Hack com 3 fases |
-| `prodops/delivery/practices/tdd-prodops.md` | ~165 | ProdOps TDD completo |
-| `prodops/commit-workflow/README.md` | ~100 | Commit Workflow completo |
+**Objetivo:** Refatoração estrutural da documentação ProdOps — separar em camadas hierárquicas e introduzir o modelo `Journey → Flow → Practice → Capability`.
 
 ---
 
-## Duplicações encontradas
+## Arquivos movidos
 
-| Conceito duplicado | Arquivos envolvidos |
+| Old path | New path |
 |---|---|
-| Estrutura CI Sync / CI Async (`Bootstrap → ... → Promote`) | AGENTS.md, CLAUDE.md, copilot-instructions.md, prodops/delivery/README.md |
-| 3 fases do Hack Flow (Antes / Durante / Após) | AGENTS.md, CLAUDE.md, copilot-instructions.md |
-| Regras de mock (`jest.fn()`, `ASAAS_MOCK`) | AGENTS.md, CLAUDE.md, copilot-instructions.md, prodops/framework/principles.md |
-| "Never invent missing context" | AGENTS.md, CLAUDE.md, copilot-instructions.md, prodops/framework/principles.md |
-| Ship = Preparation + Deployment | AGENTS.md (implícito), CLAUDE.md, prodops/framework/glossary.md |
-| Upstream vs Downstream descrição | AGENTS.md, prodops/delivery/README.md, prodops/framework/glossary.md |
+| `prodops/current-state/` (directory) | `prodops/product/` |
+| `prodops/delivery/bootstrap-flow.md` | `prodops/delivery/flows/bootstrap.md` |
+| `prodops/delivery/hack-flow.md` | `prodops/delivery/flows/hack.md` |
+| `prodops/delivery/sync-finish-flow.md` | `prodops/delivery/flows/sync-finish.md` |
+| `prodops/delivery/ship-validate-promote-flow.md` | `prodops/delivery/flows/ship-validate-promote.md` |
+| `prodops/delivery/practices/tdd-prodops.md` | `prodops/delivery/practices/prodops-tdd.md` |
+| `prodops/assessment/reliability-plan/obcs/api-token-validation.md` | `prodops/assessment/obcs/api-token-validation.md` |
+| `prodops/assessment/reliability-plan/obcs/create-invoice-boleto.md` | `prodops/assessment/obcs/create-invoice-boleto.md` |
+| `prodops/assessment/reliability-plan/obcs/webhook-configuration.md` | `prodops/assessment/obcs/webhook-configuration.md` |
+| `prodops/assessment/reliability-plan/obcs/README.md` | `prodops/assessment/obcs/README.md` |
+| `prodops/assessment/reliability-plan/risks.md` | `prodops/assessment/risks.md` |
+| `prodops/assessment/reliability-plan/opportunities.md` | `prodops/assessment/opportunities.md` |
+| `prodops/assessment/reliability-plan/objectives.md` | `prodops/assessment/reliability-plans/objectives.md` |
+| `prodops/assessment/reliability-plan/iteration-backlog.md` | `prodops/assessment/iteration-plans/iteration-backlog.md` |
+| `prodops/assessment/iteration-plan.md` | `prodops/assessment/iteration-plans/iteration-plan.md` |
+| `prodops/assessment/premortem.md` | `prodops/assessment/reliability-plans/premortem.md` |
+| `prodops/assessment/reliability-plan/setup/` | `prodops/assessment/reliability-plans/setup/` |
+| `prodops/assessment/reliability-plan/README.md` | `prodops/assessment/reliability-plans/README.md` |
+| `prodops/templates/decision-trail.md` | `prodops/templates/assessment/decision-trail.md` |
+| `prodops/templates/reliability-checklist.md` | `prodops/templates/assessment/reliability-checklist.md` |
+| `prodops/templates/pull-request-checklist.md` | `prodops/templates/delivery/pull-request-checklist.md` |
+| `prodops/templates/test-plan.md` | `prodops/templates/engineering/test-plan.md` |
 
 ---
 
-## Conflitos encontrados
+## Novos arquivos criados
 
-| Conflito | Resolução aplicada |
+| Arquivo | Propósito |
 |---|---|
-| `./scripts/test-acceptance.sh`: AGENTS.md (linha 305) tratava como incondicional; CLAUDE.md como condicional | Padronizado como condicional: "quando comportamento de pagamento ou contratos mudaram" |
-| Upstream flow sem Bootstrap: AGENTS.md linha 61 listava `Hack -> Sync -> ...` sem Bootstrap | Corrigido para `Bootstrap -> Hack -> Sync -> ...` |
-| `prodops/operation/` ausente da Source of Truth: já estava presente (linha 18 do AGENTS.md original) | Sem ação necessária — era problema do audit anterior |
+| `prodops/delivery/capabilities/README.md` | Índice de capabilities do Delivery |
+| `prodops/delivery/capabilities/commit-workflow.md` | Capability: Commit Workflow |
+| `prodops/delivery/capabilities/contract-management.md` | Capability: Contract Management |
+| `prodops/delivery/capabilities/evidence-management.md` | Capability: Evidence Management |
+| `prodops/delivery/capabilities/observability.md` | Capability: Observability |
+| `prodops/delivery/capabilities/reliability.md` | Capability: Reliability |
+| `prodops/delivery/ci-sync.md` | Agrupamento CI Sync com links para flows/practices/capabilities |
+| `prodops/delivery/ci-async.md` | Agrupamento CI Async com links para flows/capabilities |
+| `prodops/product/README.md` | Índice da área product (ex current-state) |
+| `prodops/framework/operating-model.md` | Modelo operacional: Journey → Flow → Practice → Capability |
+| `prodops/documentation-review.md` | Este arquivo |
 
 ---
 
-## Conteúdos movidos
+## Hierarquia aplicada
 
-| Conteúdo | De | Para |
-|---|---|---|
-| 3 fases completas do Hack Flow (Fase 1, 2, 3 inline) | AGENTS.md, CLAUDE.md, copilot-instructions.md | Removido — fonte canônica é `prodops/delivery/hack-flow.md` |
-| "Como ler o ProdOps" (ordem de leitura) | Não existia em lugar nenhum | Criado em `AGENTS.md` (topo) e `prodops/README.md` |
+```
+Journey → Flow → Practice → Capability
+```
 
----
+**Exemplo completo:**
 
-## Conteúdos consolidados
-
-| Conteúdo | Fonte canônica |
-|---|---|
-| 3 fases do Hack Flow | `prodops/delivery/hack-flow.md` |
-| ProdOps TDD (princípios, padrões, regras) | `prodops/delivery/practices/tdd-prodops.md` |
-| Commit Workflow (hooks, scripts, validação) | `prodops/commit-workflow/README.md` |
-| CI Sync / CI Async (visão geral, capabilities) | `prodops/delivery/README.md` |
-| Bootstrap | `prodops/delivery/bootstrap-flow.md` |
-| Ship capabilities (Preparation + Deployment) | `prodops/delivery/ship-validate-promote-flow.md` |
-| Definições de termos | `prodops/framework/glossary.md` |
-| Princípios do framework | `prodops/framework/principles.md` |
-| Definition of Done | `prodops/engineering/definition-of-done.md` |
-| Testing Policy / No Mocks Rule | `prodops/engineering/testing-policy.md` + `skills/hack/references/workflow.md` |
+```
+Journey: Downstream
+  ↓
+Flow: CI Sync → Hack
+  ↓
+Practice: ProdOps TDD
+  (Contract First · Integration First · Observability First · Progressive Substitution · Non Intrusive Testing)
+  ↓
+Capability: Commit Workflow
+  (formatter → lint → unit tests → commit-msg validation)
+```
 
 ---
 
-## Nova ordem de leitura
+## Duplicações removidas
 
-Para qualquer tarefa, ler nesta ordem:
-
-1. `prodops/README.md` — índice e mapa do framework
-2. `prodops/framework/principles.md` — princípios
-3. `prodops/delivery/README.md` — visão geral CI Sync / CI Async
-4. Identificar: CI Sync (implementação) ou CI Async (pipeline/deploy)
-5. Implementação → `prodops/delivery/hack-flow.md`
-6. TDD durante Hack → `prodops/delivery/practices/tdd-prodops.md`
-7. Commits e validação → `prodops/commit-workflow/README.md`
-8. Pipeline/deploy → `prodops/delivery/ship-validate-promote-flow.md`
+- `prodops/README.md` consolidado com portal único — removidas referências duplicadas a `current-state/` e `reliability-plan/`
+- `AGENTS.md` reescrito com Source of Truth atualizado — removidas referências a caminhos antigos
+- `prodops/delivery/README.md` reescrito com tabelas de flows + practices + capabilities — removido conteúdo duplicado de flows individuais
+- `CLAUDE.md` simplificado para referenciar `AGENTS.md` como fonte principal
 
 ---
 
-## Referências obsoletas corrigidas
+## Nova árvore de documentação (seleção)
 
-| Arquivo | Linha | Era | Ficou |
-|---|---|---|---|
-| `README.md` | 58 | "ainda não há runbooks operacionais dedicados" | Aponta para `prodops/operation/runbooks.md` |
-| `README.md` | 60 | "Não há Decision Trail separado" | Aponta para `prodops/templates/decision-trail.md` |
-| `README.md` | 104 | `[.codex](.codex)` (diretório deletado) | `[skills/](skills/)` |
-| `AGENTS.md` | Upstream flow | `Hack -> Sync -> ...` (sem Bootstrap) | `Bootstrap -> Hack -> Sync -> ...` |
+```
+prodops/
+├── README.md                          (reescrito — portal)
+├── framework/
+│   ├── glossary.md
+│   ├── operating-model.md             (NOVO)
+│   └── principles.md
+├── product/                           (ex current-state/)
+│   ├── README.md                      (NOVO)
+│   ├── features/
+│   ├── icebox-backlog.md
+│   ├── product-deck.md
+│   ├── service-decks/
+│   └── tracking-list.md
+├── upstream/
+├── assessment/
+│   ├── README.md                      (reescrito)
+│   ├── obcs/                          (ex reliability-plan/obcs/)
+│   ├── risks.md                       (ex reliability-plan/risks.md)
+│   ├── opportunities.md               (ex reliability-plan/opportunities.md)
+│   ├── iteration-plans/               (NOVO)
+│   │   ├── iteration-plan.md
+│   │   └── iteration-backlog.md
+│   └── reliability-plans/             (NOVO)
+│       ├── README.md
+│       ├── objectives.md
+│       ├── premortem.md
+│       └── setup/
+├── delivery/
+│   ├── README.md                      (reescrito)
+│   ├── ci-sync.md                     (NOVO)
+│   ├── ci-async.md                    (NOVO)
+│   ├── flows/                         (NOVO)
+│   │   ├── bootstrap.md
+│   │   ├── hack.md
+│   │   ├── sync-finish.md
+│   │   └── ship-validate-promote.md
+│   ├── practices/
+│   │   ├── README.md
+│   │   └── prodops-tdd.md             (ex tdd-prodops.md)
+│   └── capabilities/                  (NOVO)
+│       ├── README.md
+│       ├── commit-workflow.md
+│       ├── contract-management.md
+│       ├── evidence-management.md
+│       ├── observability.md
+│       └── reliability.md
+├── commit-workflow/                   (inalterado)
+├── engineering/                       (inalterado)
+├── downstream/                        (inalterado)
+├── operation/                         (inalterado)
+└── templates/
+    ├── assessment/                    (NOVO)
+    │   ├── decision-trail.md
+    │   └── reliability-checklist.md
+    ├── delivery/                      (NOVO)
+    │   └── pull-request-checklist.md
+    └── engineering/                   (NOVO)
+        └── test-plan.md
+```
+
+---
+
+## Links atualizados
+
+Arquivos com links internos corrigidos (39 arquivos):
+
+- `prodops/assessment/iteration-plans/iteration-backlog.md`
+- `prodops/assessment/iteration-plans/iteration-plan.md`
+- `prodops/assessment/obcs/api-token-validation.md`
+- `prodops/assessment/obcs/create-invoice-boleto.md`
+- `prodops/assessment/obcs/webhook-configuration.md`
+- `prodops/assessment/README.md`
+- `prodops/assessment/reliability-plans/README.md`
+- `prodops/assessment/reliability-plans/objectives.md`
+- `prodops/assessment/reliability-plans/setup/iteration-plan.prompt.md`
+- `prodops/assessment/reliability-plans/setup/reliability-plan.prompt.md`
+- `prodops/commit-workflow/templates/pull_request.md`
+- `prodops/delivery/flows/bootstrap.md`
+- `prodops/delivery/flows/hack.md`
+- `prodops/delivery/flows/sync-finish.md`
+- `prodops/delivery/flows/ship-validate-promote.md`
+- `prodops/delivery/practices/README.md`
+- `prodops/delivery/practices/prodops-tdd.md`
+- `prodops/downstream/iteration-backlog.md`
+- `prodops/downstream/release-trail.md`
+- `prodops/engineering/definition-of-done.md`
+- `prodops/engineering/observability-policy.md`
+- `prodops/engineering/reliability-policy.md`
+- `prodops/engineering/testing-policy.md`
+- `prodops/framework/glossary.md`
+- `prodops/framework/README.md`
+- `prodops/product/icebox-backlog.md`
+- `prodops/templates/assessment/reliability-checklist.md`
+- `prodops/upstream/README.md`
+- `prodops/upstream/features/README.md`
+- `prodops/upstream/experiments/001-credit-card-lifecycle/experiment.md`
+- `prodops/upstream/experiments/001-credit-card-lifecycle/upstream-trail.md`
+- `prodops/upstream/experiments/004-feature-flag-readiness/experiment.md`
+- `prodops/upstream/experiments/004-feature-flag-readiness/upstream-trail.md`
+- `prodops/upstream/experiments/006-upstream-trail-per-experiment/upstream-trail.md`
+- `prodops/upstream/upstream-trail.md`
+- `skills/downstream/SKILL.md`
+- `skills/hack/SKILL.md`
+- `skills/sync/SKILL.md`
+- `skills/upstream/SKILL.md`
+- `skills/validate/SKILL.md`
 
 ---
 
 ## Pendências
 
-| Item | Tipo | Observação |
-|---|---|---|
-| `prodops/upstream/spikes.md`, `learnings.md`, `prototypes.md` | Estrutura legada | Arquivos existem mas nenhum guia operacional os menciona. Relação com `prodops/upstream/experiments/` é ambígua. Avaliar consolidação em sessão futura. |
-| `prodops/assessment/reliability-plan/setup/` | Artefatos de bootstrap | Prompts de geração (`iteration-plan.prompt.md`, `reliability-plan.prompt.md`). Sem referência em nenhum fluxo operacional. Avaliar arquivar ou documentar uso. |
-| OBC `api-token-validation.md` — item "viabilizado em iteração futura" | OBC parcial | Mistura entregue com planejado. Recomendado separar em item de backlog distinto. |
-| `prodops/framework/operating-model.md` | Não criado | O modelo operacional (CI Sync/CI Async) já está documentado em `prodops/delivery/README.md`. Criar apenas se houver necessidade de separação futura. |
-| README.md menção a endpoint legado `/payments` | Conteúdo stale | README.md linha 62 reconhece a referência obsoleta mas não a remove. Avaliar limpeza nas scripts de validação. |
+- `prodops/downstream/release-trail.md` contém entradas históricas que referenciam os caminhos antigos (`prodops/current-state/`, `prodops/assessment/reliability-plan/`). Referências em texto histórico foram mantidas como registro de auditoria — apenas referências navegáveis foram corrigidas.
+- `prodops/assessment/architecture/overview.md` não foi inspecionado nesta refatoração — pode conter referências a `current-state/`.
+- `prodops/diligence/` não foi incluído na nova estrutura — considerar mover para `downstream/` ou `operation/` em iteração futura.
+
+---
+
+## Sugestões futuras
+
+1. **Criar `prodops/product/service-decks/README.md`** — a pasta `service-decks/` agora está em `product/` mas não tem índice.
+2. **Adicionar `prodops/upstream/obcs/README.md`** — distinguir OBCs exploratórios de OBCs comprometidos.
+3. **Revisar `prodops/assessment/architecture/overview.md`** — pode referenciar caminhos antigos.
+4. **Mover `prodops/diligence/`** — não está na nova estrutura; candidato para `downstream/` ou `operation/`.
+5. **Criar `prodops/templates/README.md`** — índice das três subpastas `assessment/`, `delivery/`, `engineering/`.

@@ -15,7 +15,7 @@ Reliability Plan lives in: `prodops/assessment/reliability-plan/`
 
 An OBC anchors implementation to a business outcome. It defines what "done" means in observable, measurable terms. OBCs must exist before code is written for a Downstream item.
 
-OBC files: `prodops/assessment/reliability-plan/obcs/`
+OBC files: `prodops/assessment/obcs/`
 
 ## Definition of Done
 
@@ -44,7 +44,7 @@ Para cada comportamento implementado no Hack Flow, verificar os seguintes requis
 
 Esses requisitos são verificados no [Definition of Done](definition-of-done.md) — seção Reliability.
 
-Para detalhes sobre como aplicar durante o TDD cycle: [ProdOps TDD — Confiabilidade no ciclo](../delivery/practices/tdd-prodops.md).
+Para detalhes sobre como aplicar durante o TDD cycle: [ProdOps TDD — Confiabilidade no ciclo](../delivery/practices/prodops-tdd.md).
 
 ## Post-deploy validation
 

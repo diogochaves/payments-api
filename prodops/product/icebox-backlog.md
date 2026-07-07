@@ -11,7 +11,7 @@
 | Dono de produto | `[Product Manager Payments]` |
 | Dono tecnico | `[Tech Lead Payments]` |
 | Canal | `[Slack/Teams: #payments-prodops]` |
-| Fonte principal | Features em `prodops/current-state/features` |
+| Fonte principal | Features em `prodops/product/features` |
 | Ultima atualizacao | `2026-06-30` |
 
 ## 2. Como usar este backlog
