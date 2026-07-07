@@ -44,7 +44,7 @@ A fase Finish foi concluída: lint, build, testes e Definition of Done satisfeit
 2. Revisar o diff final como se fosse um code review externo.
 3. Verificar evidência TDD: toda mudança de comportamento precisa de Red Bar confirmado ou justificativa documentada.
 4. Executar security checks: sem secrets, tokens reais, credenciais pessoais ou paths locais.
-5. Preencher o template de PR com evidências. Ver [`commit-workflow/templates/pull_request.md`](../../../../commit-workflow/templates/pull_request.md).
+5. Preencher o template de PR com evidências. Ver [`commit-workflow/templates/pull_request.md`](../../capabilities/commit-workflow/templates/pull_request.md).
 6. Publicar o Pull Request.
 7. Executar Preparation (Build → Package → Version → Publish Artifact).
 8. Executar Deployment (Deploy → Progressive Delivery conforme estratégia).

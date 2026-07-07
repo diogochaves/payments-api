@@ -92,12 +92,13 @@ fi
 # ── 3. Git hooks ──────────────────────────────────────────────────────────────
 step "Configurando Git hooks (Commit Workflow)..."
 
-HOOKS_DIR="$REPO_ROOT/prodops/commit-workflow/hooks"
-SCRIPTS_DIR="$REPO_ROOT/prodops/commit-workflow/scripts"
+HOOKS_DIR="$REPO_ROOT/prodops/journeys/delivery/capabilities/commit-workflow/hooks"
+SCRIPTS_DIR="$REPO_ROOT/prodops/journeys/delivery/capabilities/commit-workflow/scripts"
+HOOKS_PATH="prodops/journeys/delivery/capabilities/commit-workflow/hooks"
 
 if [[ ! -d "$HOOKS_DIR" ]]; then
-  fail "prodops/commit-workflow/hooks não encontrado"
-  ERRORS+=("Git hooks não configurados. Execute: git config core.hooksPath prodops/commit-workflow/hooks")
+  fail "commit-workflow/hooks não encontrado em $HOOKS_PATH"
+  ERRORS+=("Git hooks não configurados. Execute: git config core.hooksPath $HOOKS_PATH")
 else
   # Garantir permissões de execução
   chmod +x "$HOOKS_DIR"/* 2>/dev/null || true
@@ -106,11 +107,11 @@ else
 
   # Configurar hooksPath
   CURRENT_HOOKS=$(git config core.hooksPath 2>/dev/null || echo "")
-  if [[ "$CURRENT_HOOKS" == "prodops/commit-workflow/hooks" ]]; then
+  if [[ "$CURRENT_HOOKS" == "$HOOKS_PATH" ]]; then
     ok "core.hooksPath já configurado"
   else
-    git config core.hooksPath prodops/commit-workflow/hooks
-    ok "core.hooksPath configurado → prodops/commit-workflow/hooks"
+    git config core.hooksPath "$HOOKS_PATH"
+    ok "core.hooksPath configurado → $HOOKS_PATH"
   fi
 
   # Verificar hooks presentes
@@ -192,7 +193,7 @@ echo -e "  ${BOLD}Próximos passos:${RESET}"
 dim "  Ler contexto       prodops/current-state/  +  AGENTS.md"
 dim "  Rodar testes       ./scripts/test-acceptance.sh"
 dim "  Commitar           git commit  (hooks ativos: Conventional Commits + lint)"
-dim "  Gerar PR           gh pr create --body-file prodops/commit-workflow/templates/pull_request.md"
+dim "  Gerar PR           gh pr create --body-file prodops/journeys/delivery/capabilities/commit-workflow/templates/pull_request.md"
 echo ""
 echo -e "  ${DIM}Git hooks: $(git config core.hooksPath 2>/dev/null || echo 'não configurado')${RESET}"
 echo ""

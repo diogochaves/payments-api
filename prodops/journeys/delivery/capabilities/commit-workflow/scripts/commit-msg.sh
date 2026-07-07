@@ -27,7 +27,7 @@ if ! echo "$MSG" | grep -qE "$PATTERN"; then
   echo "  Valid types: feat fix docs test refactor perf build ci style chore revert"
   echo "  Example:   feat(invoices): add credit card hosted flow"
   echo ""
-  echo "  See: prodops/commit-workflow/docs/conventional-commits.md"
+  echo "  See: prodops/journeys/delivery/capabilities/commit-workflow/README.md#conventional-commits"
   echo ""
   exit 1
 fi

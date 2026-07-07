@@ -2,4 +2,4 @@
 # Delegates all logic to the script. Keep this file minimal.
 set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-exec "$REPO_ROOT/prodops/commit-workflow/scripts/prepare-commit-msg.sh" "$@"
+exec "$REPO_ROOT/prodops/journeys/delivery/capabilities/commit-workflow/scripts/pre-commit.sh"

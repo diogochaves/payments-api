@@ -31,7 +31,7 @@ Implementa com ProdOps TDD: Red Bar → Green Bar → Refactor → Commit.
 
 Consome:
 - **Prática:** [ProdOps TDD](practices/prodops-tdd.md)
-- **Capability:** [Commit Workflow](capabilities/commit-workflow.md)
+- **Capability:** [Commit Workflow](capabilities/commit-workflow/README.md)
 
 → [flows/hack.md](flows/hack.md)
 
@@ -51,7 +51,7 @@ Executa Quality Gates finais e cria o PR com evidências.
 
 | Capability | Estágio |
 |---|---|
-| [Commit Workflow](capabilities/commit-workflow.md) | Hack, Sync, Finish |
+| [Commit Workflow](capabilities/commit-workflow/README.md) | Hack, Sync, Finish |
 | [Contract Management](capabilities/contract-management.md) | Bootstrap, Hack, Sync |
 | [Evidence Management](capabilities/evidence-management.md) | Hack, Finish |
 | [Observability](capabilities/observability.md) | Hack |

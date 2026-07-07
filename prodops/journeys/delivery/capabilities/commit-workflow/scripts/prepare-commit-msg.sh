@@ -10,7 +10,7 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 COMMIT_MSG_FILE="$1"
 COMMIT_SOURCE="${2:-}"
 
-TEMPLATE="$REPO_ROOT/prodops/commit-workflow/templates/commit-template.txt"
+TEMPLATE="$REPO_ROOT/prodops/journeys/delivery/capabilities/commit-workflow/templates/commit-template.txt"
 
 # Only apply template to blank commits (no -m, no merge, no squash)
 if [[ -z "$COMMIT_SOURCE" ]] && [[ -f "$TEMPLATE" ]]; then

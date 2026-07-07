@@ -17,7 +17,7 @@ Hack Flow
 O Hack é responsável pela implementação. Ele não é substituído por nenhuma das capabilities — ele as consume.
 
 - **ProdOps TDD:** orienta o ciclo de codificação (Contract First, Integration First, Observability First). Ver [practices/prodops-tdd.md](../practices/prodops-tdd.md).
-- **Commit Workflow:** executa após cada ciclo Red→Green→Refactor. Ver [../../commit-workflow/README.md](../../commit-workflow/README.md).
+- **Commit Workflow:** executa após cada ciclo Red→Green→Refactor. Ver [capabilities/commit-workflow/README.md](../capabilities/commit-workflow/README.md).
 
 Para mecânica de execução — branching, comandos, lint, testes, formato de commit — ver [`skills/hack/`](../../../skills/hack/).
 
@@ -66,7 +66,7 @@ cd api && npm run lint   # formatter + lint com --fix
 cd api && npm run test   # unit tests
 ```
 
-O Commit Workflow não é responsabilidade do ProdOps TDD — é uma capability separada que o Hack consome. Ver [../../commit-workflow/README.md](../../commit-workflow/README.md).
+O Commit Workflow não é responsabilidade do ProdOps TDD — é uma capability separada que o Hack consome. Ver [capabilities/commit-workflow/README.md](../capabilities/commit-workflow/README.md).
 
 ### Passo 5 — Validar observabilidade
 
@@ -112,10 +112,10 @@ Durante o Hack, cada commit deve seguir o Commit Workflow.
 
 **Commits pequenos:** prefira commits que representam uma única intenção. Um commit por Red Bar confirmado é um bom tamanho.
 
-**Validação automática:** se os Git hooks estiverem configurados (`git config core.hooksPath prodops/commit-workflow/hooks`), as validações rodam no commit. Para configurar:
+**Validação automática:** se os Git hooks estiverem configurados (`git config core.hooksPath prodops/journeys/delivery/capabilities/commit-workflow/hooks`), as validações rodam no commit. Para configurar:
 
 ```bash
-git config core.hooksPath prodops/commit-workflow/hooks
+git config core.hooksPath prodops/journeys/delivery/capabilities/commit-workflow/hooks
 ```
 
 **Conventional Commit obrigatório:**
@@ -126,4 +126,4 @@ git config core.hooksPath prodops/commit-workflow/hooks
 
 Tipos válidos: `feat fix docs test refactor perf build ci style chore revert`
 
-Ver: [commit-workflow/docs/conventional-commits.md](../../commit-workflow/docs/conventional-commits.md)
+Ver: [capabilities/commit-workflow/README.md — Conventional Commits](../capabilities/commit-workflow/README.md#conventional-commits)

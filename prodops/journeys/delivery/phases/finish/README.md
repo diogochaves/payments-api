@@ -27,10 +27,10 @@ O Finish é responsável por:
 5. Validar contratos (BDD Features, OpenAPI, AsyncAPI).
 6. Preencher o template de PR com evidências.
 7. Publicar o Pull Request.
-8. Marcar a Task como concluída com o template [task-closing.md](../../../../commit-workflow/templates/task-closing.md).
+8. Marcar a Task como concluída com o template [task-closing.md](../../capabilities/commit-workflow/templates/task-closing.md).
 
-Checklist completo: [commit-workflow/docs/finish-checklist.md](../../../../commit-workflow/docs/finish-checklist.md)
+Checklist completo: [capabilities/commit-workflow/README.md — Checklist do Finish](../../capabilities/commit-workflow/README.md#checklist-do-finish)
 
-Template de PR: [commit-workflow/templates/pull_request.md](../../../../commit-workflow/templates/pull_request.md)
+Template de PR: [commit-workflow/templates/pull_request.md](../../capabilities/commit-workflow/templates/pull_request.md)
 
 Para mecânica de execução, veja [`prodops/skills/sync/`](../../../../skills/sync/) e [`prodops/skills/finish/`](../../../../skills/finish/).

@@ -107,10 +107,10 @@ Fase: `prodops/journeys/delivery/phases/hack/README.md`
 ## Commit Workflow
 
 ```bash
-git config core.hooksPath prodops/commit-workflow/hooks
+git config core.hooksPath prodops/journeys/delivery/capabilities/commit-workflow/hooks
 ```
 
-→ [prodops/commit-workflow/README.md](prodops/commit-workflow/README.md)
+→ [prodops/journeys/delivery/capabilities/commit-workflow/README.md](prodops/journeys/delivery/capabilities/commit-workflow/README.md)
 
 ---
 

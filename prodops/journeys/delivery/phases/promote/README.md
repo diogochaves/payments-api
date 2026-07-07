@@ -27,7 +27,7 @@ Validação concluída, riscos avaliados, prontidão operacional confirmada.
 3. Executar Release Approval com PM e Tech Lead.
 4. Aceitar formalmente os riscos remanescentes ou movê-los para follow-up documentado.
 5. Executar Environment Promotion (staging → prod).
-6. Fechar a Task com o template. Ver [`commit-workflow/templates/task-closing.md`](../../../../commit-workflow/templates/task-closing.md).
+6. Fechar a Task com o template. Ver [`commit-workflow/templates/task-closing.md`](../../capabilities/commit-workflow/templates/task-closing.md).
 7. Registrar a promoção no Release Trail: o que foi promovido, evidências, riscos aceitos e próximos passos.
 
 ## Checklist Promote

@@ -94,7 +94,7 @@ O Commit Workflow executa:
 - Unit tests rápidos
 - Validação de Conventional Commit
 
-Ver: [`prodops/commit-workflow/README.md`](../../commit-workflow/README.md)
+Ver: [capabilities/commit-workflow/README.md](../capabilities/commit-workflow/README.md)
 
 ### Confiabilidade no ciclo
 

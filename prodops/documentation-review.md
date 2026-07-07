@@ -172,7 +172,7 @@ Links internos atualizados em todos os arquivos movidos e nos seguintes arquivos
 - `prodops/framework/glossary.md` — referências de caminho atualizadas
 - `prodops/artifacts/obcs/*.md` — referências de BDD Features e OBCs atualizadas
 - `prodops/artifacts/plans/iteration-plan.md` — referências de features atualizadas
-- `prodops/commit-workflow/templates/pull_request.md` — referências atualizadas
+- `prodops/journeys/delivery/capabilities/commit-workflow/templates/pull_request.md` — referências atualizadas
 - Todos os arquivos dentro de `prodops/journeys/`, `prodops/skills/`, `prodops/artifacts/`
 
 ---

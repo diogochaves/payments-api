@@ -41,7 +41,7 @@ cd api && npm run lint              # lint + format check
 ### Commit Workflow
 
 ```bash
-git config core.hooksPath prodops/commit-workflow/hooks
+git config core.hooksPath prodops/journeys/delivery/capabilities/commit-workflow/hooks
 ```
 
 ### Modos adicionais
