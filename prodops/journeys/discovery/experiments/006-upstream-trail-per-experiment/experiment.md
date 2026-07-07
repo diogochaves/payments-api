@@ -129,8 +129,8 @@ that produced them.
 - `prodops/upstream/README.md`
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/experiments/README.md`
-- `templates/upstream-experiment.md`
-- `templates/upstream-trail.md`
+- `prodops/templates/discovery/experiment.md`
+- `prodops/templates/discovery/trail.md`
 - `prodops/upstream/experiments/006-upstream-trail-per-experiment/experiment.md`
 - `prodops/upstream/experiments/006-upstream-trail-per-experiment/upstream-trail.md`
 - `prodops/upstream/upstream-trail.md`

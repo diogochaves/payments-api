@@ -34,4 +34,4 @@ Cada arquivo de teste de aceitação cria a aplicação NestJS uma vez no `befor
 
 ## Cobertura
 
-Thresholds de cobertura (quando configurados em `jest.config.*`) não devem ser reduzidos sem uma justificativa registrada em um [Decision Trail](../templates/decision-trail.md).
+Thresholds de cobertura (quando configurados em `jest.config.*`) não devem ser reduzidos sem uma justificativa registrada em um [Decision Trail](../templates/assessment/decision-trail.md).

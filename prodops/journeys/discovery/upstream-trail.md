@@ -107,7 +107,7 @@ O EXP-004 foi recuperado como registro de referência porque o trail global, o R
 - `prodops/upstream/experiments/005-datadog-native-aws-instrumentation/upstream-trail.md`
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/upstream-trail.md`
-- `prodops/assessment/risks.md`
+- `prodops/journeys/assessment/risks.md`
 - `prodops/journeys/discovery/features/README.md`
 
 ### Decision
@@ -143,8 +143,8 @@ O `prodops/upstream/upstream-trail.md` global permanece apenas como índice cron
 - `prodops/upstream/README.md`
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/experiments/README.md`
-- `templates/upstream-experiment.md`
-- `templates/upstream-trail.md`
+- `prodops/templates/discovery/experiment.md`
+- `prodops/templates/discovery/trail.md`
 - `prodops/upstream/experiments/006-upstream-trail-per-experiment/experiment.md`
 - `prodops/upstream/experiments/006-upstream-trail-per-experiment/upstream-trail.md`
 - `prodops/upstream/upstream-trail.md`
@@ -334,7 +334,7 @@ Os experimentos existentes cobrem a incerteza de cartão de crédito e não cobr
 - `prodops/upstream/experiments/004-feature-flag-readiness/experiment.md`
 - `prodops/upstream/experiments.md`
 - `prodops/product/tracking-list.md`
-- `prodops/assessment/risks.md`
+- `prodops/journeys/assessment/risks.md`
 - `prodops/upstream/learnings.md`
 
 ### Decision
@@ -437,7 +437,7 @@ O Validation Workbench agora permite que agentes e humanos explorem os shapes de
 - `prodops/upstream/learnings.md`
 - `prodops/journeys/discovery/features/credit-card-payment.feature`
 - `prodops/product/tracking-list.md`
-- `prodops/assessment/risks.md`
+- `prodops/journeys/assessment/risks.md`
 - `prodops/upstream/obcs/credit-card-authorization-confirmation.md`
 - `validation-workbench/src/App.tsx`
 - `validation-workbench/src/styles.css`

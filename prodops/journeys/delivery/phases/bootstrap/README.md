@@ -56,7 +56,7 @@ Antes de qualquer teste ou código, ler:
 |---|---|
 | OBC da capability | `prodops/artifacts/obcs/<capability>.md` |
 | BDD Feature | `prodops/artifacts/bdd/<capability>.feature` |
-| Riscos e mitigações | `prodops/assessment/risks.md` |
+| Riscos e mitigações | `prodops/journeys/assessment/risks.md` |
 | Iteration Plan | `prodops/assessment/iteration-plans/iteration-plan.md` |
 
 Para Upstream: ler `prodops/upstream/experiments/<id>-<slug>/experiment.md`.

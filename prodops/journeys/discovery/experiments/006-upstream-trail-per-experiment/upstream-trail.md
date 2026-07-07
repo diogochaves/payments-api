@@ -43,7 +43,7 @@ in the global trail.
 - `prodops/upstream/experiments/005-datadog-native-aws-instrumentation/upstream-trail.md`
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/upstream-trail.md`
-- `prodops/assessment/risks.md`
+- `prodops/journeys/assessment/risks.md`
 - `prodops/journeys/discovery/features/README.md`
 
 ### Evidence
@@ -87,16 +87,16 @@ Upstream process changes.
 - `prodops/upstream/README.md`
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/experiments/README.md`
-- `templates/upstream-experiment.md`
-- `templates/upstream-trail.md`
+- `prodops/templates/discovery/experiment.md`
+- `prodops/templates/discovery/trail.md`
 - `prodops/upstream/experiments/006-upstream-trail-per-experiment/experiment.md`
 - `prodops/upstream/experiments/006-upstream-trail-per-experiment/upstream-trail.md`
 - `prodops/upstream/upstream-trail.md`
 
 ### Evidence
 
-- Reviewed existing `templates/upstream-experiment.md`.
-- Reviewed existing `templates/upstream-trail.md`.
+- Reviewed existing `prodops/templates/discovery/experiment.md`.
+- Reviewed existing `prodops/templates/discovery/trail.md`.
 - Reviewed existing `prodops/upstream/README.md`.
 - Reviewed existing `prodops/upstream/experiments.md`.
 - Reviewed existing flat experiment files under `prodops/upstream/experiments/`.

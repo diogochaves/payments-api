@@ -132,7 +132,7 @@
 
 | Tipo | Link |
 | --- | --- |
-| Product Deck Payments | `templates/product-deck-payments.md` |
+| Product Deck Payments | `prodops/artifacts/product/product-deck.md` |
 | OpenAPI Payments Pix | `[link]` |
 | Dashboard Pix | `[link]` |
 | Tópicos/eventos | `[link]` |

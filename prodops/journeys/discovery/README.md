@@ -242,7 +242,7 @@ Independente da saída, registrar no `upstream-trail.md` do experimento:
 - Decisão tomada
 - Próximos passos
 
-Se a saída gerar mudança no Reliability Plan, atualizar `prodops/assessment/risks.md` ou `opportunities.md` antes de fechar o ciclo.
+Se a saída gerar mudança no Reliability Plan, atualizar `prodops/journeys/assessment/risks.md` ou `opportunities.md` antes de fechar o ciclo.
 
 ---
 

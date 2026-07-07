@@ -114,7 +114,7 @@ confirmation, refusal, cancellation and refund.
 - `prodops/upstream/learnings.md`
 - `prodops/journeys/discovery/features/credit-card-payment.feature`
 - `prodops/product/tracking-list.md`
-- `prodops/assessment/risks.md`
+- `prodops/journeys/assessment/risks.md`
 - `prodops/upstream/obcs/credit-card-authorization-confirmation.md`
 - `validation-workbench/src/App.tsx`
 - `validation-workbench/src/styles.css`

@@ -129,7 +129,7 @@ journeys.
 - `prodops/upstream/experiments/004-feature-flag-readiness/experiment.md`
 - `prodops/upstream/experiments/004-feature-flag-readiness/upstream-trail.md`
 - `prodops/upstream/experiments.md`
-- `prodops/assessment/risks.md`
+- `prodops/journeys/assessment/risks.md`
 - `prodops/product/tracking-list.md`
 - `prodops/upstream/upstream-trail.md`
 

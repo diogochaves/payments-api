@@ -1,20 +1,14 @@
 # Templates
 
-Reusable templates for ProdOps artifacts, prompts, and execution records can be stored here.
+> Os templates foram consolidados em `prodops/templates/`.
+>
+> → [prodops/templates/README.md](../prodops/templates/README.md)
 
-Do not place release-specific product context in templates.
+Os arquivos nesta pasta são mantidos como cópias de compatibilidade. Para novos trabalhos, use os templates em `prodops/templates/` diretamente.
 
-## Upstream
-
-Use these templates together for new Upstream experiments:
-
-- `templates/upstream-experiment.md` → `prodops/upstream/experiments/NNN-short-slug/experiment.md`
-- `templates/upstream-trail.md` → `prodops/upstream/experiments/NNN-short-slug/upstream-trail.md`
-- `templates/upstream-learning.md` → `prodops/upstream/learnings.md` (new entry)
-
-Create an `evidence/` directory beside them when the experiment needs command
-outputs, screenshots, payload examples or provider responses.
-
-## Downstream
-
-- `templates/downstream-release-entry.md` → append to `prodops/downstream/release-trail.md`
+| Arquivo aqui | Template canônico em prodops/ |
+|---|---|
+| `upstream-experiment.md` | `prodops/templates/discovery/experiment.md` |
+| `upstream-trail.md` | `prodops/templates/discovery/trail.md` |
+| `upstream-learning.md` | `prodops/templates/discovery/learning.md` |
+| `downstream-release-entry.md` | `prodops/templates/delivery/release-entry.md` |

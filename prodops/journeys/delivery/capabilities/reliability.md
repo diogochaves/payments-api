@@ -22,11 +22,11 @@ Definir e verificar requisitos de confiabilidade antes, durante e após a implem
 
 ## Artefatos produzidos
 
-- Riscos documentados em `prodops/assessment/risks.md`
+- Riscos documentados em `prodops/journeys/assessment/risks.md`
 - OBC com SLIs e Reliability Rules em `prodops/artifacts/obcs/`
 - Reliability Plan entry em `prodops/assessment/reliability-plans/`
 
 ## Documentação canônica
 
 → [prodops/engineering/reliability-policy.md](../../engineering/reliability-policy.md)
-→ [prodops/assessment/risks.md](../../assessment/risks.md)
+→ [prodops/journeys/assessment/risks.md](../../assessment/risks.md)

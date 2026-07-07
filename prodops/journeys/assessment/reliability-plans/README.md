@@ -200,7 +200,7 @@ Estas melhorias estão relacionadas a funcionalidades que não fazem parte desta
 
 - `prodops/assessment/iteration-plans/iteration-plan.md`
 - `prodops/assessment/premortem.md`
-- `prodops/assessment/risks.md`
+- `prodops/journeys/assessment/risks.md`
 - `prodops/product/service-decks/compra-com-pix.md`
 - `prodops/artifacts/bdd/create-invoice.feature`
 - `prodops/artifacts/bdd/payment-confirmation.feature`

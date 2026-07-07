@@ -36,8 +36,8 @@ Before starting, read:
 - `prodops/assessment/reliability-plan/`
 - `prodops/upstream/README.md`
 - `prodops/upstream/experiments.md`
-- `templates/upstream-experiment.md`
-- `templates/upstream-trail.md`
+- `prodops/templates/discovery/experiment.md`
+- `prodops/templates/discovery/trail.md`
 
 ## Repository Scope Gate
 

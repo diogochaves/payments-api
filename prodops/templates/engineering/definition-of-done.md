@@ -52,4 +52,4 @@ Uma implementação está pronta quando todos os itens abaixo são verdadeiros:
 ## Pronto para Sync + Finish
 
 - [ ] Todos os itens acima estão marcados.
-- [ ] A mudança está pronta para entrar no [Sync + Finish Flow](../delivery/flows/sync-finish.md).
+- [ ] A mudança está pronta para entrar no [Finish](../../journeys/delivery/phases/finish/README.md).

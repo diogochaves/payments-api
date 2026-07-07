@@ -38,6 +38,6 @@
 
 **Mock Object** — Test double para uma dependência técnica (logger, clock, gerador de UUID, adaptador de telemetria). Aceitável apenas quando não oculta comportamento de negócio.
 
-**Decision Trail** — Registro de uma decisão tomada sob incerteza, incluindo contexto, alternativas e impacto. Template: [`templates/decision-trail.md`](../templates/decision-trail.md).
+**Decision Trail** — Registro de uma decisão tomada sob incerteza, incluindo contexto, alternativas e impacto. Template: [`prodops/templates/assessment/decision-trail.md`](../templates/assessment/decision-trail.md).
 
 **Release Trail** — O log append-only de evidências do Downstream. Fica em [`downstream/release-trail.md`](../downstream/release-trail.md).
