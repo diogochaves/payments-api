@@ -126,7 +126,18 @@ deploy_dynamodb_local() {
     AWS_ENDPOINT_URL="${LOCALSTACK_ENDPOINT}" ./scripts/deploy-dynamodb-local.sh
   )
 
-  for table in PaymentsTable TransactionsTable CustomersTable TenantsTable ProvidersTable; do
+  # Derive the environment prefix from the CloudFormation stack (default: dev)
+  local env_prefix
+  env_prefix="$(
+    aws_local cloudformation describe-stack-resource \
+      --stack-name payments-gateway-dynamodb \
+      --logical-resource-id PaymentsTable \
+      --query 'StackResourceDetail.PhysicalResourceId' \
+      --output text 2>/dev/null | sed 's/-PaymentsTable$//' || echo "dev"
+  )"
+
+  for base in PaymentsTable TransactionsTable CustomersTable TenantsTable ProvidersTable; do
+    local table="${env_prefix}-${base}"
     local table_ready="false"
     for _ in {1..30}; do
       if aws_local dynamodb describe-table --table-name "${table}" >/dev/null 2>&1; then
