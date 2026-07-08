@@ -249,3 +249,61 @@ events from day one of production traffic.
 - Add acceptance test scenarios for 401 rejection and token validation.
 - Wire `API_TOKENS` env var with real Checkout token in staging before go-live.
 - Evaluate token store migration to DynamoDB or SSM Parameter Store for zero-deploy revocation.
+
+## 2026-07-08
+
+### Summary
+
+Implemented Boleto invoice creation on the Payments gateway: contract extended with `bankSlipUrl` and `identificationField` for `billingType=BOLETO`, `dueDate` validated as future (minimum D+1) before provider call, and provider charge contract now asserts `bankSlipUrl` presence for Boleto. The `toResponse` payload now exposes `billingType`, `dueDate`, `bankSlipUrl` and `identificationField` per the OBC response contract.
+
+### Related OBC
+
+`prodops/artifacts/obcs/create-invoice-boleto.md`
+
+### Related BDD
+
+`prodops/artifacts/bdd/create-invoice-boleto.feature` (8 scenarios)
+
+### Iteration Plan
+
+"Criar invoice via Boleto" — Entrou.
+
+### Risks addressed
+
+- B1 — `bankSlipUrl` ausente: `assertProviderChargeContract` agora rejeita cobrança Boleto sem `bankSlipUrl` (provider_contract_violation).
+- B2 — `dueDate` passada/ausente: validação `400` antes de chamar a Asaas (mínimo D+1).
+- B4 — `identificationField` ausente: adicionado a `ProviderChargeResponse`, `InvoiceRecord` e `InvoiceResponseDto`.
+
+### Code
+
+- `api/src/modules/invoices/types/invoice.types.ts` — `InvoiceRecord` e `ProviderChargeResponse` ganham `bankSlipUrl`/`identificationField`.
+- `api/src/modules/invoices/dto/invoice-response.dto.ts` — DTO expõe `billingType`, `dueDate`, `bankSlipUrl`, `identificationField`.
+- `api/src/infra/asaas.service.ts` — mock gera `bankSlipUrl`/`identificationField` para BOLETO; resposta real mapeia `identificationField`.
+- `api/src/modules/invoices/services/invoice.service.ts`:
+  - `validateCreateInvoice`: `dueDate` obrigatória e futura (≥ D+1) para BOLETO.
+  - `assertProviderChargeContract`: exige `bankSlipUrl` em cobrança Boleto.
+  - `createInvoice`: propaga `bankSlipUrl`/`identificationField` ao salvar OPEN.
+  - `toResponse`: expõe os novos campos.
+
+### Tests
+
+- Test created: `api/test/criar-invoice-boleto.e2e-spec.ts` — 8 cenários BDD cobertos.
+- Red Bar confirmado (4 falhas comportamentais: bankSlipUrl/identificationField ausentes na resposta, dueDate futura não validada).
+- Green Bar: `npx jest --config ./test/jest-e2e.json test/criar-invoice-boleto.e2e-spec.ts` — 8 passed.
+- Suite completa sem regressão: `criar-invoice`, `cancelar-invoice`, `confirmar-pagamento`, `api-token`, `criar-invoice-boleto` — 38 passed, 5 suites.
+- Lint: `cd api && npm run lint` — exit 0 (0 errors).
+- Build: `cd api && npm run build` — passed.
+
+### Artifacts Updated
+
+- Product Deck: não alterado.
+- Service Deck: não alterado.
+- Iteration Plan: não alterado (entrada já com status Entrou).
+- OBC: não alterado.
+- BDD Feature: não alterada.
+- Riscos: não alterados (mitigações B1/B2/B4 cobertas pela implementação).
+
+### Notes / Decision Trail
+
+- `externalReference`: a BDD Feature (cenário "Criar boleto com sucesso") indica que o `externalReference` enviado à Asaas deve conter o identificador do pedido (`MS-200010`). O código atual usa `externalReference = invoiceId` (`inv_ulid`) e o `assertProviderChargeContract` valida consistência contra esse valor. Mudar essa semântica quebraria o contrato PIX/cartão já estabilizado e seus acceptance tests. Preservada a regra existente (`externalReference = invoiceId`); alinhamento com a BDD Boleto fica como divergência registrada para decisão posterior no Delivery Sync, conforme regra de Context Rules do AGENTS.md ("preservar a existente e registrar em Decision Trail").
+- `payment.boleto.expired` (Risco B3) não implementado nesta entrega — depende de webhook `PAYMENT_OVERDUE` do provedor, atualmente mapeado como evento ignorado. A jornada de expiração assíncrona permanece fora deste slice.

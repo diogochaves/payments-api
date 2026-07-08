@@ -36,6 +36,8 @@ export interface InvoiceRecord {
   description?: string;
   externalReference: string;
   paymentUrl?: string;
+  bankSlipUrl?: string;
+  identificationField?: string;
   providerPayload?: unknown;
   failureReason?: string;
   createdAt: string;
@@ -69,6 +71,7 @@ export interface ProviderChargeResponse {
   externalReference?: string;
   invoiceUrl?: string;
   bankSlipUrl?: string;
+  identificationField?: string;
   transactionReceiptUrl?: string;
   payload: unknown;
 }

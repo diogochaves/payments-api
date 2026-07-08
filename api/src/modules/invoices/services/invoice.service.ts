@@ -169,6 +169,8 @@ export class InvoiceService {
             charge.invoiceUrl ??
             charge.bankSlipUrl ??
             charge.transactionReceiptUrl,
+          bankSlipUrl: charge.bankSlipUrl,
+          identificationField: charge.identificationField,
         },
       );
 
@@ -806,6 +808,12 @@ export class InvoiceService {
     ) {
       throw new Error('provider_contract_violation: billingType mismatch');
     }
+
+    if (invoice.billingType === 'BOLETO' && !charge.bankSlipUrl) {
+      throw new Error(
+        'provider_contract_violation: bankSlipUrl missing for BOLETO',
+      );
+    }
   }
 
   private validateCreateInvoice(
@@ -864,6 +872,19 @@ export class InvoiceService {
 
     if (Number.isNaN(Date.parse(dto.dueDate))) {
       throw new BadRequestException('dueDate must be a valid date');
+    }
+
+    if (dto.billingType === 'BOLETO') {
+      const dueDate = new Date(dto.dueDate);
+      const tomorrow = new Date();
+      tomorrow.setUTCHours(0, 0, 0, 0);
+      tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+
+      if (dueDate.getTime() < tomorrow.getTime()) {
+        throw new BadRequestException(
+          'dueDate must be a future date (minimum D+1) for BOLETO',
+        );
+      }
     }
   }
 
@@ -1001,7 +1022,11 @@ export class InvoiceService {
       status: invoice.status,
       amount: invoice.amount,
       currency: invoice.currency,
+      billingType: invoice.billingType,
+      dueDate: invoice.dueDate,
       paymentUrl: invoice.paymentUrl,
+      bankSlipUrl: invoice.bankSlipUrl,
+      identificationField: invoice.identificationField,
       externalReference: invoice.externalReference,
     };
   }
