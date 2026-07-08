@@ -10,6 +10,7 @@ Skills NÃO são capabilities.
 
 | Skill | Fase/Jornada | Link |
 |---|---|---|
+| Bootstrap | Fase Bootstrap | [bootstrap/SKILL.md](bootstrap/SKILL.md) |
 | Hack | Fase Hack | [hack/SKILL.md](hack/SKILL.md) |
 | Sync | Fase Sync | [sync/SKILL.md](sync/SKILL.md) |
 | Finish | Fase Finish | [finish/SKILL.md](finish/SKILL.md) |
@@ -19,6 +20,7 @@ Skills NÃO são capabilities.
 | `upstream/move-to-downstream` | Step within Upstream | [upstream/steps/move-to-downstream/SKILL.md](upstream/steps/move-to-downstream/SKILL.md) |
 | Downstream | Modo Downstream | [downstream/SKILL.md](downstream/SKILL.md) |
 | Promote | Fase Promote | [promote/SKILL.md](promote/SKILL.md) |
+| `hack/bootstrap` | Legacy branch-preparation shortcut within Hack | [hack/steps/bootstrap/SKILL.md](hack/steps/bootstrap/SKILL.md) |
 | `hack/commit` | Step within Hack | [hack/steps/commit/SKILL.md](hack/steps/commit/SKILL.md) |
 
 ## Estrutura de cada Skill

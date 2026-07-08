@@ -1,0 +1,89 @@
+---
+name: hack/tdd
+description: Execute the ProdOps TDD cycle. Use after bootstrap to implement a behavior change through red, green, and yellow phases.
+---
+
+# HACK → TDD
+
+Execute only the TDD cycle of the Hack flow.
+
+## Inputs
+
+Read before starting:
+
+- Relevant BDD Feature in `prodops/artifacts/bdd/` (committed) or
+  `prodops/journeys/discovery/experiments/<NNN-slug>/features/` (exploratory)
+- Relevant OBC in `prodops/artifacts/obcs/` or experiment directory
+- The module being changed and its existing tests
+- Direct imports and shared contracts required to understand the change
+
+## Phases
+
+### Red — write the failing test
+
+1. Derive the test scenario from the BDD Feature or OBC. Do not invent criteria.
+2. Write the narrowest test that would fail because the behavior does not exist yet.
+3. Run the test and confirm it fails for the right reason (missing behavior, not a
+   syntax or import error).
+4. Record the red output as evidence.
+
+### Green — implement the minimum
+
+1. Write the smallest change that makes the failing test pass.
+2. Do not refactor yet. Do not add behavior beyond what the test requires.
+3. Run the focused test suite and confirm green.
+4. Run broader tests if the change touches shared behavior.
+5. Record the green output as evidence.
+
+### Yellow — quality and artifact closure
+
+1. **Refactor** — improve names, reduce duplication, apply Clean Code rules.
+   Do not change behavior. Re-run tests after each refactor step to stay green.
+2. **Lint** — run lint for the affected package:
+   - API: `cd api && npm run lint`
+   - Workbench: `cd validation-workbench && npm run build`
+   Resolve all lint errors before continuing. Do not suppress rules without justification.
+3. **Event Storming** — if the change adds, removes, or renames a domain event
+   (`eventEmitter.emit()` or `@OnEvent()`), update
+   `prodops/journeys/assessment/event-storming/plan.json`:
+   - add both success and `_exception` variants to `customEvents`;
+   - add the event to relevant flow bands;
+   - add an `sloSuggestions` entry if on the critical path;
+   - update `assumptions[last]` with today's date and a change summary.
+   Use `prodops/journeys/assessment/event-storming/plan-model.json` as the format reference.
+4. **Architecture** — if the change is structural (new module, route, external
+   dependency, table, or event topic), update
+   `prodops/journeys/assessment/architecture/overview.md`:
+   - edit the Mermaid diagram;
+   - add a row to the History table with today's date and a one-line description.
+5. **Release Trail** — append evidence to `prodops/artifacts/trails/release-trail.md`:
+   - red test output (or reason TDD was not applicable);
+   - green test output;
+   - lint result;
+   - summary of what changed and why.
+
+## Post-conditions
+
+- All focused tests pass.
+- Broader tests pass for touched shared behavior.
+- Lint exits 0 for the affected package.
+- Impacted ProdOps artifacts updated (Event Storming, architecture, BDD if needed).
+- Release Trail has the full TDD evidence entry.
+
+## Guardrails
+
+- Do not skip red — green without a prior failing test is not TDD.
+- Do not implement beyond the failing test in the green phase.
+- Do not refactor in the green phase — refactor only after green.
+- If TDD is not applicable (e.g. pure doc change, infrastructure config), record
+  the reason explicitly in the Release Trail instead of skipping silently.
+- Do not change unrelated modules discovered during exploration.
+
+## Engineering References
+
+| Reference | When to use |
+|---|---|
+| [`../../../../references/engineering/tdd-prodops/red-green-refactor.md`](../../../../references/engineering/tdd-prodops/red-green-refactor.md) | Allowed/prohibited actions per phase |
+| [`../../../../references/engineering/tdd-prodops/mocking-policy.md`](../../../../references/engineering/tdd-prodops/mocking-policy.md) | What is permitted in Yellow Bar |
+| [`../../../../references/engineering/tdd-prodops/observability.md`](../../../../references/engineering/tdd-prodops/observability.md) | What to validate after Green |
+| [`../../../../references/engineering/clean-code/refactoring.md`](../../../../references/engineering/clean-code/refactoring.md) | Refactoring techniques for Yellow phase |

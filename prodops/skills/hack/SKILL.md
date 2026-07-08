@@ -18,6 +18,8 @@ exclusively — do not run the rest of the flow.
 
 | Step | File | When to use |
 |---|---|---|
+| `bootstrap` | [steps/bootstrap/SKILL.md](steps/bootstrap/SKILL.md) | Clean stage, sync base branch, create feature branch |
+| `tdd` | [steps/tdd/SKILL.md](steps/tdd/SKILL.md) | Execute red → green → yellow cycle with artifact closure |
 | `commit` | [steps/commit/SKILL.md](steps/commit/SKILL.md) | Stage and commit after green + lint + trail |
 
 If the requested step is not listed, run the full flow.
@@ -28,9 +30,9 @@ Read before editing:
 
 - `AGENTS.md`
 - ProdOps artifacts directly related to the requested capability in
-  `prodops/product/`
+  `prodops/artifacts/product/`
 - Reliability Plan sections directly related to the requested capability in
-  `prodops/assessment/reliability-plan/`
+  `prodops/journeys/assessment/reliability-plans/`
 - Relevant BDD Feature in `prodops/artifacts/bdd/` (committed) or
   `prodops/journeys/discovery/experiments/<NNN-slug>/features/` (exploratory)
 
@@ -60,15 +62,15 @@ module boundary.
 9. Run lint for the affected package when a lint script exists.
 10. Update only impacted ProdOps artifacts.
 11. If the change adds, removes, or renames a domain event (`eventEmitter.emit()`
-    or `@OnEvent()`), update `prodops/assessment/event-storming/plan.json`:
+    or `@OnEvent()`), update `prodops/journeys/assessment/event-storming/plan.json`:
     - add the new event to the relevant flow bands (negative_kpis, negative_trends,
       positive_kpis, positive_trends);
     - add both success and `_exception` variants to `customEvents`;
     - add an `sloSuggestions` entry if the event is on the critical path;
     - update `assumptions[last]` with the date and change summary.
-    Use `prodops/assessment/event-storming/plan-model.json` as the format reference.
+    Use `prodops/journeys/assessment/event-storming/plan-model.json` as the format reference.
 12. If the change is structural (new module, route, external dependency, table,
-    or event topic), update `prodops/assessment/architecture/overview.md`:
+    or event topic), update `prodops/journeys/assessment/architecture/overview.md`:
     - edit the Mermaid diagram to reflect the change;
     - add a row to the History table with today's date and a one-line description.
 12. Append evidence to `prodops/artifacts/trails/release-trail.md`.
@@ -82,11 +84,19 @@ module boundary.
 - Prefer focused code reading over broad repository reading.
 - Do not change unrelated modules just because they were discovered during
   exploration.
-- Keep functions small, names explicit and behavior easy to test.
 - Preserve existing architecture and module boundaries unless the BDD or
   Reliability Plan requires a contract change.
-- Avoid speculative abstractions. Add an abstraction only when it removes real
-  duplication or matches an existing local pattern.
+
+For Clean Code rules (naming, functions, refactoring) see
+[`../references/engineering/clean-code/`](../references/engineering/clean-code/README.md).
+
+## Engineering References
+
+| Area | File | When to read |
+|---|---|---|
+| Clean Code | [`../references/engineering/clean-code/`](../references/engineering/clean-code/README.md) | Naming, functions, refactoring, error handling |
+| TDD ProdOps | [`../references/engineering/tdd-prodops/`](../references/engineering/tdd-prodops/README.md) | Red/green/yellow cycle, mocking policy, quality gates |
+| DDD | [`../references/engineering/ddd/`](../references/engineering/ddd/README.md) | Aggregates, repositories, domain events, ubiquitous language |
 
 ## Validation
 
