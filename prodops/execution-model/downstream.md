@@ -29,6 +29,7 @@ Antes de iniciar qualquer trabalho Downstream:
 2. BDD Feature em `prodops/artifacts/bdd/`
 3. Entrada no Iteration Plan com status `Entrou` em `prodops/artifacts/plans/iteration-plan.md`
 4. Riscos documentados em `prodops/journeys/assessment/risks.md`
+5. Entrada no Reliability Plan em `prodops/journeys/assessment/reliability-plans/`
 
 Não iniciar o Downstream sem esses artefatos.
 

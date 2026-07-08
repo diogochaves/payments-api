@@ -1,6 +1,6 @@
 # Hack Flow
 
-Hack Flow é o segundo estágio do **CI Sync**, sucede o [Bootstrap](../bootstrap/README.md) e precede o Sync. É usado em Upstream e Downstream e produz implementação com testes, contratos, observabilidade e evidência registrada.
+Hack Flow é a segunda fase do **CI Sync**, sucede o [Bootstrap](../bootstrap/README.md) e precede o Sync. É usado em Upstream e Downstream e produz implementação com testes, contratos, observabilidade e evidência registrada.
 
 O Hack recebe do Bootstrap uma branch limpa, o ambiente pronto, os artefatos ProdOps lidos e o contrato verificado. **O Hack começa diretamente no TDD — não há leitura ou preparação antes do primeiro teste.**
 
@@ -43,6 +43,7 @@ Teste → Implementação → Observabilidade → Refactor → Commit → Valida
 - Escrever a menor mudança de produção que faz o teste falho passar.
 - Não adicionar lógica não exigida pelo teste.
 - Não modificar código de produção para fazer o teste passar artificialmente.
+- Verificar os requisitos de confiabilidade que se aplicam ao comportamento implementado: timeout, retry com idempotência, tratamento de exceções, mensagens de erro, status HTTP, degradação controlada. Ver [reliability-policy.md](../../capabilities/reliability-policy.md#requisitos-de-confiabilidade-por-comportamento).
 
 ### Passo 3 — Refatorar
 

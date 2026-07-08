@@ -1,6 +1,6 @@
 # Bootstrap
 
-Bootstrap é o primeiro estágio do **CI Sync**. Prepara o ambiente de desenvolvimento, cria a branch e estabelece o contexto de produto antes de iniciar a implementação.
+Bootstrap é a primeira fase do **CI Sync**. Prepara o ambiente de desenvolvimento, cria a branch e estabelece o contexto de produto antes de iniciar a implementação.
 
 ---
 
@@ -19,6 +19,7 @@ O Bootstrap não produz código, não escreve testes, não lê código-fonte. Pr
 - OBC criado em `prodops/artifacts/obcs/`
 - BDD Feature presente em `prodops/artifacts/bdd/`
 - Riscos documentados em `prodops/journeys/assessment/risks.md`
+- Entrada no Reliability Plan (`prodops/journeys/assessment/reliability-plans/`)
 
 **Upstream:**
 - Experimento criado em `prodops/journeys/discovery/experiments/`

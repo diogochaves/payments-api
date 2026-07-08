@@ -46,4 +46,4 @@ git rebase -i origin/main
 
 Consolide commits `fixup`/`squash` de forma que o histórico final seja coerente. Cada commit resultante deve passar `commit-msg` validation (Conventional Commits).
 
-Para mecânica de execução, veja [`prodops/skills/sync/`](../../../../skills/sync/) e [`prodops/skills/finish/`](../../../../skills/finish/).
+Para mecânica de execução, veja [`prodops/skills/sync/`](../../../../skills/sync/).

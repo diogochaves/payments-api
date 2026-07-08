@@ -33,4 +33,4 @@ Checklist completo: [capabilities/commit-workflow/README.md — Checklist do Fin
 
 Template de PR: [commit-workflow/templates/pull_request.md](../../capabilities/commit-workflow/templates/pull_request.md)
 
-Para mecânica de execução, veja [`prodops/skills/sync/`](../../../../skills/sync/) e [`prodops/skills/finish/`](../../../../skills/finish/).
+Para mecânica de execução, veja [`prodops/skills/finish/`](../../../../skills/finish/).
