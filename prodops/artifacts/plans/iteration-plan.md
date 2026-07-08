@@ -61,6 +61,7 @@ A decisão principal é reduzir o lote: entregar uma jornada menor, completa e c
 | Feature | Decisão | Justificativa | Valor entregue |
 | --- | --- | --- | --- |
 | Habilitar novo gateway para o Checkout na jornada priorizada | Entrou | Sem a habilitação do novo gateway, a Release não entrega valor de negócio. Deve ser tratada como parte do recorte funcional, não como item acessório. | Checkout passa a usar Payments como caminho de pagamento para a jornada escolhida. |
+| Criar invoice via Cartão de Crédito (Hosted) | Entrou | EXP-003 + EXP-001 (hosted slice) validaram a abordagem. OBC e BDD Feature existem. Aprovado em 2026-07-07 — pronto para Bootstrap + Hack. | Checkout passa a oferecer cartão hospedado como meio de pagamento via gateway Payments, sem exposição PCI no backend. |
 | Criar invoice via Pix | Entrou | Pix é a melhor fatia para validar o novo gateway: tem alto valor para Checkout, está presente no Service Deck e já possui base de implementação. | Cliente consegue iniciar pagamento Pix pelo novo domínio Payments. |
 | Confirmação de pagamento | Entrou | Sem confirmação, a invoice criada não fecha a jornada de negócio. Essa funcionalidade reduz o principal risco de cliente pagar sem continuidade clara. | Ecommerce recebe sinal confiável de pagamento aprovado. |
 

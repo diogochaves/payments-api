@@ -31,8 +31,9 @@ only in `prodops/artifacts/obcs/`.
 
 ## Flow
 
-1. Confirm the item is approved for Downstream via the Iteration Backlog or an
-   explicit release decision.
+1. Confirm the item has status `Entrou` in the Iteration Plan at
+   `prodops/artifacts/plans/iteration-plan.md` (section "Iteration Plan recomendado")
+   or has an explicit release decision.
 2. Read the relevant Current State, Assessment, Reliability Plan, and BDD
    Feature.
 3. Execute the full flow:

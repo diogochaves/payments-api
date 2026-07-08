@@ -7,7 +7,7 @@
 - [x] Completed
 - [ ] Cancelled
 
-**Business Intent:** [`prodops/business-intents/split-payment.md`](../../../../../business-intents/split-payment.md)
+**Business Intent:** [`prodops/business-intents/split-payment.md`](../../../../business-intents/split-payment.md)
 
 ---
 
@@ -317,7 +317,7 @@ Pagamentos simples continuam via `POST /v1/invoices`. Nenhum campo obrigatório 
 
 - [x] Business Intent: `prodops/business-intents/split-payment.md` — perguntas respondidas
 - [x] Tracking List: `prodops/artifacts/product/tracking-list.md` — novos itens de produto
-- [x] OBC candidato: `prodops/artifacts/obcs/payment-composition-draft.md` — criado
+- [x] OBC candidato: `prodops/journeys/discovery/experiments/007-split-payment-model/obcs/payment-composition.md` — criado
 - [ ] BDD Feature — aguarda decisão sobre política de falha parcial
 - [ ] Event Storming — atualizar `prodops/journeys/assessment/event-storming/` com novos eventos
 
@@ -365,7 +365,7 @@ Após a decisão:
 Todas as perguntas técnicas e de domínio foram respondidas. O único bloqueio é a decisão de produto sobre a política de falha parcial (Política A, B ou C), que determina o estado machine e o contrato de `PagamentoParcialFalhou`. Recomenda-se Política B (manter confirmados, nova tentativa para o falho).
 
 Com a política definida, o Downstream pode começar com:
-1. OBC: `prodops/artifacts/obcs/payment-composition-draft.md`
+1. OBC: `prodops/journeys/discovery/experiments/007-split-payment-model/obcs/payment-composition.md`
 2. BDD Feature: a criar após definição da política
 3. Entrada no Iteration Plan para a próxima iteração
 
@@ -400,7 +400,7 @@ O MVP deve suportar 2 métodos por pedido, priorizando Pix + Cartão. A única d
 
 ## OBC Candidato
 
-→ `prodops/artifacts/obcs/payment-composition-draft.md`
+→ `prodops/journeys/discovery/experiments/007-split-payment-model/obcs/payment-composition.md`
 
 ## Escopo Downstream Recomendado (após decisão de política)
 

@@ -85,7 +85,7 @@ Reference:
 
 ### Activity
 
-Execução completa da jornada Upstream para o Business Intent "Suporte a Múltiplos Pagamentos no Checkout".
+Execução completa da atividade Upstream (modo exploratório) para o Business Intent "Suporte a Múltiplos Pagamentos no Checkout".
 
 ### Summary
 
