@@ -80,7 +80,7 @@ Artifacts
 
 ## Journeys
 
-### Discovery (ex-Upstream)
+### Discovery
 
 Exploração. Transforma hipóteses em conhecimento validado. Sem compromisso de entrega — apenas compromisso de aprendizado.
 

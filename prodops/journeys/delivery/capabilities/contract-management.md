@@ -34,5 +34,5 @@ Definir, manter e verificar contratos que descrevem o comportamento esperado do 
 
 ## Referências
 
-→ [prodops/framework/glossary.md](../../framework/glossary.md) — definições de OBC e BDD Feature
-→ [prodops/delivery/flows/bootstrap.md](../flows/bootstrap.md) — como verificar o contrato no Bootstrap
+→ [prodops/framework/glossary.md](../../../framework/glossary.md) — definições de OBC e BDD Feature
+→ [prodops/journeys/delivery/phases/bootstrap/README.md](../phases/bootstrap/README.md) — como verificar o contrato no Bootstrap

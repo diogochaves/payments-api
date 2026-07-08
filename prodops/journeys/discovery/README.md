@@ -1,8 +1,8 @@
-# Upstream
+# Discovery
 
 ## Propósito
 
-Upstream é o fluxo de engenharia exploratória do ProdOps.
+Discovery é o fluxo de engenharia exploratória do ProdOps.
 
 Seu propósito é reduzir incerteza antes de uma capability entrar no fluxo padrão de entrega.
 
@@ -310,7 +310,7 @@ Antes de promover, confirmar que:
 
 - Mover código para produção sem mover os artefatos ProdOps.
 - Criar um OBC committed sem BDD Feature correspondente.
-- Iniciar implementação Downstream antes de o OBC estar em `assessment/obcs/`.
+- Iniciar implementação Downstream antes de o OBC estar em `prodops/artifacts/obcs/`.
 - Promover com recomendação `Não promover` ou `Requer outro experimento` no Decision Package.
 
 ---

@@ -260,7 +260,7 @@ cd api && npm run test
 
 ### 7. Definition of Done
 
-- [ ] Todos os itens de [definition-of-done.md](../../../../../templates/engineering/definition-of-done.md) satisfeitos.
+- [ ] Todos os itens de [definition-of-done.md](../../../../templates/engineering/definition-of-done.md) satisfeitos.
 
 ### Geração do Pull Request
 

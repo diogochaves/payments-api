@@ -23,7 +23,7 @@ Prepara o ambiente, cria a branch e estabelece o contexto de produto. Não produ
 
 Saída: branch limpa + ambiente pronto + artefatos ProdOps lidos + contrato verificado.
 
-→ [flows/bootstrap.md](flows/bootstrap.md)
+→ [phases/bootstrap/README.md](phases/bootstrap/README.md)
 
 ### Hack
 
@@ -33,19 +33,19 @@ Consome:
 - **Prática:** [ProdOps TDD](practices/prodops-tdd.md)
 - **Capability:** [Commit Workflow](capabilities/commit-workflow/README.md)
 
-→ [flows/hack.md](flows/hack.md)
+→ [phases/hack/README.md](phases/hack/README.md)
 
 ### Sync
 
 Confirma consistência entre implementação e artefatos ProdOps (BDD Feature, OBC, Event Storming, arquitetura).
 
-→ [flows/sync-finish.md](flows/sync-finish.md#sync)
+→ [phases/sync/README.md](phases/sync/README.md)
 
 ### Finish
 
 Executa Quality Gates finais e cria o PR com evidências.
 
-→ [flows/sync-finish.md](flows/sync-finish.md#finish)
+→ [phases/finish/README.md](phases/finish/README.md)
 
 ## Capabilities utilizadas
 

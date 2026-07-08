@@ -82,5 +82,5 @@ Executar uma jornada de Upstream para:
 |---|---|
 | Experimento EXP-007 (análise completa) | `prodops/journeys/discovery/experiments/007-split-payment-model/experiment.md` |
 | Trail do experimento | `prodops/journeys/discovery/experiments/007-split-payment-model/upstream-trail.md` |
-| OBC candidato (draft) | `prodops/artifacts/obcs/payment-composition-draft.md` |
+| OBC candidato (draft) | `prodops/journeys/discovery/experiments/007-split-payment-model/obcs/payment-composition.md` |
 | BDD Feature | `prodops/artifacts/bdd/payment-composition.feature` — **a criar após decisão de política** |

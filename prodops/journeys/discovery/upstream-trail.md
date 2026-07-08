@@ -188,7 +188,7 @@ Pronto para Assessment.
 
 ### Notes
 
-Arquivos planos de experimentos existentes foram migrados. Novos experimentos devem usar `prodops/upstream/experiments/NNN-short-slug/`.
+Arquivos planos de experimentos existentes foram migrados. Novos experimentos devem usar `prodops/journeys/discovery/experiments/NNN-short-slug/`.
 
 ## 2026-07-03 17:50
 

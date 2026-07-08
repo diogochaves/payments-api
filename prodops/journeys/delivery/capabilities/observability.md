@@ -28,4 +28,4 @@ Garantir que o comportamento do sistema é visível em produção: logs estrutur
 
 ## Documentação canônica
 
-→ [prodops/engineering/observability-policy.md](../../engineering/observability-policy.md)
+→ [prodops/journeys/delivery/capabilities/observability-policy.md](observability-policy.md)

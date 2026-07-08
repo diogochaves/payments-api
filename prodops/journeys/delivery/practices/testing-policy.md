@@ -21,12 +21,12 @@ Unit tests não substituem testes de aceitação para comportamento funcional.
 
 A proibição de test doubles em testes de aceitação é aplicada como Quality Gate que bloqueia merge.
 
-- Definição técnica completa: [`skills/hack/references/workflow.md § No Mocks Rule`](../../skills/hack/references/workflow.md)
-- Enforcement gate (o que bloqueia merge): [`prodops/journeys/delivery/phases/finish/quality-gates.md § Test Quality Gates`](../downstream/quality-gates.md)
+- Definição técnica completa: [`skills/hack/references/workflow.md § No Mocks Rule`](../../../skills/hack/references/workflow.md)
+- Enforcement gate (o que bloqueia merge): [`prodops/journeys/delivery/phases/finish/quality-gates.md § Test Quality Gates`](../phases/finish/quality-gates.md)
 
 ## Testes de caminhos de erro
 
-Caminhos de erro que exigem falha de sistema externo pertencem a unit tests ou testes de camada de serviço, não a testes de aceitação. Ver [ProdOps TDD — Yellow Bar Patterns](../delivery/practices/prodops-tdd.md).
+Caminhos de erro que exigem falha de sistema externo pertencem a unit tests ou testes de camada de serviço, não a testes de aceitação. Ver [ProdOps TDD — Yellow Bar Patterns](prodops-tdd.md).
 
 ## App compartilhado por arquivo
 
@@ -34,4 +34,4 @@ Cada arquivo de teste de aceitação cria a aplicação NestJS uma vez no `befor
 
 ## Cobertura
 
-Thresholds de cobertura (quando configurados em `jest.config.*`) não devem ser reduzidos sem uma justificativa registrada em um [Decision Trail](../templates/assessment/decision-trail.md).
+Thresholds de cobertura (quando configurados em `jest.config.*`) não devem ser reduzidos sem uma justificativa registrada em um [Decision Trail](../../../../templates/assessment/decision-trail.md).

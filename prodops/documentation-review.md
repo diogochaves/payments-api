@@ -21,8 +21,9 @@ prodops/
 │   ├── discovery/                     ← ex-upstream/
 │   │   ├── README.md
 │   │   ├── experiments/
-│   │   ├── features/
-│   │   ├── obcs/
+│   │   │   └── <NNN-slug>/
+│   │   │       ├── features/          ← BDD Features exploratórias (por experimento)
+│   │   │       └── obcs/              ← OBC drafts (por experimento)
 │   │   └── upstream-trail.md
 │   ├── delivery/                      ← ex-delivery/
 │   │   ├── README.md (reescrito)
@@ -75,7 +76,7 @@ prodops/
 │   ├── upstream/
 │   ├── downstream/
 │   └── payments-api-local-testing/
-└── commit-workflow/                   ← não movido (hooks path intocado)
+└── journeys/delivery/capabilities/commit-workflow/  ← hooks path intocado
 ```
 
 ---
@@ -181,7 +182,7 @@ Links internos atualizados em todos os arquivos movidos e nos seguintes arquivos
 
 1. **`prodops/artifacts/plans/`** — considerar renomear `iteration-backlog.md` (ex-assessment) e `downstream-iteration-backlog.md` (ex-downstream) para consolidar em um único arquivo.
 
-2. **`prodops/journeys/assessment/`** — ainda não tem um README principal. Considerar criar.
+2. ~~**`prodops/journeys/assessment/`** — ainda não tem um README principal.~~ README já existe em `prodops/journeys/assessment/README.md`.
 
 3. **`prodops/journeys/discovery/features/README.md`** — distingue features exploratórias de features comprometidas. Verificar se precisa de atualização.
 

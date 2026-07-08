@@ -15,7 +15,7 @@ O Bootstrap não produz código, não escreve testes, não lê código-fonte. Pr
 ## Pré-condição
 
 **Downstream:**
-- Item presente no Iteration Backlog (`prodops/artifacts/plans/downstream-iteration-backlog.md`)
+- Item presente no Iteration Plan com status `Entrou` (`prodops/artifacts/plans/iteration-plan.md`)
 - OBC criado em `prodops/artifacts/obcs/`
 - BDD Feature presente em `prodops/artifacts/bdd/`
 
@@ -104,4 +104,4 @@ O Hack não re-lê artefatos. O Hack não verifica ambiente. O Hack começa no R
 
 ## Próximo estágio
 
-→ [Hack Flow](hack.md)
+→ [Hack Flow](../hack/README.md)

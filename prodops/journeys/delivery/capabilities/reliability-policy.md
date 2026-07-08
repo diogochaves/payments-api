@@ -44,7 +44,7 @@ Para cada comportamento implementado no Hack Flow, verificar os seguintes requis
 
 Esses requisitos são verificados no [Definition of Done](definition-of-done.md) — seção Reliability.
 
-Para detalhes sobre como aplicar durante o TDD cycle: [ProdOps TDD — Confiabilidade no ciclo](../delivery/practices/prodops-tdd.md).
+Para detalhes sobre como aplicar durante o TDD cycle: [ProdOps TDD — Confiabilidade no ciclo](../practices/prodops-tdd.md).
 
 ## Validação pós-deploy
 

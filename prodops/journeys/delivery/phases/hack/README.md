@@ -1,6 +1,6 @@
 # Hack Flow
 
-Hack Flow é o segundo estágio do **CI Sync**, sucede o [Bootstrap](bootstrap.md) e precede o Sync. É usado em Upstream e Downstream e produz implementação com testes, contratos, observabilidade e evidência registrada.
+Hack Flow é o segundo estágio do **CI Sync**, sucede o [Bootstrap](../bootstrap/README.md) e precede o Sync. É usado em Upstream e Downstream e produz implementação com testes, contratos, observabilidade e evidência registrada.
 
 O Hack recebe do Bootstrap uma branch limpa, o ambiente pronto, os artefatos ProdOps lidos e o contrato verificado. **O Hack começa diretamente no TDD — não há leitura ou preparação antes do primeiro teste.**
 
@@ -16,10 +16,10 @@ Hack Flow
 
 O Hack é responsável pela implementação. Ele não é substituído por nenhuma das capabilities — ele as consume.
 
-- **ProdOps TDD:** orienta o ciclo de codificação (Contract First, Integration First, Observability First). Ver [practices/prodops-tdd.md](../practices/prodops-tdd.md).
-- **Commit Workflow:** executa após cada ciclo Red→Green→Refactor. Ver [capabilities/commit-workflow/README.md](../capabilities/commit-workflow/README.md).
+- **ProdOps TDD:** orienta o ciclo de codificação (Contract First, Integration First, Observability First). Ver [practices/prodops-tdd.md](../../practices/prodops-tdd.md).
+- **Commit Workflow:** executa após cada ciclo Red→Green→Refactor. Ver [capabilities/commit-workflow/README.md](../../capabilities/commit-workflow/README.md).
 
-Para mecânica de execução — branching, comandos, lint, testes, formato de commit — ver [`skills/hack/`](../../../skills/hack/).
+Para mecânica de execução — branching, comandos, lint, testes, formato de commit — ver [`skills/hack/`](../../../../skills/hack/).
 
 ---
 
@@ -66,7 +66,7 @@ cd api && npm run lint   # formatter + lint com --fix
 cd api && npm run test   # unit tests
 ```
 
-O Commit Workflow não é responsabilidade do ProdOps TDD — é uma capability separada que o Hack consome. Ver [capabilities/commit-workflow/README.md](../capabilities/commit-workflow/README.md).
+O Commit Workflow não é responsabilidade do ProdOps TDD — é uma capability separada que o Hack consome. Ver [capabilities/commit-workflow/README.md](../../capabilities/commit-workflow/README.md).
 
 ### Passo 5 — Validar observabilidade
 
@@ -85,7 +85,7 @@ npm run test        # unit tests
 ./scripts/test-acceptance.sh   # suite completa de aceitação — quando comportamento de pagamento ou contratos mudaram
 ```
 
-Ver [skills/hack/SKILL.md](../../../skills/hack/SKILL.md) para a lista completa de validações.
+Ver [skills/hack/SKILL.md](../../../../skills/hack/SKILL.md) para a lista completa de validações.
 
 ### Passo 7 — Registrar evidência
 
@@ -99,7 +99,7 @@ Antes de avançar para Sync ou Finish:
 
 - Se o contrato ou critério de aceite estiver ausente, parar: o Bootstrap não foi concluído. Retornar ao Bootstrap antes de escrever qualquer teste.
 - Não pular o Red Bar — um teste que nunca foi vermelho pode não verificar o comportamento de fato.
-- Não usar mocks para serviços próprios ou regras de negócio. Ver [practices/prodops-tdd.md](../practices/prodops-tdd.md) e [testing policy](../../engineering/testing-policy.md).
+- Não usar mocks para serviços próprios ou regras de negócio. Ver [practices/prodops-tdd.md](../../practices/prodops-tdd.md) e [testing policy](../../practices/testing-policy.md).
 - Não modificar código de produção apenas para fazer um teste passar.
 - Não adicionar features além do que o teste atual exige.
 - Preservar a arquitetura e os limites de módulos existentes.
@@ -126,4 +126,4 @@ git config core.hooksPath prodops/journeys/delivery/capabilities/commit-workflow
 
 Tipos válidos: `feat fix docs test refactor perf build ci style chore revert`
 
-Ver: [capabilities/commit-workflow/README.md — Conventional Commits](../capabilities/commit-workflow/README.md#conventional-commits)
+Ver: [capabilities/commit-workflow/README.md — Conventional Commits](../../capabilities/commit-workflow/README.md#conventional-commits)

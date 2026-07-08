@@ -2,7 +2,7 @@
 
 ProdOps TDD é a evolução do TDD clássico para o contexto de produtos digitais observáveis e confiáveis. Combina TDD, contratos, testes de integração, observabilidade, confiabilidade e evidência operacional em uma única prática de codificação.
 
-**ProdOps TDD não é um fluxo separado.** É a prática utilizada dentro do [Hack Flow](../flows/hack.md).
+**ProdOps TDD não é um fluxo separado.** É a prática utilizada dentro do [Hack Flow](../phases/hack/README.md).
 
 ---
 
@@ -42,7 +42,7 @@ Nunca alterar payload, headers, regras de negócio ou comportamento de produçã
 
 1. **Priorizar testes de integração.** Os testes devem verificar comportamento na fronteira HTTP ou de evento, não detalhes de implementação interna.
 
-2. **Sem mocks para regras de negócio.** Não substituir serviços próprios que carregam lógica de negócio por test doubles. Ver [No Mocks Rule](../../../skills/hack/references/workflow.md) e [quality-gates.md](../../downstream/quality-gates.md).
+2. **Sem mocks para regras de negócio.** Não substituir serviços próprios que carregam lógica de negócio por test doubles. Ver [No Mocks Rule](../../../skills/hack/references/workflow.md) e [quality-gates.md](../phases/finish/quality-gates.md).
 
 3. **Sem mocks para APIs de domínio quando existe contrato verificável.** Se existe spec OpenAPI, AsyncAPI ou BDD, testar contra ela. Mock Servers baseados nesse contrato são aceitáveis como infraestrutura temporária.
 

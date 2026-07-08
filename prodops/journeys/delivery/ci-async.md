@@ -26,7 +26,7 @@ Duas famílias:
 
 Build, Package e Publish são capabilities internas do Ship — não são estágios independentes.
 
-→ [flows/ship-validate-promote.md](flows/ship-validate-promote.md#ship)
+→ [phases/ship/README.md](phases/ship/README.md)
 
 ### Validate
 
@@ -34,7 +34,7 @@ Verifica a entrega em execução no ambiente alvo.
 
 Capabilities: Smoke Tests, Runtime Contract Validation, Synthetic Monitoring, Health Checks, Observability Validation, SLO Validation, Business Validation, Incident Signals.
 
-→ [flows/ship-validate-promote.md](flows/ship-validate-promote.md#validate)
+→ [phases/validate/README.md](phases/validate/README.md)
 
 ### Promote
 
@@ -42,7 +42,7 @@ Oficializa a evolução da versão com aprovação formal e evidência registrad
 
 Capabilities: Promotion Gates, Environment Promotion, Release Approval, Release Trail, Operational Evidence, Release Documentation, Rollback Readiness.
 
-→ [flows/ship-validate-promote.md](flows/ship-validate-promote.md#promote)
+→ [phases/promote/README.md](phases/promote/README.md)
 
 ## Capabilities utilizadas
 

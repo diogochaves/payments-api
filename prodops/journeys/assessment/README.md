@@ -4,10 +4,10 @@ Artefatos de avaliação de risco, confiabilidade, oportunidades e planejamento 
 
 | Artefato | Localização |
 |---|---|
-| OBCs (Outcome-Based Criteria) | [obcs/](obcs/) |
+| OBCs (Outcome-Based Criteria) | [../../artifacts/obcs/](../../artifacts/obcs/) |
 | Riscos | [risks.md](risks.md) |
 | Oportunidades | [opportunities.md](opportunities.md) |
-| Iteration Plans | [iteration-plans/](iteration-plans/) |
+| Iteration Plans | [../../artifacts/plans/](../../artifacts/plans/) |
 | Reliability Plans | [reliability-plans/](reliability-plans/) |
 | Event Storming | [event-storming/](event-storming/) |
 | Arquitetura | [architecture/](architecture/) |

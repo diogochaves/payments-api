@@ -2,7 +2,7 @@
 
 ## Status
 
-Downstream. Accepted into `prodops/assessment/iteration-plans/iteration-plan.md` Iteration Backlog.
+Downstream. Accepted into `prodops/artifacts/plans/iteration-plan.md` Iteration Backlog.
 
 ## Business Outcome
 
@@ -41,4 +41,4 @@ dependência de infraestrutura de secrets durante o desenvolvimento.
 ## Related Artifacts
 
 - BDD: `prodops/artifacts/bdd/api-token-validation.feature`
-- Iteration Plan: `prodops/assessment/iteration-plans/iteration-plan.md`
+- Iteration Plan: `prodops/artifacts/plans/iteration-plan.md`

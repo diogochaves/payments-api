@@ -32,3 +32,4 @@ Business Intent → Assessment → Execution Mode → Journey → Phase → Prac
 | [templates/](templates/) | Templates centralizados por área |
 | [skills/](skills/) | Skills executáveis por agentes |
 | [journeys/delivery/capabilities/commit-workflow/](journeys/delivery/capabilities/commit-workflow/) | Commit Workflow: hooks Git nativos, scripts, documentação |
+| [documentation-review.md](documentation-review.md) | Revisão e estado da documentação do framework |

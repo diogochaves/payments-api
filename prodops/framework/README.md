@@ -7,10 +7,10 @@ ProdOps is a product-driven engineering framework. It organizes work into two pa
 | Directory | Purpose |
 |---|---|
 | `framework/` | Core principles and shared vocabulary |
-| `delivery/` | Delivery flows and coding practices |
-| `engineering/` | Technical policies: testing, observability, reliability |
+| `journeys/delivery/` | Delivery phases and coding practices |
+| `skills/` | Executable skills for agents |
 | `templates/` | Reusable templates for plans, trails, and checklists |
 
-For work context, see the [assessment](../assessment/README.md), [product](../product/), and [downstream](../downstream/README.md) directories.
+For work context, see the [assessment](../journeys/assessment/README.md), [product](../artifacts/product/), and [downstream](../execution-model/downstream.md) directories.
 
-For agent execution, see [AGENTS.md](../../AGENTS.md) and [skills/](../../skills/).
+For agent execution, see [AGENTS.md](../../AGENTS.md) and [skills/](../skills/).

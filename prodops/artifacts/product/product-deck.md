@@ -64,7 +64,7 @@ Payments existe para proteger conversão, GMV, confiança do cliente e capacidad
 
 ## 6. Arquitetura do produto
 
-> Diagrama de componentes: [`prodops/assessment/architecture/overview.md`](../assessment/architecture/overview.md)
+> Diagrama de componentes: [`prodops/journeys/assessment/architecture/overview.md`](../../journeys/assessment/architecture/overview.md)
 >
 > O diagrama é a fonte canônica da estrutura do sistema. Atualizar sempre que
 > houver mudança estrutural (novo módulo, rota, dependência externa, tabela ou

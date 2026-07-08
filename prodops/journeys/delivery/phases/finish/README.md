@@ -9,7 +9,7 @@ Checklist:
 - [ ] Todos os testes passam (unit + acceptance).
 - [ ] Build passa.
 - [ ] Nenhum TODO ou FIXME não resolvido introduzido nesta mudança.
-- [ ] Definition of Done satisfeita. Ver [definition-of-done.md](../../templates/engineering/definition-of-done.md).
+- [ ] Definition of Done satisfeita. Ver [definition-of-done.md](../../../../templates/engineering/definition-of-done.md).
 - [ ] Evidência acrescentada ao Release Trail.
 
 Uma implementação não sai do Finish até que todos os itens estejam marcados.
