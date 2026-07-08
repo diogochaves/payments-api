@@ -6,6 +6,10 @@ export class InvoiceResponseDto {
   status: string;
   amount: number;
   currency: string;
+  billingType: string;
+  dueDate: string;
   paymentUrl?: string;
+  bankSlipUrl?: string;
+  identificationField?: string;
   externalReference: string;
 }

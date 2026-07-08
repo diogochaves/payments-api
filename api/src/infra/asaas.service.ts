@@ -54,6 +54,13 @@ export class AsaasService {
   ): Promise<ProviderChargeResponse> {
     if (this.mockEnabled()) {
       const id = `pay_mock_${payload.externalReference}`;
+      const isBoleto = payload.billingType === 'BOLETO';
+      const bankSlipUrl = isBoleto
+        ? `https://sandbox.asaas.com/b/pdf/${id}`
+        : undefined;
+      const identificationField = isBoleto
+        ? `34191.75402 01234.567890 12345.678901 9 10000000250000`
+        : undefined;
       return {
         id,
         status: 'PENDING',
@@ -62,11 +69,15 @@ export class AsaasService {
         billingType: payload.billingType,
         externalReference: payload.externalReference,
         invoiceUrl: `https://sandbox.asaas.com/i/${id}`,
+        bankSlipUrl,
+        identificationField,
         payload: {
           id,
           object: 'payment',
           status: 'PENDING',
           invoiceUrl: `https://sandbox.asaas.com/i/${id}`,
+          bankSlipUrl,
+          identificationField,
           ...payload,
         },
       };
@@ -83,6 +94,7 @@ export class AsaasService {
         externalReference: data.externalReference,
         invoiceUrl: data.invoiceUrl,
         bankSlipUrl: data.bankSlipUrl,
+        identificationField: data.identificationField,
         transactionReceiptUrl: data.transactionReceiptUrl,
         payload: data,
       };
