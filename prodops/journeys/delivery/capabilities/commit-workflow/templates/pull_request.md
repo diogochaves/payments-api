@@ -41,7 +41,7 @@
 - [ ] Red Bar confirmado antes da implementação.
 - [ ] Nenhum mock indevido de regra de negócio.
 - [ ] Nenhuma branch de produção criada apenas para teste.
-- [ ] Definition of Done satisfeita. Ver [definition-of-done.md](../engineering/definition-of-done.md).
+- [ ] Definition of Done satisfeita. Ver [definition-of-done.md](../../../../../templates/engineering/definition-of-done.md).
 
 ## Evidências
 

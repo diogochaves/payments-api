@@ -64,7 +64,7 @@ Embora a necessidade de negócio seja clara, ainda existem decisões importantes
 
 ## Próximo passo
 
-Executar uma jornada de Upstream para:
+Executar uma atividade no modo Upstream (exploratório) para:
 
 * pesquisar benchmarks de mercado para checkouts com múltiplos pagamentos;
 * identificar padrões consolidados de UX;

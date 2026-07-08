@@ -19,7 +19,7 @@ O Hack é responsável pela implementação. Ele não é substituído por nenhum
 - **ProdOps TDD:** orienta o ciclo de codificação (Contract First, Integration First, Observability First). Ver [practices/prodops-tdd.md](../../practices/prodops-tdd.md).
 - **Commit Workflow:** executa após cada ciclo Red→Green→Refactor. Ver [capabilities/commit-workflow/README.md](../../capabilities/commit-workflow/README.md).
 
-Para mecânica de execução — branching, comandos, lint, testes, formato de commit — ver [`skills/hack/`](../../../../skills/hack/).
+Para mecânica de execução — branching, comandos, lint, testes, formato de commit — ver [`prodops/skills/hack/`](../../../../skills/hack/).
 
 ---
 
@@ -85,7 +85,7 @@ npm run test        # unit tests
 ./scripts/test-acceptance.sh   # suite completa de aceitação — quando comportamento de pagamento ou contratos mudaram
 ```
 
-Ver [skills/hack/SKILL.md](../../../../skills/hack/SKILL.md) para a lista completa de validações.
+Ver [prodops/skills/hack/SKILL.md](../../../../skills/hack/SKILL.md) para a lista completa de validações.
 
 ### Passo 7 — Registrar evidência
 

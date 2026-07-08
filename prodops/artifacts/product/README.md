@@ -6,9 +6,9 @@ Estado atual do produto, artefatos de produto e features comprometidas.
 |---|---|
 | Product Deck | [product-deck.md](product-deck.md) |
 | Service Decks | [service-decks/](service-decks/) |
-| BDD Features (committed) | [features/](features/) |
+| BDD Features (committed) | [../bdd/](../bdd/) |
 | Tracking List | [tracking-list.md](tracking-list.md) |
 | Icebox | [icebox-backlog.md](icebox-backlog.md) |
 
-Features em `features/` são as BDD Features comprometidas para Downstream.
-Features exploratórias ficam em `prodops/journeys/discovery/features/`.
+Features comprometidas ficam em `prodops/artifacts/bdd/`.
+Features exploratórias ficam em `prodops/journeys/discovery/experiments/<NNN-slug>/features/`.

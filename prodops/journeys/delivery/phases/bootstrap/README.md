@@ -18,6 +18,7 @@ O Bootstrap não produz código, não escreve testes, não lê código-fonte. Pr
 - Item presente no Iteration Plan com status `Entrou` (`prodops/artifacts/plans/iteration-plan.md`)
 - OBC criado em `prodops/artifacts/obcs/`
 - BDD Feature presente em `prodops/artifacts/bdd/`
+- Riscos documentados em `prodops/journeys/assessment/risks.md`
 
 **Upstream:**
 - Experimento criado em `prodops/journeys/discovery/experiments/`
@@ -59,7 +60,7 @@ Antes de qualquer teste ou código, ler:
 | Riscos e mitigações | `prodops/journeys/assessment/risks.md` |
 | Iteration Plan | `prodops/artifacts/plans/iteration-plan.md` |
 
-Para Upstream: ler `prodops/journeys/discovery/experiments/<id>-<slug>/experiment.md`.
+Para Upstream: ler `prodops/journeys/discovery/experiments/<NNN-slug>/experiment.md`.
 
 ### 4. Verificar testes existentes
 

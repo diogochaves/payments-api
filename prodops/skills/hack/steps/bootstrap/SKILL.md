@@ -20,7 +20,7 @@ the remaining need is local branch setup.
    - Never discard work silently — confirm intent before any destructive operation.
 
 2. **Identify the base branch.**
-   Determine the branch to diverge from (typically `master` or the branch declared in the task context).
+   Determine the branch to diverge from (typically `main` or the branch declared in the task context).
 
 3. **Sync the base branch.**
    ```bash

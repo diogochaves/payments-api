@@ -19,7 +19,7 @@ Arquivos de OBC: `prodops/artifacts/obcs/`
 
 ## Definition of Done
 
-Uma capability não está completa até que o [Definition of Done](definition-of-done.md) seja satisfeito, incluindo os critérios de confiabilidade.
+Uma capability não está completa até que o [Definition of Done](../../../templates/engineering/definition-of-done.md) seja satisfeito, incluindo os critérios de confiabilidade.
 
 ## Modos de falha
 
@@ -42,7 +42,7 @@ Para cada comportamento implementado no Hack Flow, verificar os seguintes requis
 | **Códigos HTTP** | Status codes correspondem à semântica: 201 (criado), 400 (input inválido), 404 (não encontrado), 409 (conflito/estado inválido), 422 (regra de negócio). |
 | **Degradação controlada** | Falha de dependência externa (provedor, SQS, DynamoDB) não derruba fluxos independentes. |
 
-Esses requisitos são verificados no [Definition of Done](definition-of-done.md) — seção Reliability.
+Esses requisitos são verificados no [Definition of Done](../../../templates/engineering/definition-of-done.md) — seção Reliability.
 
 Para detalhes sobre como aplicar durante o TDD cycle: [ProdOps TDD — Confiabilidade no ciclo](../practices/prodops-tdd.md).
 

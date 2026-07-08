@@ -2,7 +2,7 @@
 
 ## Status
 
-Downstream. Accepted into `prodops/artifacts/plans/iteration-plan.md` Iteration Backlog.
+Downstream. Status `Entrou` in `prodops/artifacts/plans/iteration-plan.md` (section "Iteration Plan recomendado").
 
 ## Business Outcome
 

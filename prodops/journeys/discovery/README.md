@@ -292,7 +292,9 @@ Antes de promover, confirmar que:
 
 3. Criar ou atualizar entrada no Iteration Plan:
    prodops/artifacts/plans/iteration-plan.md
-   (adicionar à tabela "Iteration Backlog identificado")
+   (adicionar com decisão `Entrou` na tabela "Iteration Plan recomendado" —
+   não apenas em "Iteration Backlog identificado", pois esta seção não satisfaz
+   a pré-condição formal do Downstream)
 
 4. Atualizar Tracking List se o item estava lá:
    prodops/artifacts/product/tracking-list.md

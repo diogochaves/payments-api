@@ -51,7 +51,7 @@ done < <(find prodops/journeys/discovery/experiments -mindepth 1 -maxdepth 1 -ty
 
 legacy_refs="$(
   rg -n \
-    'prodops/(upstream|product|downstream/release-trail\.md|assessment/reliability-plan|assessment/reliability-plans|assessment/event-storming|assessment/architecture)|prodops/operation/|delivery/flows/' \
+    'prodops/(upstream|product|downstream/release-trail\.md|assessment/reliability-plan|assessment/reliability-plans|assessment/iteration-plans|assessment/event-storming|assessment/architecture)|prodops/operation/|delivery/flows/' \
     AGENTS.md prodops/README.md prodops/framework prodops/execution-model prodops/journeys prodops/skills prodops/templates prodops/business-intents \
     -g '!prodops/framework/canonical-paths.md' \
     -g '!prodops/journeys/discovery/upstream-trail.md' \

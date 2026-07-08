@@ -75,9 +75,9 @@ Score = ((Reach * Impact * Confidence) + Operational Risk) / Effort
 
 | ID | Título | Tipo | Outcome esperado | Status | Score inicial | Fonte |
 | --- | --- | --- | --- | --- | --- | --- |
-| PAY-ICE-001 | Criar invoice via gateway com contrato único | Feature | Ecommerce emite cobranças sem acoplamento direto ao provedor Asaas. | Icebox | 16.4 | [create-invoice.feature](features/create-invoice.feature) |
-| PAY-ICE-002 | Confirmar pagamento por webhook confiável | Feature | Pedido e ecommerce recebem confirmação uma única vez, com eventos auditáveis. | Icebox | 20.8 | [payment-confirmation.feature](features/payment-confirmation.feature) |
-| PAY-ICE-003 | Cancelar invoice pendente com idempotência | Feature | Cobranças abertas podem ser canceladas sem pagamento indevido ou evento duplicado. | Icebox | 13.7 | [cancel-invoice.feature](features/cancel-invoice.feature) |
+| PAY-ICE-001 | Criar invoice via gateway com contrato único | Feature | Ecommerce emite cobranças sem acoplamento direto ao provedor Asaas. | Icebox | 16.4 | [create-invoice.feature](../bdd/create-invoice.feature) |
+| PAY-ICE-002 | Confirmar pagamento por webhook confiável | Feature | Pedido e ecommerce recebem confirmação uma única vez, com eventos auditáveis. | Icebox | 20.8 | [payment-confirmation.feature](../bdd/payment-confirmation.feature) |
+| PAY-ICE-003 | Cancelar invoice pendente com idempotência | Feature | Cobranças abertas podem ser canceladas sem pagamento indevido ou evento duplicado. | Icebox | 13.7 | [cancel-invoice.feature](../bdd/cancel-invoice.feature) |
 
 ## 7. Itens detalhados
 
@@ -95,7 +95,7 @@ Score = ((Reach * Impact * Confidence) + Operational Risk) / Effort
 | Dependências | Credenciais Asaas, cadastro de provedores por tenant, modelo de customer binding, storage de idempotência, contrato de resposta ao ecommerce. |
 | Riscos | Duplicidade de cobrança, cliente Asaas duplicado, invoice aberta sem `providerPaymentId`, exposição de payload sensível em erro. |
 | Telemetria mínima | Evento de invoice criada, tentativa de chamada ao provedor, provider latency, provider error code, idempotency hit/miss, audit log de rejeição. |
-| Critérios de aceite | Cenários do arquivo [create-invoice.feature](features/create-invoice.feature) passam; retry com mesma chave não chama o provedor; falha 5xx não retorna invoice `OPEN` sem `providerPaymentId`; erro de validação é auditável sem segredo. |
+| Critérios de aceite | Cenários do arquivo [create-invoice.feature](../bdd/create-invoice.feature) passam; retry com mesma chave não chama o provedor; falha 5xx não retorna invoice `OPEN` sem `providerPaymentId`; erro de validação é auditável sem segredo. |
 | Score | Reach 4, Impact 5, Confidence 4, Effort 5, Operational Risk 2 = 16.4 |
 | Status | Icebox |
 
@@ -119,7 +119,7 @@ Score = ((Reach * Impact * Confidence) + Operational Risk) / Effort
 | Dependências | Endpoint público de webhook, segredo/token Asaas, armazenamento de eventos brutos, publicação de eventos canônicos, contrato com ecommerce/Orders. |
 | Riscos | Pedido liberado duas vezes, pagamento recebido sem pedido liberado, token vazado em logs, evento não correlacionado, divergência entre `CONFIRMED` e `RECEIVED`. |
 | Telemetria mínima | Webhook received, webhook rejected, event deduplication, invoice status transition, canonical event published, lag entre recebimento e publicação. |
-| Critérios de aceite | Cenários do arquivo [payment-confirmation.feature](features/payment-confirmation.feature) passam; webhook inválido não altera invoice; evento duplicado retorna sucesso técnico sem republicar; `PAYMENT_RECEIVED` não libera pedido pela segunda vez. |
+| Critérios de aceite | Cenários do arquivo [payment-confirmation.feature](../bdd/payment-confirmation.feature) passam; webhook inválido não altera invoice; evento duplicado retorna sucesso técnico sem republicar; `PAYMENT_RECEIVED` não libera pedido pela segunda vez. |
 | Score | Reach 5, Impact 5, Confidence 4, Effort 5, Operational Risk 4 = 20.8 |
 | Status | Icebox |
 
@@ -143,7 +143,7 @@ Score = ((Reach * Impact * Confidence) + Operational Risk) / Effort
 | Dependências | Política de estados da invoice, endpoint Asaas `DELETE /v3/payments/{id}`, idempotência de cancelamento, evento `payment.cancelled`, política para 404. |
 | Riscos | Cobrança permanecer pagável após cancelamento local, publicação de cancelamento sem confirmação do provedor, cancelamento indevido após pagamento, duplicidade de evento. |
 | Telemetria mínima | Cancel request, provider delete latency/error, status transition, idempotency hit/miss, webhook `PAYMENT_DELETED`, canonical cancellation published. |
-| Critérios de aceite | Cenários do arquivo [cancel-invoice.feature](features/cancel-invoice.feature) passam; invoice `CONFIRMED` não é cancelada; retry com mesma chave não chama o provedor; 404 não publica `payment.cancelled` sem decisão explícita. |
+| Critérios de aceite | Cenários do arquivo [cancel-invoice.feature](../bdd/cancel-invoice.feature) passam; invoice `CONFIRMED` não é cancelada; retry com mesma chave não chama o provedor; 404 não publica `payment.cancelled` sem decisão explícita. |
 | Score | Reach 3, Impact 4, Confidence 4, Effort 4, Operational Risk 2 = 13.7 |
 | Status | Icebox |
 

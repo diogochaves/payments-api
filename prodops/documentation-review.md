@@ -184,7 +184,7 @@ Links internos atualizados em todos os arquivos movidos e nos seguintes arquivos
 
 2. ~~**`prodops/journeys/assessment/`** — ainda não tem um README principal.~~ README já existe em `prodops/journeys/assessment/README.md`.
 
-3. **`prodops/journeys/discovery/features/README.md`** — distingue features exploratórias de features comprometidas. Verificar se precisa de atualização.
+3. ~~**`prodops/journeys/discovery/features/README.md`**~~ — Este diretório não existe. Features exploratórias ficam em `prodops/journeys/discovery/experiments/<NNN-slug>/features/`. Pendência encerrada.
 
 4. **`prodops/skills/payments-api-local-testing/`** — skill específica de repositório. Avaliar se deve ser mantida em `prodops/skills/` ou em área própria.
 

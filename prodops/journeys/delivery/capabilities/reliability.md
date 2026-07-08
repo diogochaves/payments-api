@@ -29,4 +29,4 @@ Definir e verificar requisitos de confiabilidade antes, durante e após a implem
 ## Documentação canônica
 
 → [prodops/journeys/delivery/capabilities/reliability-policy.md](reliability-policy.md)
-→ [prodops/journeys/assessment/risks.md](../../../assessment/risks.md)
+→ [prodops/journeys/assessment/risks.md](../../assessment/risks.md)

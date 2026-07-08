@@ -44,7 +44,7 @@ completed release trail entry must exist. Ship does not re-run the gates — it 
 that Finish recorded.
 
 **Canonical source:** The authoritative gate definitions (the ones that block merge) live in
-[`../../phases/finish/quality-gates.md`](../../phases/finish/quality-gates.md).
+[`../../../../journeys/delivery/phases/finish/quality-gates.md`](../../../../journeys/delivery/phases/finish/quality-gates.md).
 This file is the engineering reference; that file is the enforcement definition.
 
 ---
