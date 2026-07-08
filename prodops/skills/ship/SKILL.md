@@ -12,7 +12,7 @@ For detailed Codex submission mechanics, read `references/workflow.md`.
 ## Inputs
 
 - `AGENTS.md`
-- `prodops/assessment/reliability-plan/`
+- `prodops/journeys/assessment/reliability-plans/`
 - `prodops/artifacts/trails/release-trail.md`
 - `prodops/journeys/delivery/phases/finish/quality-gates.md`
 - Current branch diff and validation evidence
@@ -43,3 +43,10 @@ For detailed Codex submission mechanics, read `references/workflow.md`.
 - Tests must cover changed behavior or the residual test gap must be explicit.
 - Behavior changes must show TDD evidence or explain why TDD was not applicable.
 - PR or deploy notes must explain behavior, validation and risk.
+
+## Engineering References
+
+| Reference | When to read |
+|---|---|
+| [`../references/engineering/tdd-prodops/workflow.md`](../references/engineering/tdd-prodops/workflow.md) | TDD evidence standards (what counts as red/green/refactor proof) |
+| [`../references/engineering/tdd-prodops/quality-gates.md`](../references/engineering/tdd-prodops/quality-gates.md) | Delivery gates checklist before creating a PR |

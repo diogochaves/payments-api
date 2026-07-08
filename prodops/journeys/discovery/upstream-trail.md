@@ -497,3 +497,54 @@ Move-to-delivery: hosted card slice promoted to Downstream.
 ### Decision
 
 PM approved. OBC and BDD Feature moved to committed locations. Iteration Plan updated. Hosted card slice enters Downstream delivery flow.
+
+## 2026-07-08
+
+### Activity
+
+Normalized ProdOps framework operational paths and executable skills.
+
+### Summary
+
+The framework now has an explicit canonical path map and the primary executable
+skills point to the current `prodops/artifacts/` and `prodops/journeys/`
+structure instead of migrated legacy paths. Discovery instructions now create
+new experiments under `prodops/journeys/discovery/experiments/`, root
+Upstream templates are marked as legacy, and Bootstrap is available as a
+first-class Delivery skill.
+
+A lightweight `prodops/scripts/doctor.sh` check was added to verify required
+ProdOps paths, experiment layout, and accidental legacy path references in
+operational documents.
+
+### Artifacts Updated
+
+- `AGENTS.md`
+- `prodops/README.md`
+- `prodops/framework/canonical-paths.md`
+- `prodops/framework/glossary.md`
+- `prodops/framework/principles.md`
+- `prodops/journeys/discovery/README.md`
+- `prodops/journeys/discovery/experiments.md`
+- `prodops/journeys/assessment/reliability-plans/`
+- `prodops/journeys/delivery/capabilities/`
+- `prodops/journeys/operation/runbooks.md`
+- `prodops/skills/`
+- `prodops/scripts/doctor.sh`
+- `templates/upstream-*.md`
+
+### Evidence
+
+- `prodops/scripts/doctor.sh` passed.
+- `rg` check found no legacy ProdOps path references in operational docs outside
+  explicitly excluded historical trails and the canonical legacy mapping.
+
+### Decision
+
+Continue using the `prodops/journeys/` and `prodops/artifacts/` structure as the
+operational source of truth.
+
+### Notes
+
+Historical trails may still mention legacy paths as migration evidence. New
+operational instructions should use `prodops/framework/canonical-paths.md`.

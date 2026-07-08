@@ -12,12 +12,13 @@ Business Intent → Assessment → Execution Mode → Journey → Phase → Prac
 
 1. `framework/principles.md` — princípios
 2. `framework/glossary.md` — termos canônicos
-3. `framework/operating-model.md` — modelo operacional completo
-4. `execution-model/README.md` — Upstream vs Downstream
-5. `journeys/README.md` — as 5 jornadas
-6. A jornada específica da tarefa
-7. A fase dentro da jornada
-8. As capabilities da fase
+3. `framework/canonical-paths.md` — localizações canônicas
+4. `framework/operating-model.md` — modelo operacional completo
+5. `execution-model/README.md` — Upstream vs Downstream
+6. `journeys/README.md` — as 5 jornadas
+7. A jornada específica da tarefa
+8. A fase dentro da jornada
+9. As capabilities da fase
 
 ## Portal
 

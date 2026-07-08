@@ -18,7 +18,7 @@ Instruções gerais
 
 Após concluir a análise, gere o arquivo:
 
-prodops/assessment/reliability-plans/README.md
+prodops/journeys/assessment/reliability-plans/README.md
 
 Esse arquivo deve conter exatamente a estrutura definida neste prompt.
 

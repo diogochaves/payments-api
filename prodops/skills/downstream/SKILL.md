@@ -10,8 +10,8 @@ Use this skill for standardized, traceable delivery.
 ## Inputs
 
 - `AGENTS.md`
-- `prodops/product/`
-- `prodops/assessment/reliability-plan/`
+- `prodops/artifacts/product/`
+- `prodops/journeys/assessment/reliability-plans/`
 - `prodops/artifacts/plans/downstream-iteration-backlog.md`
 - Relevant BDD Feature in `prodops/artifacts/bdd/`
 - Relevant OBC in `prodops/artifacts/obcs/`
@@ -48,3 +48,11 @@ only in `prodops/artifacts/obcs/`.
 - Do not skip Quality Gates without recording the reason and risk.
 - Do not duplicate product context inside skills.
 - Do not promote unresolved high-risk items without explicit acceptance.
+
+## Engineering References
+
+| Area | File | When to read |
+|---|---|---|
+| Clean Code | [`../references/engineering/clean-code/`](../references/engineering/clean-code/README.md) | Naming, functions, refactoring during Hack |
+| TDD ProdOps | [`../references/engineering/tdd-prodops/`](../references/engineering/tdd-prodops/README.md) | Full TDD cycle, mocking policy, quality gates |
+| DDD | [`../references/engineering/ddd/`](../references/engineering/ddd/README.md) | Domain model, aggregates, ubiquitous language |

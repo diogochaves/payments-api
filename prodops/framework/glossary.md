@@ -4,7 +4,7 @@
 
 **BDD Feature** — Especificação Gherkin que descreve o comportamento esperado. Fica em `prodops/artifacts/bdd/` (comprometida) ou `prodops/journeys/discovery/features/` (exploratória). Usada como insumo de TDD no Downstream.
 
-**Reliability Plan** — O contrato de execução de um item Downstream. Define riscos, OBCs, SLOs e ações de mitigação. Fica em `prodops/assessment/reliability-plan/`.
+**Reliability Plan** — O contrato de execução de um item Downstream. Define riscos, OBCs, SLOs e ações de mitigação. Fica em `prodops/journeys/assessment/reliability-plans/`.
 
 **CI Sync** — O agrupamento síncrono do ProdOps Delivery. Representa o trabalho local, colaborativo e conduzido pelo engenheiro. Inclui Bootstrap, Hack, Sync e Finish. Produz: task fechada, PR com narrativa, evidências, commits organizados, validações locais executadas. Ver [`delivery/README.md`](../delivery/README.md).
 
@@ -40,4 +40,4 @@
 
 **Decision Trail** — Registro de uma decisão tomada sob incerteza, incluindo contexto, alternativas e impacto. Template: [`prodops/templates/assessment/decision-trail.md`](../templates/assessment/decision-trail.md).
 
-**Release Trail** — O log append-only de evidências do Downstream. Fica em [`downstream/release-trail.md`](../downstream/release-trail.md).
+**Release Trail** — O log append-only de evidências do Downstream. Fica em [`artifacts/trails/release-trail.md`](../artifacts/trails/release-trail.md).

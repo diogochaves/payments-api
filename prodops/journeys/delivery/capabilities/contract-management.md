@@ -22,15 +22,15 @@ Definir, manter e verificar contratos que descrevem o comportamento esperado do 
 
 ## Artefatos produzidos
 
-- BDD Feature em `prodops/artifacts/bdd/` (committed) ou `prodops/journeys/discovery/features/` (exploratory)
+- BDD Feature em `prodops/artifacts/bdd/` (committed) ou `prodops/journeys/discovery/experiments/<NNN-slug>/features/` (exploratory)
 - OBC em `prodops/artifacts/obcs/`
 - OpenAPI spec atualizada
 - AsyncAPI spec atualizada
 
 ## Dependências
 
-- Product Deck (`prodops/product/product-deck.md`)
-- Reliability Plan (`prodops/assessment/reliability-plans/`)
+- Product Deck (`prodops/artifacts/product/product-deck.md`)
+- Reliability Plan (`prodops/journeys/assessment/reliability-plans/`)
 
 ## Referências
 

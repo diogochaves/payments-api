@@ -1,20 +1,25 @@
-# Upstream Experiment
+# LEGACY TEMPLATE - Upstream Experiment
+
+This root template is kept only for historical compatibility.
+For new Discovery experiments, use:
+
+`prodops/templates/discovery/experiment.md`
 
 Canonical location:
 
 ```text
-prodops/upstream/experiments/NNN-short-slug/experiment.md
+prodops/journeys/discovery/experiments/NNN-short-slug/experiment.md
 ```
 
 Each experiment must also have:
 
 ```text
-prodops/upstream/experiments/NNN-short-slug/upstream-trail.md
-prodops/upstream/experiments/NNN-short-slug/evidence/
+prodops/journeys/discovery/experiments/NNN-short-slug/upstream-trail.md
+prodops/journeys/discovery/experiments/NNN-short-slug/evidence/
 ```
 
 Do not create new flat experiment files directly under
-`prodops/upstream/experiments/`.
+`prodops/journeys/discovery/experiments/`.
 
 ## Status
 

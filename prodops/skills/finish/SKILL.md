@@ -28,3 +28,9 @@ Use this skill to close a task with explicit quality evidence.
 - Do not mark work complete without evidence.
 - Do not hide skipped tests; record why they were skipped.
 - Do not expand scope during finish work.
+
+## Engineering References
+
+| Reference | When to read |
+|---|---|
+| [`../references/engineering/tdd-prodops/quality-gates.md`](../references/engineering/tdd-prodops/quality-gates.md) | Full quality gate definitions and Definition of Done |

@@ -129,7 +129,7 @@ Downstream (se aprovado)
 Experimentos ficam em:
 
 ```
-prodops/upstream/experiments/
+prodops/journeys/discovery/experiments/
 ```
 
 Cada experimento deve responder a uma pergunta específica.
@@ -148,7 +148,7 @@ Experimentos devem ser pequenos e focados.
 Novos experimentos devem usar um diretório por experimento:
 
 ```text
-prodops/upstream/experiments/NNN-short-slug/
+prodops/journeys/discovery/experiments/NNN-short-slug/
   experiment.md
   upstream-trail.md
   evidence/
@@ -160,9 +160,9 @@ Use o `upstream-trail.md` local do experimento para notas cronológicas de execu
 
 Use `evidence/` apenas para material de suporte muito detalhado para o documento do experimento, como saídas de comandos, capturas de tela, exemplos de payload ou respostas do provedor.
 
-Arquivos planos de experimento em `prodops/upstream/experiments/*.md` são artefatos legados. Não criar novos arquivos planos de experimento. Se um arquivo plano for restaurado do histórico ou de outra branch, migrá-lo para o padrão de diretório antes de fazer outras alterações.
+Arquivos planos de experimento restaurados de caminhos legados são artefatos históricos. Não criar novos arquivos planos de experimento. Se um arquivo plano for restaurado do histórico ou de outra branch, migrá-lo para o padrão de diretório canônico antes de fazer outras alterações.
 
-O `prodops/upstream/upstream-trail.md` global não é mais o lugar primário para o histórico de execução de experimentos. Mantê-lo como índice cronológico de alto nível para marcos entre experimentos, migrações, promoções e mudanças de processo Upstream em nível de repositório.
+O `prodops/journeys/discovery/upstream-trail.md` global não é o lugar primário para o histórico de execução de experimentos. Mantê-lo como índice cronológico de alto nível para marcos entre experimentos, migrações, promoções e mudanças de processo Discovery/Upstream em nível de repositório.
 
 ---
 

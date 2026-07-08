@@ -12,7 +12,7 @@ Use this skill to prove release readiness with evidence.
 - `AGENTS.md`
 - Relevant OBCs under `prodops/`
 - Relevant BDD Features in `prodops/artifacts/bdd/` (committed) or `prodops/journeys/discovery/experiments/<NNN-slug>/features/` (exploratory)
-- `prodops/assessment/reliability-plan/`
+- `prodops/journeys/assessment/reliability-plans/`
 - `prodops/journeys/delivery/phases/finish/quality-gates.md`
 
 ## Flow
@@ -29,3 +29,10 @@ Use this skill to prove release readiness with evidence.
 - Do not invent metrics or SLOs.
 - If an SLO is absent, record the gap in the appropriate ProdOps artifact.
 - Prefer executable evidence over narrative claims.
+
+## Engineering References
+
+| Reference | When to read |
+|---|---|
+| [`../references/engineering/tdd-prodops/quality-gates.md`](../references/engineering/tdd-prodops/quality-gates.md) | Evidence standards, Definition of Done, Test Quality Gates |
+| [`../references/engineering/tdd-prodops/observability.md`](../references/engineering/tdd-prodops/observability.md) | What to verify in logs, traces, and correlation IDs |

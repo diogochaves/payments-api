@@ -9,7 +9,7 @@ Toda capability Downstream requer uma entrada no Reliability Plan. O plano defin
 - OBCs (Outcome-Based Criteria) com thresholds de sucesso mensuráveis
 - Sugestões de SLO para eventos no caminho crítico
 
-O Reliability Plan fica em: `prodops/assessment/reliability-plan/`
+O Reliability Plan fica em: `prodops/journeys/assessment/reliability-plans/`
 
 ## OBCs
 
@@ -48,4 +48,4 @@ Para detalhes sobre como aplicar durante o TDD cycle: [ProdOps TDD — Confiabil
 
 ## Validação pós-deploy
 
-Após o deploy, validar os critérios de confiabilidade definidos no OBC. Registrar evidências em `prodops/artifacts/trails/release-trail.md` e `prodops/operation/operational-trail.md`.
+Após o deploy, validar os critérios de confiabilidade definidos no OBC. Registrar evidências em `prodops/artifacts/trails/release-trail.md` e `prodops/journeys/operation/operational-trail.md`.

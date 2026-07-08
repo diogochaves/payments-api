@@ -24,7 +24,7 @@ Definir e verificar requisitos de confiabilidade antes, durante e após a implem
 
 - Riscos documentados em `prodops/journeys/assessment/risks.md`
 - OBC com SLIs e Reliability Rules em `prodops/artifacts/obcs/`
-- Reliability Plan entry em `prodops/assessment/reliability-plans/`
+- Reliability Plan entry em `prodops/journeys/assessment/reliability-plans/`
 
 ## Documentação canônica
 

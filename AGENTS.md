@@ -9,11 +9,12 @@ ProdOps é a fonte canônica de contexto de produto e processo deste repositóri
 1. `prodops/README.md` — portal e mapa de navegação
 2. `prodops/framework/principles.md` — princípios obrigatórios
 3. `prodops/framework/glossary.md` — termos canônicos
-4. `prodops/execution-model/README.md` — identificar o modo (Upstream ou Downstream)
-5. `prodops/journeys/README.md` — identificar a jornada
-6. A jornada identificada em `prodops/journeys/<journey>/`
-7. A fase em `prodops/journeys/delivery/phases/<phase>/README.md` (se for Delivery)
-8. A practice ou capability relevante
+4. `prodops/framework/canonical-paths.md` — localizações canônicas
+5. `prodops/execution-model/README.md` — identificar o modo (Upstream ou Downstream)
+6. `prodops/journeys/README.md` — identificar a jornada
+7. A jornada identificada em `prodops/journeys/<journey>/`
+8. A fase em `prodops/journeys/delivery/phases/<phase>/README.md` (se for Delivery)
+9. A practice ou capability relevante
 
 ---
 

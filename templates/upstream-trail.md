@@ -1,15 +1,20 @@
-# Experiment Upstream Trail
+# LEGACY TEMPLATE - Experiment Upstream Trail
+
+This root template is kept only for historical compatibility.
+For new Discovery experiment trails, use:
+
+`prodops/templates/discovery/trail.md`
 
 Canonical location:
 
 ```text
-prodops/upstream/experiments/NNN-short-slug/upstream-trail.md
+prodops/journeys/discovery/experiments/NNN-short-slug/upstream-trail.md
 ```
 
 This file records chronological activity for one Upstream experiment.
 
 Do not use this template as the primary global trail. The global
-`prodops/upstream/upstream-trail.md` is only a high-level index for
+`prodops/journeys/discovery/upstream-trail.md` is only a high-level index for
 cross-experiment milestones, migrations, promotions and repository-wide
 Upstream process changes.
 
@@ -17,7 +22,7 @@ Upstream process changes.
 
 Reference:
 
-`prodops/upstream/experiments/NNN-short-slug/experiment.md`
+`prodops/journeys/discovery/experiments/NNN-short-slug/experiment.md`
 
 ---
 

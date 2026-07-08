@@ -44,25 +44,15 @@ The `api/` package enforces these rules via `eslint.config.mjs`. Write code that
 
 ## Clean Code
 
-- Keep the implementation cohesive and close to the behavior being changed.
-- Use explicit names for domain concepts, contracts, events, provider mappings, and test scenarios.
-- Prefer simple control flow over clever abstractions.
-- Keep functions small enough to show their main decision path.
-- Preserve dependency direction and module boundaries.
-- Avoid drive-by cleanup, speculative refactors, and broad formatting churn.
+See [`references/engineering/clean-code/`](../../references/engineering/clean-code/README.md) for the full reference.
+
+Key operational rule for this repo: avoid drive-by cleanup, speculative refactors, and broad formatting churn. Refactor only in the Yellow phase, only under green tests.
 
 ## TDD Cycle
 
-Use classical TDD (Detroit school) for behavior changes. Classical TDD verifies observable state — HTTP responses and database state — not interactions or call sequences.
+See [`references/engineering/tdd-prodops/red-green-refactor.md`](../../references/engineering/tdd-prodops/red-green-refactor.md) for the full cycle with allowed/prohibited actions per phase.
 
-1. Red: write or update a focused test that expresses the desired behavior.
-2. Run the focused test and confirm it fails for the expected behavioral reason.
-3. Green: implement the smallest production change to pass the test.
-4. Run the focused test and confirm it passes.
-5. Refactor: improve structure only while preserving behavior.
-6. Rerun the focused test after refactoring.
-
-Good TDD evidence includes:
+Required evidence before committing:
 
 - The test file and scenario added or changed.
 - The failing command and failure reason from the red phase.
@@ -72,7 +62,7 @@ Do not skip the red phase unless the task is documentation-only, mechanical clea
 
 ## No Mocks Rule
 
-> **Definição técnica canônica.** O gate de enforcement (o que bloqueia merge) está em [`prodops/journeys/delivery/phases/finish/quality-gates.md`](../../../prodops/journeys/delivery/phases/finish/quality-gates.md).
+> **Definição técnica canônica.** O gate de enforcement (o que bloqueia merge) está em [`prodops/journeys/delivery/phases/finish/quality-gates.md`](../../../prodops/journeys/delivery/phases/finish/quality-gates.md). Para a política completa com Yellow Bar patterns aceitáveis, ver [`references/engineering/tdd-prodops/mocking-policy.md`](../../references/engineering/tdd-prodops/mocking-policy.md).
 
 **Acceptance and integration tests never use test doubles.** This is an unconditional rule.
 

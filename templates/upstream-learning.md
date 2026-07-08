@@ -1,4 +1,9 @@
-# Upstream Learning
+# LEGACY TEMPLATE - Upstream Learning
+
+This root template is kept only for historical compatibility.
+For new reusable Discovery learnings, register them in:
+
+`prodops/journeys/discovery/learnings.md`
 
 ## Status
 
@@ -33,7 +38,7 @@ Origin of this learning.
 
 Experiment(s):
 
-- `prodops/upstream/experiments/NNN-short-slug/experiment.md`
+- `prodops/journeys/discovery/experiments/NNN-short-slug/experiment.md`
 
 Additional references:
 

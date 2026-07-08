@@ -133,10 +133,10 @@ O objetivo é manter cada experimento focado em reduzir uma única incerteza.
 Novos experimentos devem usar esta estrutura:
 
 ```text
-prodops/upstream/experiments/NNN-short-slug/
+prodops/journeys/discovery/experiments/NNN-short-slug/
   experiment.md
   upstream-trail.md
   evidence/
 ```
 
-Arquivos planos diretamente em `prodops/upstream/experiments/*.md` são artefatos legados. Mantê-los legíveis, mas não criar novos experimentos nesse formato.
+Arquivos planos restaurados de caminhos legados são artefatos históricos. Mantê-los legíveis, mas não criar novos experimentos nesse formato.
