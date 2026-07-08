@@ -1,5 +1,10 @@
 # Mocking Policy — No Mocks Rule
 
+> **Hierarquia de autoridade:**
+> - Gate de enforcement (o que bloqueia merge): [`journeys/delivery/phases/finish/quality-gates.md`](../../../../journeys/delivery/phases/finish/quality-gates.md)
+> - Definição técnica canônica: [`skills/hack/references/workflow.md § No Mocks Rule`](../../../hack/references/workflow.md)
+> - Este arquivo: referência de engenharia — consolida a política com exemplos e Yellow Bar patterns
+
 ---
 
 ## Prohibited in `api/test/`

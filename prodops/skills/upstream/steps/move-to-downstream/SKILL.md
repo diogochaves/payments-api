@@ -23,8 +23,10 @@ locations and registering the capability in the Iteration Plan.
    - To: `prodops/artifacts/obcs/<slug>.md`
    - Remove any "Upstream draft only" marking from the file.
 4. Add an entry to the Iteration Plan at
-   `prodops/artifacts/plans/iteration-plan.md` under
-   "Iteration Backlog identificado".
+   `prodops/artifacts/plans/iteration-plan.md` with decision status `Entrou`
+   in the main plan table — not merely in "Iteration Backlog identificado".
+   This satisfies the Downstream pre-condition that requires status `Entrou`
+   before Bootstrap can begin.
 5. If the capability had a Tracking List entry, update its status to
    "Promovido para Downstream" in `prodops/artifacts/product/tracking-list.md`.
 6. Append a promotion entry to the experiment's trail:

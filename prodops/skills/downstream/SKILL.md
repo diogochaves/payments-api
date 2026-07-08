@@ -36,7 +36,7 @@ only in `prodops/artifacts/obcs/`.
 2. Read the relevant Current State, Assessment, Reliability Plan, and BDD
    Feature.
 3. Execute the full flow:
-   `Hack -> Sync -> Finish -> Ship -> Validate -> Promote`.
+   `Bootstrap -> Hack -> Sync -> Finish -> Ship -> Validate -> Promote`.
 4. Use TDD for behavior changes.
 5. Update impacted OBCs, BDDs, Reliability Plan items, and operational artifacts.
 6. Validate with concrete evidence.

@@ -34,6 +34,14 @@ check_path "prodops/journeys/discovery/experiments"
 check_path "prodops/journeys/assessment/reliability-plans"
 check_path "prodops/journeys/assessment/risks.md"
 check_path "prodops/journeys/operation"
+check_path "prodops/journeys/delivery/phases/bootstrap/README.md"
+check_path "prodops/journeys/delivery/phases/hack/README.md"
+check_path "prodops/journeys/delivery/phases/finish/quality-gates.md"
+
+# Verify key committed OBC artifacts exist for items with Entrou status
+for obc in api-token-validation create-invoice-boleto webhook-configuration credit-card-authorization-confirmation; do
+  check_path "prodops/artifacts/obcs/${obc}.md"
+done
 
 while IFS= read -r experiment_dir; do
   [[ -z "${experiment_dir}" ]] && continue
@@ -43,8 +51,8 @@ done < <(find prodops/journeys/discovery/experiments -mindepth 1 -maxdepth 1 -ty
 
 legacy_refs="$(
   rg -n \
-    'prodops/(upstream|product|downstream/release-trail\.md|assessment/reliability-plan|assessment/reliability-plans|assessment/event-storming|assessment/architecture)' \
-    AGENTS.md prodops/README.md prodops/framework prodops/execution-model prodops/journeys prodops/skills prodops/templates \
+    'prodops/(upstream|product|downstream/release-trail\.md|assessment/reliability-plan|assessment/reliability-plans|assessment/event-storming|assessment/architecture)|prodops/operation/|delivery/flows/' \
+    AGENTS.md prodops/README.md prodops/framework prodops/execution-model prodops/journeys prodops/skills prodops/templates prodops/business-intents \
     -g '!prodops/framework/canonical-paths.md' \
     -g '!prodops/journeys/discovery/upstream-trail.md' \
     -g '!prodops/journeys/discovery/experiments/**/upstream-trail.md' \

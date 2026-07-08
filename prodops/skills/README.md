@@ -21,7 +21,10 @@ Skills NÃO são capabilities.
 | Downstream | Modo Downstream | [downstream/SKILL.md](downstream/SKILL.md) |
 | Promote | Fase Promote | [promote/SKILL.md](promote/SKILL.md) |
 | `hack/bootstrap` | Legacy branch-preparation shortcut within Hack | [hack/steps/bootstrap/SKILL.md](hack/steps/bootstrap/SKILL.md) |
+| `hack/tdd` | Step within Hack | [hack/steps/tdd/SKILL.md](hack/steps/tdd/SKILL.md) |
 | `hack/commit` | Step within Hack | [hack/steps/commit/SKILL.md](hack/steps/commit/SKILL.md) |
+| `upstream/deploy-to-sandbox` | Step within Upstream | [upstream/steps/deploy-to-sandbox/SKILL.md](upstream/steps/deploy-to-sandbox/SKILL.md) |
+| `payments-api-local-testing` | Referência de testes locais | [payments-api-local-testing/SKILL.md](payments-api-local-testing/SKILL.md) |
 
 ## Estrutura de cada Skill
 

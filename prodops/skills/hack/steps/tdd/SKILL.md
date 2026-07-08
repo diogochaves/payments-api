@@ -83,7 +83,7 @@ Read before starting:
 
 | Reference | When to use |
 |---|---|
-| [`../../../../references/engineering/tdd-prodops/red-green-refactor.md`](../../../../references/engineering/tdd-prodops/red-green-refactor.md) | Allowed/prohibited actions per phase |
-| [`../../../../references/engineering/tdd-prodops/mocking-policy.md`](../../../../references/engineering/tdd-prodops/mocking-policy.md) | What is permitted in Yellow Bar |
-| [`../../../../references/engineering/tdd-prodops/observability.md`](../../../../references/engineering/tdd-prodops/observability.md) | What to validate after Green |
-| [`../../../../references/engineering/clean-code/refactoring.md`](../../../../references/engineering/clean-code/refactoring.md) | Refactoring techniques for Yellow phase |
+| [`../../../references/engineering/tdd-prodops/red-green-refactor.md`](../../../references/engineering/tdd-prodops/red-green-refactor.md) | Allowed/prohibited actions per phase |
+| [`../../../references/engineering/tdd-prodops/mocking-policy.md`](../../../references/engineering/tdd-prodops/mocking-policy.md) | What is permitted in Yellow Bar |
+| [`../../../references/engineering/tdd-prodops/observability.md`](../../../references/engineering/tdd-prodops/observability.md) | What to validate after Green |
+| [`../../../references/engineering/clean-code/refactoring.md`](../../../references/engineering/clean-code/refactoring.md) | Refactoring techniques for Yellow phase |

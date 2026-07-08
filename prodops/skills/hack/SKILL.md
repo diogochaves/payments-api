@@ -73,7 +73,7 @@ module boundary.
     or event topic), update `prodops/journeys/assessment/architecture/overview.md`:
     - edit the Mermaid diagram to reflect the change;
     - add a row to the History table with today's date and a one-line description.
-12. Append evidence to `prodops/artifacts/trails/release-trail.md`.
+13. Append evidence to `prodops/artifacts/trails/release-trail.md`.
 
 ## Guardrails
 

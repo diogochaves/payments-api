@@ -96,7 +96,7 @@ Every Upstream experiment must:
 6. Stop when the hypothesis is answered.
 7. Avoid expanding into unrelated or out-of-repository capabilities.
 8. Update impacted ProdOps artifacts.
-9. Register progress in the active experiment trail at `prodops/journeys/discovery/experiments/<id>-<slug>/upstream-trail.md`.
+9. Register progress in the active experiment trail at `prodops/journeys/discovery/experiments/<NNN-slug>/upstream-trail.md`.
 10. Register reusable findings in `prodops/journeys/discovery/learnings.md`.
 11. Finish with a recommendation.
 
@@ -127,14 +127,14 @@ Possible targets:
 - `prodops/artifacts/product/product-deck.md`
 - `prodops/artifacts/product/service-decks/`
 - `prodops/artifacts/product/tracking-list.md`
-- `prodops/journeys/discovery/experiments/<id>-<slug>/features/` (BDD Features — stay here until move-to-downstream)
-- `prodops/journeys/discovery/experiments/<id>-<slug>/obcs/` (OBC drafts — stay here until move-to-downstream)
+- `prodops/journeys/discovery/experiments/<NNN-slug>/features/` (BDD Features — stay here until move-to-downstream)
+- `prodops/journeys/discovery/experiments/<NNN-slug>/obcs/` (OBC drafts — stay here until move-to-downstream)
 - `prodops/journeys/assessment/event-storming/`
 - `prodops/journeys/assessment/reliability-plans/`
 - `prodops/artifacts/obcs/` (committed OBCs — only after move-to-downstream)
 - `prodops/artifacts/bdd/` (committed BDD Features — only after move-to-downstream)
 - `prodops/journeys/discovery/learnings.md`
-- `prodops/journeys/discovery/experiments/<id>-<slug>/upstream-trail.md`
+- `prodops/journeys/discovery/experiments/<NNN-slug>/upstream-trail.md`
 - `prodops/journeys/discovery/upstream-trail.md` only for global milestones, promotions, migrations, or repository-wide Upstream process changes
 
 Do not update unrelated artifacts.
