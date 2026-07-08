@@ -27,7 +27,7 @@ this skill when the full ProdOps context must be verified.
 1. Confirm the work is Upstream or Downstream. If it is exploratory, use the
    Upstream skill instead.
 2. Confirm Downstream prerequisites exist: OBC, BDD Feature, Iteration Plan
-   entry with status `Entrou`, and documented risks.
+   entry with status `Entrou`, documented risks, and a Reliability Plan entry.
 3. Read only the product, reliability, architecture, and contract artifacts
    directly related to the requested capability.
 4. Inspect the working tree with `git status`.

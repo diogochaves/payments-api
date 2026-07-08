@@ -50,30 +50,13 @@ module boundary.
 
 ## Flow
 
-1. Confirm the requested behavior against ProdOps artifacts.
-2. Create or select a focused branch.
-3. Map the smallest module boundary that can satisfy the behavior.
-4. Write or update a failing test first when behavior changes.
-5. Implement the smallest change that makes the test pass.
-6. Refactor only after tests are green.
-7. Apply Clean Code rules while refactoring.
-8. Run targeted validation first, then broader validation if shared behavior is
-   affected.
-9. Run lint for the affected package when a lint script exists.
-10. Update only impacted ProdOps artifacts.
-11. If the change adds, removes, or renames a domain event (`eventEmitter.emit()`
-    or `@OnEvent()`), update `prodops/journeys/assessment/event-storming/plan.json`:
-    - add the new event to the relevant flow bands (negative_kpis, negative_trends,
-      positive_kpis, positive_trends);
-    - add both success and `_exception` variants to `customEvents`;
-    - add an `sloSuggestions` entry if the event is on the critical path;
-    - update `assumptions[last]` with the date and change summary.
-    Use `prodops/journeys/assessment/event-storming/plan-model.json` as the format reference.
-12. If the change is structural (new module, route, external dependency, table,
-    or event topic), update `prodops/journeys/assessment/architecture/overview.md`:
-    - edit the Mermaid diagram to reflect the change;
-    - add a row to the History table with today's date and a one-line description.
-13. Append evidence to `prodops/artifacts/trails/release-trail.md`.
+When invoked without a step argument, execute the three steps in sequence.
+Before starting, confirm the requested behavior exists in the ProdOps artifacts
+listed in Inputs above.
+
+1. **[bootstrap](steps/bootstrap/SKILL.md)** — clean working tree, sync base branch, create feature branch
+2. **[tdd](steps/tdd/SKILL.md)** — Red → Green → Yellow TDD cycle with artifact closure
+3. **[commit](steps/commit/SKILL.md)** — stage, review diff, commit with Conventional Commit
 
 ## Guardrails
 
