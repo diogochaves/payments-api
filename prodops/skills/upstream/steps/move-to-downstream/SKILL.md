@@ -1,9 +1,9 @@
 ---
-name: upstream/move-to-delivery
+name: upstream/move-to-downstream
 description: Promote a completed upstream experiment to the Downstream delivery flow. Use after the Decision Package is complete and the Product Manager + Tech Lead have approved the capability for delivery.
 ---
 
-# UPSTREAM → MOVE-TO-DELIVERY
+# UPSTREAM → MOVE-TO-DOWNSTREAM
 
 Execute only the promotion step of the Upstream flow.
 

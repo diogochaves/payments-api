@@ -60,8 +60,7 @@ Para detalhes de cada modo, variáveis de ambiente e instrumentação Datadog: v
 
 ```
 api/                NestJS API — backend (porta 3011)
-prodops/            Framework ProdOps — artefatos, fluxos, documentação
-skills/             Guias de execução para agentes e desenvolvedores
+prodops/            Framework ProdOps — artefatos, fluxos, documentação, skills
 scripts/            Scripts de setup, deploy e testes
 validation-workbench/  Bancada Upstream para validar fluxos (porta 5173)
 ```
@@ -74,7 +73,7 @@ Este repositório materializa o Framework ProdOps. Para entender como o framewor
 
 1. [prodops/README.md](prodops/README.md) — portal e mapa de navegação
 2. [prodops/framework/principles.md](prodops/framework/principles.md) — princípios
-3. [prodops/delivery/README.md](prodops/delivery/README.md) — CI Sync e CI Async
+3. [prodops/journeys/delivery/README.md](prodops/journeys/delivery/README.md) — CI Sync e CI Async
 
 ---
 

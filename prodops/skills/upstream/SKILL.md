@@ -13,24 +13,10 @@ exclusively — do not run the rest of the flow.
 
 | Step | File | When to use |
 |---|---|---|
-| `move-to-delivery` | [steps/move-to-delivery/SKILL.md](steps/move-to-delivery/SKILL.md) | Promote a completed experiment to the Downstream delivery flow |
+| `move-to-downstream` | [steps/move-to-downstream/SKILL.md](steps/move-to-downstream/SKILL.md) | Promote a completed experiment to the Downstream delivery flow |
 | `deploy-to-sandbox` | [steps/deploy-to-sandbox/SKILL.md](steps/deploy-to-sandbox/SKILL.md) | Deploy experiment branch to real AWS sandbox for provider validation |
 
 If the requested step is not listed, run the full flow.
-
-### Naming rationale
-
-`move-to-delivery` follows the canonical term from Dual-Track Agile (Patton / Cagan, SVPG).
-In that model, a validated capability in the Discovery Track is said to **"move to delivery"**
-when it crosses into the Delivery Track with a committed scope.
-
-The term `promote` was not adopted here because it is already used in this
-framework's CI Async phase (`Ship → Validate → Promote`) with a different
-meaning: advancing a release through deployment stages. Using `promote` for
-both the experiment transition and the release stage would create ambiguity.
-
-References: [SVPG — Discovery vs. Delivery](https://www.svpg.com/discovery-vs-delivery/) ·
-[SVPG — Discovery-Delivery](https://www.svpg.com/discovery-delivery/)
 
 ---
 
@@ -141,12 +127,12 @@ Possible targets:
 - `prodops/artifacts/product/product-deck.md`
 - `prodops/artifacts/product/service-decks/`
 - `prodops/artifacts/product/tracking-list.md`
-- `prodops/journeys/discovery/experiments/<id>-<slug>/features/` (BDD Features — stay here until move-to-delivery)
-- `prodops/journeys/discovery/experiments/<id>-<slug>/obcs/` (OBC drafts — stay here until move-to-delivery)
+- `prodops/journeys/discovery/experiments/<id>-<slug>/features/` (BDD Features — stay here until move-to-downstream)
+- `prodops/journeys/discovery/experiments/<id>-<slug>/obcs/` (OBC drafts — stay here until move-to-downstream)
 - `prodops/journeys/assessment/event-storming/`
 - `prodops/journeys/assessment/reliability-plans/`
-- `prodops/artifacts/obcs/` (committed OBCs — only after move-to-delivery)
-- `prodops/artifacts/bdd/` (committed BDD Features — only after move-to-delivery)
+- `prodops/artifacts/obcs/` (committed OBCs — only after move-to-downstream)
+- `prodops/artifacts/bdd/` (committed BDD Features — only after move-to-downstream)
 - `prodops/journeys/discovery/learnings.md`
 - `prodops/journeys/discovery/experiments/<id>-<slug>/upstream-trail.md`
 - `prodops/journeys/discovery/upstream-trail.md` only for global milestones, promotions, migrations, or repository-wide Upstream process changes
