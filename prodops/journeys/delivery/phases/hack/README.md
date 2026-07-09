@@ -4,6 +4,34 @@ Hack Flow é a segunda fase do **CI Sync**, sucede o [Bootstrap](../bootstrap/RE
 
 O Hack recebe do Bootstrap uma branch limpa, o ambiente pronto, os artefatos ProdOps lidos e o contrato verificado. **O Hack começa diretamente no TDD — não há leitura ou preparação antes do primeiro teste.**
 
+---
+
+## Visão Geral
+
+**Para que serve:** É a fase de implementação do CI Sync. Transforma critérios de aceite do OBC e cenários BDD em código verificável por testes, seguindo o ciclo Red→Green→Refactor.
+
+**Como funciona:**
+
+```
+Red Bar (teste falha pela razão certa) → Green Bar (mínimo que passa)
+→ Refactor → Commit Workflow → Validação → Evidência no Release Trail
+```
+
+**Guardrails principais:**
+
+- Não pular o Red Bar — um teste que nunca foi vermelho pode não verificar o comportamento de fato
+- Não usar mocks para serviços próprios ou regras de negócio
+- Não adicionar features além do que o teste atual exige
+- Se contrato ou critério de aceite estiver ausente, parar e voltar ao Bootstrap
+
+**Posição no fluxo:**
+
+```
+CI Sync  →  Bootstrap → [Hack] → Sync → Finish
+```
+
+---
+
 ## Capabilities do Hack Flow
 
 O Hack Flow consome duas capabilities obrigatórias:

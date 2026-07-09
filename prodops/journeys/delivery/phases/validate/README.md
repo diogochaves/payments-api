@@ -2,6 +2,34 @@
 
 # Validate
 
+---
+
+## Visão Geral
+
+**Para que serve:** Prova que a entrega funciona no ambiente alvo com evidência mensurável — testes, logs, métricas e SLOs. Não assume que o que passou em local passa em produção.
+
+**Como funciona:**
+
+```
+Identificar capability/OBC → Selecionar evidências executáveis
+→ Executar validações → Confirmar BDD no ambiente alvo
+→ Verificar observabilidade → Avaliar riscos → Release Trail
+```
+
+**Guardrails principais:**
+
+- Não inventar métricas ou SLOs — se ausentes, registrar o gap no artefato ProdOps
+- Preferir evidência executável sobre afirmações narrativas
+- Se falhar: não promover; abrir novo ciclo Hack com o comportamento observado como Red Bar
+
+**Posição no fluxo:**
+
+```
+CI Async  →  Ship → [Validate] → Promote
+```
+
+---
+
 **Objetivo:** verificar a entrega em execução no ambiente alvo.
 
 ## Capabilities do Validate

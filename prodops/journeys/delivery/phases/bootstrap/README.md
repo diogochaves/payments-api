@@ -4,6 +4,32 @@ Bootstrap é a primeira fase do **CI Sync**. Prepara o ambiente de desenvolvimen
 
 ---
 
+## Visão Geral
+
+**Para que serve:** É a fase de preparação do CI Sync — não produz código, produz **condições**. Garante que o Hack começa com branch limpa, ambiente pronto, artefatos ProdOps lidos e contrato verificado.
+
+**Como funciona:**
+
+```
+Verificar artefatos ProdOps → Inspecionar worktree → Criar branch
+→ Ler OBC + BDD Feature → Confirmar contrato → Hack pode começar
+```
+
+**Guardrails principais:**
+
+- Não inventar OBCs, BDD ou critérios de aceite faltantes — bloqueio explícito, não avançar para Hack
+- Não começar implementação em `main` ou branch compartilhada
+- Não descartar trabalho local sem confirmação
+- Não alargar escopo durante o Bootstrap
+
+**Posição no fluxo:**
+
+```
+CI Sync  →  [Bootstrap] → Hack → Sync → Finish
+```
+
+---
+
 ## Objetivo
 
 Entregar ao Hack uma branch limpa, o ambiente pronto, os artefatos ProdOps lidos e o contrato verificado.

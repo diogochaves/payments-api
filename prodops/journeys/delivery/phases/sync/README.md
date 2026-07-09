@@ -2,6 +2,41 @@
 
 # Sync
 
+---
+
+## Visão Geral
+
+**Para que serve:** Checkpoint de consistência entre o Hack e o Finish. Tem dois papéis: manter a feature branch atualizada em relação à base e garantir que artefatos (BDD, Event Storming, Release Trail) estejam alinhados com o que foi implementado.
+
+**Como funciona:**
+
+```
+Fetch remoto → Atualiza base (fast-forward) → Integra base na feature
+→ Resolve conflitos → Valida áreas tocadas → Branch limpa
+```
+
+Na dimensão de artefatos:
+
+```
+Identifica inconsistência → Rastreia fonte de verdade em prodops/
+→ Atualiza só o que ficou stale → Registra no Release Trail
+```
+
+**Guardrails principais:**
+
+- Nunca descarta trabalho local nem reescreve histórico compartilhado
+- Não enfraquece testes para fazer o sync passar
+- Conflitos são inspecionados dos dois lados antes de qualquer edição
+- Não reescreve decisões de produto durante trabalho de consistência
+
+**Posição no fluxo:**
+
+```
+CI Sync  →  Bootstrap → Hack → [Sync] → Finish
+```
+
+---
+
 Objetivo: confirmar que todos os artefatos tocados pela implementação do Hack estão consistentes entre si.
 
 Checklist:

@@ -2,6 +2,34 @@
 
 # Promote
 
+---
+
+## Visão Geral
+
+**Para que serve:** Oficializa a evolução do release com aprovação formal de PM e Tech Lead, move o artefato para o próximo ambiente e fecha o ciclo com evidência registrada no Release Trail.
+
+**Como funciona:**
+
+```
+Confirmar Quality Gates → Verificar prontidão operacional
+→ Release Approval (PM + Tech Lead) → Environment Promotion
+→ Fechar Task → Registrar no Release Trail
+```
+
+**Guardrails principais:**
+
+- Não promover com evidência faltante
+- Não aceitar risco alto silenciosamente — documentar ou mover para follow-up
+- Nunca substituir histórico do Release Trail; sempre adicionar nova entrada
+
+**Posição no fluxo:**
+
+```
+CI Async  →  Ship → Validate → [Promote]
+```
+
+---
+
 **Objetivo:** oficializar a evolução da versão com aprovação formal e evidência registrada.
 
 ## Capabilities do Promote

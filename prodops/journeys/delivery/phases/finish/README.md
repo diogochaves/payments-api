@@ -2,6 +2,35 @@
 
 # Finish
 
+---
+
+## Visão Geral
+
+**Para que serve:** É a porta de saída do CI Sync. Garante que todos os quality gates passam antes de marcar o trabalho como pronto para ship — lint, build, testes, Definition of Done e evidência registrada no Release Trail.
+
+**Como funciona:**
+
+```
+Revisar escopo do diff → Executar lint + build + testes
+→ Confirmar artefatos ProdOps atualizados → Evidência no Release Trail → Publicar PR
+```
+
+**Guardrails principais:**
+
+- Não marcar completo sem evidência
+- Não esconder testes pulados — registrar o motivo
+- Não expandir escopo durante o Finish
+
+**Posição no fluxo:**
+
+```
+CI Sync  →  Bootstrap → Hack → Sync → [Finish]
+                                               ↓
+CI Async →                               Ship → Validate → Promote
+```
+
+---
+
 Objetivo: confirmar que todos os Quality Gates passam antes de marcar o trabalho como pronto para ship.
 
 Checklist:

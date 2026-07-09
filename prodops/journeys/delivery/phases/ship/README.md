@@ -2,6 +2,36 @@
 
 # Ship
 
+---
+
+## Visão Geral
+
+**Para que serve:** Transforma a implementação aprovada pelo Finish em um artefato executável, versionado e publicado, e conduz sua entrega até o ambiente alvo via deployment.
+
+**Como funciona:**
+
+```
+Preparation: Build → Package → Version → Sign → SBOM → Publish Artifact
+Deployment:  Deploy → Progressive Delivery → Rollout
+```
+
+**Guardrails principais:**
+
+- Não shipar mudanças de comportamento não documentadas
+- Não incluir secrets, tokens reais ou paths locais no diff
+- Evidência TDD obrigatória para mudanças de comportamento — ausência deve ser justificada
+- Não alterar escopo de negócio durante o ship
+
+**Posição no fluxo:**
+
+```
+CI Async  →  [Ship] → Validate → Promote
+                 ↑
+        precede pelo Finish do CI Sync
+```
+
+---
+
 **Objetivo:** transformar a implementação finalizada em um artefato executável, publicável e implantável, conduzindo sua entrega até o ambiente alvo.
 
 O Ship é organizado em duas famílias de capabilities:
