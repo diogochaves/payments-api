@@ -307,3 +307,41 @@ Implemented Boleto invoice creation on the Payments gateway: contract extended w
 
 - `externalReference`: a BDD Feature (cenário "Criar boleto com sucesso") indica que o `externalReference` enviado à Asaas deve conter o identificador do pedido (`MS-200010`). O código atual usa `externalReference = invoiceId` (`inv_ulid`) e o `assertProviderChargeContract` valida consistência contra esse valor. Mudar essa semântica quebraria o contrato PIX/cartão já estabilizado e seus acceptance tests. Preservada a regra existente (`externalReference = invoiceId`); alinhamento com a BDD Boleto fica como divergência registrada para decisão posterior no Delivery Sync, conforme regra de Context Rules do AGENTS.md ("preservar a existente e registrar em Decision Trail").
 - `payment.boleto.expired` (Risco B3) não implementado nesta entrega — depende de webhook `PAYMENT_OVERDUE` do provedor, atualmente mapeado como evento ignorado. A jornada de expiração assíncrona permanece fora deste slice.
+
+## 2026-07-08 — Fix: test-acceptance.sh não executava a suíte Boleto
+
+### Summary
+
+`scripts/test-acceptance.sh` não incluía `test/criar-invoice-boleto.e2e-spec.ts` em nenhum filtro — nem na suíte padrão (sem argumento), nem como opção nomeada (`criar`, `cancelar`, `confirmar`, `token`). Os 8 cenários BDD de Boleto, implementados e commitados na entrada anterior deste trail, nunca eram executados pelo wrapper de testes de aceitação. Adicionado filtro `boleto` e inclusão na suíte padrão.
+
+Corrigido também um bug de detecção de container: `docker inspect` em um container inexistente emite uma linha vazia em stdout (comportamento observado no Docker CLI 29.6.1) além do erro em stderr; combinado com `set -o pipefail`, isso encerrava o script silenciosamente antes de alcançar o fallback `missing`, impedindo a criação automática do container LocalStack quando ausente.
+
+### Related OBC
+
+`prodops/artifacts/obcs/create-invoice-boleto.md`
+
+### Related BDD
+
+`prodops/artifacts/bdd/create-invoice-boleto.feature` (8 cenários — já cobertos por `api/test/criar-invoice-boleto.e2e-spec.ts`, agora efetivamente executados)
+
+### Evidence
+
+- `scripts/test-acceptance.sh`:
+  - Linha de detecção de estado do container: normaliza saída de `docker inspect` (`tr -d '[:space:]'`) e neutraliza o exit code da pipeline (`|| true`) antes de aplicar o fallback `missing`, corrigindo a interação com `set -euo pipefail`.
+  - Filtro `boleto` adicionado, mapeando para `test/criar-invoice-boleto.e2e-spec.ts`.
+  - Suíte padrão (`FILTER=""`) passa a incluir `test/criar-invoice-boleto.e2e-spec.ts`.
+  - Comentário de uso e mensagem de erro de filtro inválido atualizados.
+- Validação executada: container `localstack` removido manualmente (`docker rm -f localstack`) e `./scripts/test-acceptance.sh` reexecutado do zero — script detectou corretamente o estado `missing`, recriou o container, aguardou saúde, e rodou a suíte completa.
+- Suite completa sem regressão: `criar-invoice`, `criar-invoice-boleto`, `cancelar-invoice`, `confirmar-pagamento`, `api-token` — 38 passed, 5 suites.
+
+### Artifacts Updated
+
+- Product Deck: não alterado.
+- Service Deck: não alterado.
+- Iteration Plan: não alterado.
+- OBC: não alterado.
+- BDD Feature: não alterada — o gap era de execução (script wrapper), não de cobertura de cenário.
+
+### Notes
+
+Esse gap não teria sido pego por CI, já que `.github/workflows/staging-deploy.yml` invoca os specs diretamente via `npx jest` (não via `test-acceptance.sh`) — o wrapper é usado apenas em fluxo local. Vale considerar, em um Sync futuro, se o CI e o script local devem compartilhar a mesma lista de specs para evitar essa classe de divergência se repetir.
