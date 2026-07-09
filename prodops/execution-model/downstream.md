@@ -52,7 +52,7 @@ CI Async: Ship → Validate → Promote            (plataforma, pipelines, ambie
 |---|---|---|
 | Bootstrap | Branch + ambiente + contexto ProdOps | [../journeys/delivery/phases/bootstrap/README.md](../journeys/delivery/phases/bootstrap/README.md) |
 | Hack | Implementação via ProdOps TDD | [../journeys/delivery/phases/hack/README.md](../journeys/delivery/phases/hack/README.md) |
-| Sync | Consistência de artefatos | [../journeys/delivery/phases/sync/README.md](../journeys/delivery/phases/sync/README.md) |
+| Sync | Branch sync (rebase) + alinhamento de artefatos (align) | [../journeys/delivery/phases/sync/README.md](../journeys/delivery/phases/sync/README.md) |
 | Finish | Quality Gates + PR | [../journeys/delivery/phases/finish/README.md](../journeys/delivery/phases/finish/README.md) |
 | Ship | Preparation + Deployment | [../journeys/delivery/phases/ship/README.md](../journeys/delivery/phases/ship/README.md) |
 | Validate | Runtime + observabilidade + SLO | [../journeys/delivery/phases/validate/README.md](../journeys/delivery/phases/validate/README.md) |

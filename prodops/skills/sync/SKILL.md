@@ -1,6 +1,6 @@
 ---
 name: sync
-description: Review consistency, update artifacts, or synchronize a work branch with its base. Use when aligning code, documentation, BDD, Reliability Plan, release records, fetching remote changes, updating from main, resolving conflicts, or ensuring a feature branch is current.
+description: Synchronize a work branch with its base or align ProdOps artifacts with the current implementation. Use when fetching remote changes, resolving conflicts, updating from main, or when BDD Features, Event Storming, architecture, or the Release Trail are stale.
 ---
 
 # SYNC
@@ -8,8 +8,17 @@ description: Review consistency, update artifacts, or synchronize a work branch 
 Use this skill to make the repository internally consistent with the current
 ProdOps context or to synchronize a work branch with its intended base.
 
-For detailed Codex branch synchronization mechanics, read
-`references/workflow.md`.
+The Sync phase has two independent steps. When invoked with a step argument
+(`/sync <step>`), execute only that step. Otherwise run both in sequence.
+
+## Steps
+
+| Step | File | When to use |
+|---|---|---|
+| `rebase` | [steps/rebase/SKILL.md](steps/rebase/SKILL.md) | Branch is behind origin, has conflicts, or needs to incorporate upstream changes |
+| `align` | [steps/align/SKILL.md](steps/align/SKILL.md) | BDD Features, Event Storming, architecture, or Release Trail are stale relative to what was implemented |
+
+If the requested step is not listed, run the full flow.
 
 ## Inputs
 
@@ -20,28 +29,12 @@ For detailed Codex branch synchronization mechanics, read
 
 ## Flow
 
-### Artifact Consistency
+When invoked without a step argument, execute both steps in sequence:
 
-1. Identify the artifact or code inconsistency.
-2. Trace the source of truth in `prodops/`.
-3. Update only stale or impacted files.
-4. Preserve historical release-trail entries.
-5. Validate links, paths, and changed Markdown.
-6. Record the synchronization in the Release Trail when meaningful.
+1. **[rebase](steps/rebase/SKILL.md)** — fetch remote updates, fast-forward base, integrate into feature branch, resolve conflicts, preserve TDD, validate
+2. **[align](steps/align/SKILL.md)** — identify stale artifacts, trace source of truth in `prodops/`, update only impacted files, record in Release Trail
 
-### Branch Synchronization
-
-1. Inspect the worktree and current branch.
-2. Fetch remote updates with pruning.
-3. Identify the base branch and compare local, remote, and feature branch
-   commits.
-4. Update the local base using fast-forward only.
-5. Bring the updated base into the feature branch with the repository's
-   preferred strategy.
-6. Resolve conflicts by preserving intended behavior from both sides.
-7. Preserve or repair tests that encode the branch behavior.
-8. Run validation for touched areas.
-9. Leave the branch clean or clearly report remaining conflicts/blockers.
+For detailed branch synchronization mechanics, read `references/workflow.md`.
 
 ## Guardrails
 

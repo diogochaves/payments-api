@@ -37,7 +37,10 @@ Consome:
 
 ### Sync
 
-Confirma consistência entre implementação e artefatos ProdOps (BDD Feature, OBC, Event Storming, arquitetura).
+Dois steps independentes:
+
+- **rebase** — sincroniza a feature branch com a base (fetch, integração, conflitos, validação)
+- **align** — alinha artefatos ProdOps com a implementação (BDD Feature, Event Storming, arquitetura, Release Trail)
 
 → [phases/sync/README.md](phases/sync/README.md)
 

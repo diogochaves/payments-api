@@ -49,10 +49,10 @@ Ask the developer:
 > "What type of change is this? (`feat`, `fix`, `chore`, `refactor`, `docs`, `test`)"
 > "Short slug for this capability? (e.g. `api-token-db`, `invoice-boleto`, `prodops-tdd-steps`)"
 
-Create the branch from the updated base:
+Create the branch from the updated base, setting the tracking upstream explicitly:
 
 ```bash
-git checkout -b <type>/<short-slug>
+git checkout -b <type>/<short-slug> --track origin/<base-branch>
 ```
 
 If a branch for this capability already exists, switch to it and surface any divergence:
