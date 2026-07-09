@@ -4,6 +4,7 @@
 # Uso:
 #   ./scripts/test-acceptance.sh          # roda todos os specs
 #   ./scripts/test-acceptance.sh criar    # roda apenas criar-invoice
+#   ./scripts/test-acceptance.sh boleto   # roda apenas criar-invoice-boleto
 #   ./scripts/test-acceptance.sh cancelar
 #   ./scripts/test-acceptance.sh confirmar
 #   ./scripts/test-acceptance.sh token
@@ -45,7 +46,8 @@ ok "Docker disponível"
 # ── 2. LocalStack ──────────────────────────────────────────────────────────────
 step "Verificando LocalStack..."
 
-CONTAINER_STATUS=$(docker inspect "${LOCALSTACK_CONTAINER}" --format '{{.State.Status}}' 2>/dev/null || echo "missing")
+CONTAINER_STATUS=$(docker inspect "${LOCALSTACK_CONTAINER}" --format '{{.State.Status}}' 2>/dev/null | tr -d '[:space:]' || true)
+[[ -z "${CONTAINER_STATUS}" ]] && CONTAINER_STATUS="missing"
 
 case "${CONTAINER_STATUS}" in
   running)
@@ -137,17 +139,19 @@ fi
 FILTER="${1:-}"
 case "${FILTER}" in
   criar)     SPECS="test/criar-invoice.e2e-spec.ts" ;;
+  boleto)    SPECS="test/criar-invoice-boleto.e2e-spec.ts" ;;
   cancelar)  SPECS="test/cancelar-invoice.e2e-spec.ts" ;;
   confirmar) SPECS="test/confirmar-pagamento.e2e-spec.ts" ;;
   token)     SPECS="test/api-token.acceptance.e2e-spec.ts" ;;
   "")
     SPECS="test/criar-invoice.e2e-spec.ts \
+           test/criar-invoice-boleto.e2e-spec.ts \
            test/cancelar-invoice.e2e-spec.ts \
            test/confirmar-pagamento.e2e-spec.ts \
            test/api-token.acceptance.e2e-spec.ts"
     ;;
   *)
-    abort "Filtro inválido: '${FILTER}'. Use: criar | cancelar | confirmar | token"
+    abort "Filtro inválido: '${FILTER}'. Use: criar | boleto | cancelar | confirmar | token"
     ;;
 esac
 
