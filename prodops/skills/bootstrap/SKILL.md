@@ -7,9 +7,9 @@ description: Prepare a governed ProdOps Delivery task before implementation. Use
 
 Use this skill to prepare a Delivery task before implementation starts.
 
-Bootstrap is a first-class Delivery phase. The legacy `hack/bootstrap` step may
-be used as a narrow branch-preparation shortcut, but Downstream work should use
-this skill when the full ProdOps context must be verified.
+Bootstrap is a first-class Delivery phase that verifies the full ProdOps context
+before implementation. For branch preparation within a Hack session, use
+`/hack start` — it handles working tree cleanup, base sync, and branch creation.
 
 ## Inputs
 

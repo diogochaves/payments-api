@@ -18,7 +18,7 @@ exclusively — do not run the rest of the flow.
 
 | Step | File | When to use |
 |---|---|---|
-| `bootstrap` | [steps/bootstrap/SKILL.md](steps/bootstrap/SKILL.md) | Clean stage, sync base branch, create feature branch |
+| `start` | [steps/start/SKILL.md](steps/start/SKILL.md) | Clean stage, sync base branch, create feature branch |
 | `tdd` | [steps/tdd/SKILL.md](steps/tdd/SKILL.md) | Execute red → green → yellow cycle with artifact closure |
 | `commit` | [steps/commit/SKILL.md](steps/commit/SKILL.md) | Stage and commit after green + lint + trail |
 
@@ -54,7 +54,7 @@ When invoked without a step argument, execute the three steps in sequence.
 Before starting, confirm the requested behavior exists in the ProdOps artifacts
 listed in Inputs above.
 
-1. **[bootstrap](steps/bootstrap/SKILL.md)** — clean working tree, sync base branch, create feature branch
+1. **[start](steps/start/SKILL.md)** — clean working tree, sync base branch, create feature branch
 2. **[tdd](steps/tdd/SKILL.md)** — Red → Green → Yellow TDD cycle with artifact closure
 3. **[commit](steps/commit/SKILL.md)** — stage, review diff, commit with Conventional Commit
 

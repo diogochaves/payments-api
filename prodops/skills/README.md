@@ -20,7 +20,7 @@ Skills NÃO são capabilities.
 | `upstream/move-to-downstream` | Step within Upstream | [upstream/steps/move-to-downstream/SKILL.md](upstream/steps/move-to-downstream/SKILL.md) |
 | Downstream | Modo Downstream | [downstream/SKILL.md](downstream/SKILL.md) |
 | Promote | Fase Promote | [promote/SKILL.md](promote/SKILL.md) |
-| `hack/bootstrap` | Legacy branch-preparation shortcut within Hack | [hack/steps/bootstrap/SKILL.md](hack/steps/bootstrap/SKILL.md) |
+| `hack/start` | Branch preparation step within Hack | [hack/steps/start/SKILL.md](hack/steps/start/SKILL.md) |
 | `hack/tdd` | Step within Hack | [hack/steps/tdd/SKILL.md](hack/steps/tdd/SKILL.md) |
 | `hack/commit` | Step within Hack | [hack/steps/commit/SKILL.md](hack/steps/commit/SKILL.md) |
 | `upstream/deploy-to-sandbox` | Step within Upstream | [upstream/steps/deploy-to-sandbox/SKILL.md](upstream/steps/deploy-to-sandbox/SKILL.md) |

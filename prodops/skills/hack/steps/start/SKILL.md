@@ -1,9 +1,9 @@
 ---
-name: hack/bootstrap
+name: hack/start
 description: Prepare the working branch before implementation. Check for incomplete work, sync the base branch, and create a correctly named feature branch.
 ---
 
-# HACK → BOOTSTRAP
+# HACK → START
 
 Prepare the git working context before the TDD cycle begins.
 
