@@ -10,11 +10,13 @@ ProdOps é a fonte canônica de contexto de produto e processo deste repositóri
 2. `prodops/framework/principles.md` — princípios obrigatórios
 3. `prodops/framework/glossary.md` — termos canônicos
 4. `prodops/framework/canonical-paths.md` — localizações canônicas
-5. `prodops/execution-model/README.md` — identificar o modo (Upstream ou Downstream)
-6. `prodops/journeys/README.md` — identificar a jornada
-7. A jornada identificada em `prodops/journeys/<journey>/`
-8. A fase em `prodops/journeys/delivery/phases/<phase>/README.md` (se for Delivery)
-9. A practice ou capability relevante
+5. `prodops/framework/flow.md` — fluxo oficial do Framework
+6. `prodops/framework/origin-streams.md` — os quatro Origin Streams
+7. `prodops/execution-model/README.md` — identificar o modo (Upstream ou Downstream)
+8. `prodops/journeys/README.md` — identificar a jornada
+9. A jornada identificada em `prodops/journeys/<journey>/`
+10. A fase em `prodops/journeys/delivery/phases/<phase>/README.md` (se for Delivery)
+11. A practice ou capability relevante
 
 ---
 
@@ -22,13 +24,16 @@ ProdOps é a fonte canônica de contexto de produto e processo deste repositóri
 
 | Assunto | Localização |
 |---|---|
+| Fluxo oficial do Framework | `prodops/framework/flow.md` |
+| Origin Streams (Business, Enterprise, Team, Technology) | `prodops/framework/origin-streams.md` |
+| Intents registradas | `prodops/business-intents/` |
 | Contexto de produto | `prodops/artifacts/product/` |
 | BDD Features (committed) | `prodops/artifacts/bdd/` |
-| OBCs | `prodops/artifacts/obcs/` |
+| OBCs (Observable Business Contracts) | `prodops/artifacts/obcs/` |
 | Riscos | `prodops/journeys/assessment/risks.md` |
 | Iteration Plan | `prodops/artifacts/plans/iteration-plan.md` |
 | Reliability Plans | `prodops/journeys/assessment/reliability-plans/` |
-| Upstream (Discovery) | `prodops/journeys/discovery/` |
+| Exploration / Discovery (Upstream) | `prodops/journeys/discovery/` |
 | Downstream | `prodops/execution-model/downstream.md` |
 | Release Trail | `prodops/artifacts/trails/release-trail.md` |
 | Operação | `prodops/journeys/operation/` |
@@ -66,7 +71,7 @@ Bootstrap → Hack → Sync → Finish → Ship → Validate → Promote
 Antes de alterar código de produção, leia:
 1. `prodops/artifacts/product/` — Product Deck, Service Decks, BDD Features
 2. `prodops/journeys/assessment/` — Reliability Plans, riscos
-3. O OBC e a BDD Feature da capability sendo implementada
+3. O OBC (Observable Business Contract) e a BDD Feature da Product Capability sendo implementada
 
 → [prodops/execution-model/downstream.md](prodops/execution-model/downstream.md)
 

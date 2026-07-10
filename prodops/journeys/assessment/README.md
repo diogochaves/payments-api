@@ -4,7 +4,7 @@ Artefatos de avaliação de risco, confiabilidade, oportunidades e planejamento 
 
 | Artefato | Localização |
 |---|---|
-| OBCs (Outcome-Based Criteria) | [../../artifacts/obcs/](../../artifacts/obcs/) |
+| OBCs (Observable Business Contracts) | [../../artifacts/obcs/](../../artifacts/obcs/) |
 | Riscos | [risks.md](risks.md) |
 | Oportunidades | [opportunities.md](opportunities.md) |
 | Iteration Plans | [../../artifacts/plans/](../../artifacts/plans/) |

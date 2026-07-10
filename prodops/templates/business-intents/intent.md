@@ -1,8 +1,8 @@
-# Business Intent — [Título]
+# Intent — [Título]
 
 Localização canônica: `prodops/business-intents/<slug>.md`
 
-> Um Business Intent registra uma intenção de gerar valor, sem compromisso de implementação. É o ponto de entrada do Framework antes de decidir se o trabalho segue por Upstream (exploração) ou Downstream (entrega governada).
+> Uma Intent registra uma intenção de gerar valor, sem compromisso de implementação. É o ponto de entrada do Framework antes de decidir se o trabalho segue por Upstream (exploração) ou Downstream (entrega governada). *Anteriormente chamado de Business Intent.*
 
 ---
 
@@ -11,9 +11,18 @@ Localização canônica: `prodops/business-intents/<slug>.md`
 | Campo | Conteúdo |
 |---|---|
 | Título | |
+| Origin Stream | Business / Enterprise / Team / Technology |
 | Data de registro | YYYY-MM-DD |
 | Solicitante | |
 | Dono de produto | |
+
+> **Origin Stream:** Classifique a origem desta Intent. Escolha exatamente um:
+> - **Business** — mercado, cliente, produto (conversão, adoção, receita, retenção)
+> - **Enterprise** — compliance, regulação, auditoria, parceiros, governança
+> - **Team** — processo, produtividade, onboarding, automações, fluxo de trabalho
+> - **Technology** — plataforma, segurança, infraestrutura, observabilidade, confiabilidade
+>
+> Ver [`framework/origin-streams.md`](../../framework/origin-streams.md) para definições e exemplos.
 
 ---
 
@@ -21,7 +30,7 @@ Localização canônica: `prodops/business-intents/<slug>.md`
 
 Descreva em uma ou duas frases o valor que se pretende gerar.
 
-> "Queremos que [ator] consiga [ação] para [resultado de negócio]."
+> "Queremos que [ator] consiga [ação] para [resultado de negócio / melhoria operacional]."
 
 ---
 
@@ -31,16 +40,16 @@ Por que esta intenção surgiu agora? Qual pressão, oportunidade ou problema a 
 
 ---
 
-## Hipóteses de Negócio
+## Hipóteses
 
 Liste as hipóteses que motivam esta intenção e que deverão ser confirmadas, refinadas ou descartadas durante a exploração.
 
-Uma hipótese deve representar uma crença sobre o negócio, o usuário ou o produto, e não uma decisão de implementação.
+Uma hipótese deve representar uma crença sobre o negócio, o usuário, o processo ou o sistema — não uma decisão de implementação.
 
 Exemplos:
 
-- [ ] A limitação atual reduz a conversão.
-- [ ] Resolver este problema aumentará a satisfação do cliente.
+- [ ] A limitação atual reduz a conversão / gera custo operacional / cria risco.
+- [ ] Resolver este problema gerará valor mensurável.
 - [ ] Existe demanda suficiente para justificar o investimento.
 
 ---

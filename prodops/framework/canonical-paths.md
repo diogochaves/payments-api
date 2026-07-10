@@ -12,6 +12,8 @@ Use esta tabela como fonte primária de navegação antes de ler ou escrever qua
 | Portal e mapa de navegação | `prodops/README.md` |
 | Princípios obrigatórios | `prodops/framework/principles.md` |
 | Glossário canônico | `prodops/framework/glossary.md` |
+| Fluxo oficial do Framework | `prodops/framework/flow.md` |
+| Os quatro Origin Streams | `prodops/framework/origin-streams.md` |
 | Operating model | `prodops/framework/operating-model.md` |
 | Localizações canônicas (este arquivo) | `prodops/framework/canonical-paths.md` |
 
@@ -99,9 +101,9 @@ Use esta tabela como fonte primária de navegação antes de ler ou escrever qua
 | CI Sync — sequência local | `prodops/journeys/delivery/ci-sync.md` |
 | CI Async — sequência de plataforma | `prodops/journeys/delivery/ci-async.md` |
 
-## Delivery — Capabilities
+## Delivery — Capabilities (Delivery Capabilities)
 
-| Capability | Canonical path |
+| Delivery Capability | Canonical path |
 |---|---|
 | Commit Workflow | `prodops/journeys/delivery/capabilities/commit-workflow/README.md` |
 | Commit Workflow — PR template | `prodops/journeys/delivery/capabilities/commit-workflow/templates/pull_request.md` |
@@ -154,12 +156,13 @@ Use esta tabela como fonte primária de navegação antes de ler ou escrever qua
 
 ---
 
-## Business Intents
+## Intents
 
 | Concern | Canonical path |
 |---|---|
-| Visão geral | `prodops/business-intents/README.md` |
-| Business intents individuais | `prodops/business-intents/<slug>.md` |
+| Visão geral das Intents | `prodops/business-intents/README.md` |
+| Intents individuais | `prodops/business-intents/<slug>.md` |
+| Template de Intent | `prodops/templates/business-intents/intent.md` |
 
 ---
 
@@ -215,7 +218,7 @@ Use esta tabela como fonte primária de navegação antes de ler ou escrever qua
 | Template | Canonical path |
 |---|---|
 | Visão geral | `prodops/templates/README.md` |
-| Business Intent | `prodops/templates/business-intents/intent.md` |
+| Intent | `prodops/templates/business-intents/intent.md` |
 | Experiment | `prodops/templates/discovery/experiment.md` |
 | Learning | `prodops/templates/discovery/learning.md` |
 | Discovery Trail | `prodops/templates/discovery/trail.md` |

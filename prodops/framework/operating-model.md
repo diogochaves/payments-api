@@ -2,12 +2,16 @@
 
 ## Modelo operacional
 
-O ProdOps organiza o trabalho de produto e engenharia em camadas hierárquicas:
+O ProdOps organiza o trabalho de produto e engenharia em camadas hierárquicas, com origem rastreável desde a fonte da necessidade até os artefatos produzidos:
 
 ```
-Business
+Origin Stream (Business | Enterprise | Team | Technology)
   ↓
-Business Intent
+Intent
+  ↓
+Exploration
+  ↓
+Observable Business Contract (OBC)
   ↓
 Continuous Assessment
   ↓
@@ -34,7 +38,7 @@ Phase
 Practice
 └── ProdOps TDD
   ↓
-Capability
+Delivery Capability
 ├── Commit Workflow
 ├── Contract Management
 ├── Evidence Management
@@ -49,7 +53,18 @@ Artifacts
 └── Evidence
 ```
 
-**Business Intent** — ponto de entrada do Framework. Uma intenção de gerar valor ainda não comprometida.
+→ [Fluxo completo: como cada etapa funciona](flow.md)
+→ [Origin Streams: os quatro tipos de origem](origin-streams.md)
+
+---
+
+**Origin Stream** — a classificação da origem de uma Intent. Quatro possibilidades: Business (mercado, cliente, produto), Enterprise (compliance, regulação, governança), Team (processo, automações, produtividade), Technology (plataforma, segurança, infraestrutura). Toda Intent tem exatamente um Origin Stream. Ver [`origin-streams.md`](origin-streams.md).
+
+**Intent** — ponto de entrada do Framework. Uma intenção de gerar valor ainda não comprometida. A Intent registra o "porquê" sem prescrever o "como". *Anteriormente chamada de Business Intent.*
+
+**Exploration** — a etapa entre Intent e OBC. Reduz incerteza transformando hipóteses em conhecimento validado. Implementada pela Jornada Discovery no modo Upstream. Ver [`flow.md`](flow.md).
+
+**OBC (Observable Business Contract)** — a transformação de uma Intent suficientemente compreendida em critérios observáveis e verificáveis de sucesso. É o resultado da Exploration, não a entrada do Framework. *Anteriormente definido incorretamente como Outcome-Based Criterion.*
 
 **Continuous Assessment** — avalia continuamente riscos, oportunidades e decide o próximo passo.
 
@@ -68,7 +83,7 @@ Artifacts
 **Practice** — o método utilizado durante uma fase:
 - ProdOps TDD (usado pelo Hack)
 
-**Capability** — competências reutilizáveis consumidas pelas fases:
+**Delivery Capability** — competências técnicas reutilizáveis consumidas pelas fases:
 - Commit Workflow
 - Contract Management
 - Evidence Management
@@ -78,17 +93,19 @@ Artifacts
 **Artifacts** — artefatos produzidos e consumidos pelo Framework:
 - OBCs, BDD Features, Plans, Trails, Evidence
 
+---
+
 ## Journeys
 
 ### Discovery
 
-Exploração. Transforma hipóteses em conhecimento validado. Sem compromisso de entrega — apenas compromisso de aprendizado.
+Exploração. Implementa a etapa de Exploration do fluxo. Transforma hipóteses em conhecimento validado. Sem compromisso de entrega — apenas compromisso de aprendizado.
 
 → [prodops/journeys/discovery/README.md](../journeys/discovery/README.md)
 
 ### Delivery
 
-Implementação governada. Usa o conhecimento validado pelo Discovery para entregar com confiança.
+Implementação governada. Usa o conhecimento validado pela Exploration para entregar com confiança. Exige OBC committed antes de iniciar.
 
 → [prodops/journeys/delivery/README.md](../journeys/delivery/README.md)
 
@@ -110,24 +127,36 @@ Jornada transversal. Observa a execução e garante consistência do Framework.
 
 → [prodops/journeys/diligence/README.md](../journeys/diligence/README.md)
 
+---
+
 ## Execution Modes
 
 → [prodops/execution-model/README.md](../execution-model/README.md)
 
-## Ciclo de vida de uma capability
+---
+
+## Ciclo de vida de uma Product Capability
 
 ```
-Business Intent
-  ↓ Continuous Assessment
-Upstream (Discovery)
-  Experimento → learning → Decision Package
+Origin Stream (Business | Enterprise | Team | Technology)
+  ↓ gera
+Intent
+  ↓ entra em
+Exploration — Upstream (Discovery)
+  Experimento → aprendizado → Decision Package
+  ↓ quando hipótese respondida
+OBC committed + BDD Feature committed
   ↓ Assessment Review
 Revisão do Decision Package (PM + Tech Lead)
   ↓ se aprovado
-Promoção: BDD Feature → artifacts/bdd/, OBC → artifacts/obcs/
+Iteration Plan (status: Entrou) + Reliability Plan
   ↓ Downstream (Delivery)
 Bootstrap → Hack → Sync → Finish → Ship → Validate → Promote
+  ↓
+Operation
 ```
+
+---
 
 ## Princípios
 
@@ -136,3 +165,11 @@ Bootstrap → Hack → Sync → Finish → Ship → Validate → Promote
 ## Glossário
 
 → [glossary.md](glossary.md)
+
+## Fluxo completo
+
+→ [flow.md](flow.md)
+
+## Origin Streams
+
+→ [origin-streams.md](origin-streams.md)

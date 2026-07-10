@@ -2,30 +2,49 @@
 
 Este diretório é a fonte canônica do Framework ProdOps neste repositório.
 
+## Fluxo oficial
+
+```
+Origin Stream → Intent → Exploration → OBC → Iteration Plan → Reliability Plan → Delivery → Operation
+```
+
+→ [Fluxo completo explicado](framework/flow.md)
+→ [Os quatro Origin Streams](framework/origin-streams.md)
+
 ## Modelo operacional
 
 ```
-Business Intent → Assessment → Execution Mode → Journey → Phase → Practice → Capability → Artifacts
+Origin Stream (Business | Enterprise | Team | Technology)
+  ↓
+Intent
+  ↓
+Continuous Assessment
+  ↓
+Execution Mode → Journey → Phase → Practice → Delivery Capability → Artifacts
 ```
+
+→ [Modelo operacional completo](framework/operating-model.md)
 
 ## Ordem de leitura
 
 1. `framework/principles.md` — princípios
 2. `framework/glossary.md` — termos canônicos
 3. `framework/canonical-paths.md` — localizações canônicas
-4. `framework/operating-model.md` — modelo operacional completo
-5. `execution-model/README.md` — Upstream vs Downstream
-6. `journeys/README.md` — as 5 jornadas
-7. A jornada específica da tarefa
-8. A fase dentro da jornada
-9. As capabilities da fase
+4. `framework/flow.md` — fluxo oficial do Framework
+5. `framework/origin-streams.md` — os quatro Origin Streams
+6. `framework/operating-model.md` — modelo operacional completo
+7. `execution-model/README.md` — Upstream vs Downstream
+8. `journeys/README.md` — as 5 jornadas
+9. A jornada específica da tarefa
+10. A fase dentro da jornada
+11. As capabilities da fase
 
 ## Portal
 
 | Área | Descrição |
 |---|---|
-| [framework/](framework/) | Princípios, glossário, modelo operacional |
-| [business-intents/](business-intents/) | Intenções de negócio (ponto de entrada) |
+| [framework/](framework/) | Princípios, glossário, fluxo, Origin Streams, modelo operacional |
+| [business-intents/](business-intents/) | Intents registradas (ponto de entrada do Framework) |
 | [execution-model/](execution-model/) | Upstream e Downstream como modos de execução |
 | [journeys/](journeys/) | As 5 jornadas: Discovery, Delivery, Operation, Assessment, Diligence |
 | [artifacts/](artifacts/) | Artefatos produzidos: OBCs, BDD Features, planos, trilhas, evidências |
