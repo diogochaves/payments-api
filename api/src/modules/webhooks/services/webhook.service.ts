@@ -19,6 +19,15 @@ export class WebhookService {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
+  /**
+   * Registers a new webhook for the given token and tenant.
+   * @param tokenId The ID of the token to register the webhook for.
+   * @param tenantId The ID of the tenant to register the webhook for.
+   * @param dto The data transfer object containing the webhook details.
+   * @param correlationId A unique identifier for tracing the request.
+   * @returns A promise that resolves to the registered webhook response DTO.
+   * @throws UnprocessableEntityException if the URL is invalid, events are empty, or the token has reached its maximum number of webhooks.
+   */
   async register(
     tokenId: string,
     tenantId: string,
