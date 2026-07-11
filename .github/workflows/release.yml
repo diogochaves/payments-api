@@ -27,12 +27,34 @@ jobs:
       run:
         working-directory: api
 
+    # Acceptance tests provision DynamoDB tables through the app fixture even
+    # with the in-memory repository, so LocalStack is required (same pattern
+    # as staging-deploy.yml).
+    services:
+      localstack:
+        image: localstack/localstack:4
+        ports:
+          - 4566:4566
+        env:
+          SERVICES: dynamodb,sqs
+          DEBUG: '0'
+        options: >-
+          --health-cmd "curl -sf http://localhost:4566/_localstack/health"
+          --health-interval 5s
+          --health-timeout 10s
+          --health-retries 12
+
     env:
       NODE_ENV: test
       INVOICE_REPOSITORY: memory
       ENABLED_PAYMENT_PROVIDERS: ASAAS
       DEFAULT_PAYMENT_PROVIDER: ASAAS
       ASAAS_MOCK: 'true'
+      AWS_DYNAMODB_ENDPOINT: http://localhost:4566
+      AWS_SQS_ENDPOINT: http://localhost:4566
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
 
     steps:
       - name: Checkout
@@ -73,7 +95,7 @@ jobs:
         run: |
           npx jest \
             --config ./test/jest-e2e.json \
-            test/create-invoice.acceptance.e2e-spec.ts \
+            test/criar-invoice.e2e-spec.ts \
             --runInBand \
             --json \
             --outputFile ./acceptance-report.json
