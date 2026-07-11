@@ -1,0 +1,101 @@
+# ============================================================================
+# ProdOps Exec Manifest — single machine-readable source of truth
+# ============================================================================
+#
+# How this file is used:
+#   1. Prose documents REFERENCE values from this file — they never restate
+#      them. Restating pipeline, paths, or vocabulary in prose is drift
+#      (checked by scripts/validate-manifest.sh and scripts/doctor.sh).
+#   2. Agents (Claude Code, Copilot, Codex, ...) read this file instead of
+#      walking a documentation chain.
+#   3. Scripts (doctor, hooks, CI) validate the repository AGAINST this file.
+#
+# Adoption: copy to prodops/exec/manifest.yaml in your repository, replace
+# every <placeholder>, remove gates that do not apply, then run:
+#   ./prodops/scripts/validate-manifest.sh
+# ============================================================================
+
+version: 1
+
+# The official ProdOps Delivery pipeline. Two lanes:
+#   ci_sync  — local, synchronous work (developer + agent on a branch)
+#   ci_async — platform work (pipelines, environments, promotion)
+pipeline:
+  ci_sync: [bootstrap, hack, sync, finish]
+  ci_async: [ship, validate, promote]
+
+# Executable skill for each phase (invocable as /<name> in agent runtimes).
+# Values are repository-relative paths; every entry must exist.
+skills:
+  bootstrap: prodops/skills/bootstrap/SKILL.md
+  hack: prodops/skills/hack/SKILL.md
+  sync: prodops/skills/sync/SKILL.md
+  finish: prodops/skills/finish/SKILL.md
+  ship: prodops/skills/ship/SKILL.md
+  validate: prodops/skills/validate/SKILL.md
+  promote: prodops/skills/promote/SKILL.md
+
+# Canonical artifact locations. Keys are stable — skills refer to them by
+# name; values may be relocated to fit your repository. Every entry must
+# resolve to an existing path. Append "# optional" to a line to downgrade a
+# missing path from failure to warning in validate-manifest.sh.
+paths:
+  obcs: prodops/artifacts/obcs/                        # Observable Business Contracts
+  bdd: prodops/artifacts/bdd/                          # committed BDD features
+  intents: prodops/business-intents/                   # intents (the "why", pre-commitment)
+  iteration_plan: prodops/artifacts/plans/iteration-plan.md
+  release_trail: prodops/artifacts/trails/release-trail.md   # append-only evidence log
+  risks: prodops/journeys/assessment/risks.md
+  reliability_plans: prodops/journeys/assessment/reliability-plans/
+  architecture: prodops/journeys/assessment/architecture/overview.md
+  experiments: prodops/journeys/discovery/experiments/ # exploratory (upstream) work
+  templates: prodops/templates/
+  cards: prodops/exec/cards/ # optional — context capsules generated per card by /bootstrap
+
+# Quality gates — each gate is a verifiable command plus an objective
+# criterion. Skills reference gates BY NAME ("run the `lint` gate"), never by
+# command, so swapping stacks means editing only this file.
+#
+# The `expect` contract:
+#   exit0       — the command must exit with status 0
+#   zero_hits   — the grep patterns must match nothing inside the `in:` dirs
+#   "<literal>" — the observed output must equal the literal value
+# The optional `when` field narrows the trigger; omitted means the gate runs
+# whenever a phase names it.
+gates:
+  lint:
+    cmd: "<your-lint-command>"            # e.g. lint the changed package, auto-fix allowed
+    expect: exit0
+  unit:
+    cmd: "<your-unit-test-command>"
+    expect: exit0
+  acceptance:
+    cmd: "<your-acceptance-test-command>" # end-to-end suites against a local stack
+    expect: exit0
+    when: behavior_or_contract_changed
+  build:
+    cmd: "<your-build-command>"
+    expect: exit0
+  no_mocks:
+    # Mock/stub patterns that must never appear in production code paths.
+    # Replace with your test framework's mock/stub constructor patterns.
+    grep: ["<mock-pattern-1>", "<mock-pattern-2>"]
+    in: ["<your-src-dir>", "<your-test-dir>"]
+    expect: zero_hits
+  smoke:
+    # One end-to-end probe proving the system is alive locally. Runs during
+    # bootstrap so implementation never starts on a broken environment.
+    cmd: "<your-smoke-command>"           # e.g. start local stack && probe one endpoint
+    expect: "<expected-observable-result>" # e.g. an HTTP status like "201"
+    when: bootstrap
+
+# Canonical vocabulary — closed enums. Fixes drift between docs, skills,
+# hooks, and CI: every consumer reads these lists, none restates them.
+vocabulary:
+  # Kept in sync with hooks/commit-msg (the hook reads this file when present).
+  commit_types: [feat, fix, docs, test, refactor, perf, build, ci, style, chore, revert]
+  commit_summary_max: 72
+  # Decision recorded when an experiment leaves discovery (exact strings).
+  promotion_decision: ["Promote", "Promote with constraints", "Do not promote", "Discard"]
+  # Status of an item in the iteration plan (exact strings).
+  iteration_status: ["Committed", "Deferred", "Removed"]
