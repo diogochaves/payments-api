@@ -308,7 +308,7 @@ preserves the provider HTTP status and the Sandbox controller maps this
 
 - `api/src/infra/asaas.service.ts`
 - `api/src/modules/invoices/controllers/asaas-sandbox.controller.ts`
-- `api/test/create-invoice.acceptance.e2e-spec.ts`
+- `api/test/create-invoice.acceptance.e2e-spec.ts` (renomeado: hoje `api/test/criar-invoice.e2e-spec.ts`)
 - `prodops/upstream/experiments/002-sandbox-funding/upstream-trail.md`
 
 ### Evidence
