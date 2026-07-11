@@ -435,7 +435,7 @@ O tratamento de webhooks agora registra eventos Asaas específicos de cartão �
 
 - `api/src/modules/invoices/dto/create-invoice.dto.ts`
 - `api/src/modules/invoices/services/invoice.service.ts`
-- `api/test/create-invoice.acceptance.e2e-spec.ts`
+- `api/test/create-invoice.acceptance.e2e-spec.ts` (renomeado: hoje `api/test/criar-invoice.e2e-spec.ts`)
 
 ### Decision
 

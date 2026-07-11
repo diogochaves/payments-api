@@ -54,7 +54,7 @@ Run this before `POST /invoices` exists. It must return 404. That is the Red Bar
 
 **Expected output:**
 ```
-PASS api/test/create-invoice.acceptance.e2e-spec.ts
+PASS api/test/criar-invoice.e2e-spec.ts
   ✓ should create invoice and return 201 with invoiceId (312ms)
 ```
 
