@@ -16,9 +16,12 @@ Execute only the commit step of the Hack flow.
    or `git add .`.
 4. Compose a commit message following conventional commits:
    - Format: `type(scope): description`
-   - Types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`
+   - Types: `feat`, `fix`, `docs`, `test`, `refactor`, `perf`, `build`, `ci`,
+     `style`, `chore`, `revert` — canonical list in `prodops/exec/manifest.yaml`
+     (`vocabulary.commit_types`), enforced by the commit-msg hook
    - Scope: package or area changed (`api`, `prodops`, `workbench`, etc.)
-   - Description: one line, imperative, lowercase, no period
+   - Description: one line, imperative, lowercase, no period, summary within
+     72 characters (`vocabulary.commit_summary_max` in the manifest)
    - Example: `fix(api): use invoiceId as externalReference to avoid mock collision`
 5. Run `git commit -m "<message>"`.
 6. Run `git status` to confirm the working tree is clean for committed files.
