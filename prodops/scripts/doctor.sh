@@ -49,10 +49,35 @@ while IFS= read -r experiment_dir; do
   check_path "${experiment_dir}/upstream-trail.md"
 done < <(find prodops/journeys/discovery/experiments -mindepth 1 -maxdepth 1 -type d | sort)
 
+# Legacy ProdOps path references. Trails and experiment records are exempt
+# because they legitimately record old layouts as history. `prodops/product/`
+# keeps a trailing slash so references to existing files such as
+# docs/prodops/product-deck.md do not false-positive on the old
+# prodops/product/ directory pattern.
+legacy_pattern='prodops/(upstream|product/|downstream/release-trail\.md|assessment/reliability-plan|assessment/reliability-plans|assessment/iteration-plans|assessment/event-storming|assessment/architecture)|prodops/operation/|delivery/flows/'
+
+legacy_targets=(
+  AGENTS.md
+  prodops/README.md
+  prodops/framework
+  prodops/execution-model
+  prodops/journeys
+  prodops/skills
+  prodops/templates
+  prodops/business-intents
+)
+
+# Repo-wide coverage: agent/tool instruction dirs and docs.
+for extra_target in .codex .claude .github docs; do
+  if [[ -e "${extra_target}" ]]; then
+    legacy_targets+=("${extra_target}")
+  fi
+done
+
 legacy_refs="$(
   rg -n \
-    'prodops/(upstream|product|downstream/release-trail\.md|assessment/reliability-plan|assessment/reliability-plans|assessment/iteration-plans|assessment/event-storming|assessment/architecture)|prodops/operation/|delivery/flows/' \
-    AGENTS.md prodops/README.md prodops/framework prodops/execution-model prodops/journeys prodops/skills prodops/templates prodops/business-intents \
+    "${legacy_pattern}" \
+    "${legacy_targets[@]}" \
     -g '!prodops/framework/canonical-paths.md' \
     -g '!prodops/journeys/discovery/upstream-trail.md' \
     -g '!prodops/journeys/discovery/experiments/**/upstream-trail.md' \
@@ -68,8 +93,82 @@ else
   pass "no legacy ProdOps path references in operational docs"
 fi
 
+# Stale artifact references. Unlike the legacy layout paths above, these files
+# were renamed or removed and every reference -- including trails -- is
+# expected to point at the current location, so trails are not exempt here.
+stale_pattern='api/test/create-invoice\.acceptance\.e2e-spec\.ts|prodops/journeys/discovery/features/'
+
+stale_refs="$(
+  rg -n \
+    "${stale_pattern}" \
+    --hidden \
+    -g '*.md' \
+    -g '!.git/**' \
+    -g '!node_modules/**' \
+    -g '!api/node_modules/**' \
+    -g '!prodops/framework/canonical-paths.md' \
+    -g '!prodops/documentation-review.md' \
+    || true
+)"
+
+if [[ -n "${stale_refs}" ]]; then
+  printf '%s\n' "${stale_refs}" >&2
+  fail "stale artifact references found (renamed or removed files)"
+else
+  pass "no stale artifact references"
+fi
+
+# Relative markdown link check. Extracts inline links and images
+# `[text](target)` from every markdown file and verifies that relative
+# targets resolve from the file's directory (leading `/` resolves from the
+# repo root). External links (scheme://, mailto:, tel:, data:) and pure
+# anchor links are skipped; `#fragment` suffixes, optional `"title"` parts
+# and <angle-bracket> wrapping are stripped. Reference-style links
+# ([text][ref]) are deliberately not resolved.
+link_re='\]\(([^()]+)\)'
+broken_links=0
+
+while IFS= read -r md_file; do
+  md_file="${md_file#./}"
+  md_dir="$(dirname "${md_file}")"
+  while IFS= read -r line || [[ -n "${line}" ]]; do
+    rest="${line}"
+    while [[ "${rest}" =~ ${link_re} ]]; do
+      link="${BASH_REMATCH[1]}"
+      rest="${rest#*"${BASH_REMATCH[0]}"}"
+      link="${link#"${link%%[![:space:]]*}"}"
+      link="${link%"${link##*[![:space:]]}"}"
+      link="${link%%[[:space:]]\"*}"
+      link="${link%%[[:space:]]\'*}"
+      if [[ "${link}" == \<*\> ]]; then
+        link="${link:1:${#link}-2}"
+      fi
+      case "${link}" in
+        '' | \#* | mailto:* | tel:* | data:*) continue ;;
+      esac
+      [[ "${link}" == *"://"* ]] && continue
+      link="${link%%#*}"
+      [[ -z "${link}" ]] && continue
+      if [[ "${link}" == /* ]]; then
+        link_target="${ROOT_DIR}${link}"
+      else
+        link_target="${md_dir}/${link}"
+      fi
+      if [[ ! -e "${link_target}" ]]; then
+        fail "${md_file}: broken link -> ${link}"
+        broken_links=$((broken_links + 1))
+      fi
+    done
+  done < "${md_file}"
+done < <(find . -type f -name '*.md' -not -path './.git/*' -not -path '*/node_modules/*' | LC_ALL=C sort)
+
+if [[ "${broken_links}" -eq 0 ]]; then
+  pass "all relative markdown links resolve"
+fi
+
 if [[ "${failures}" -gt 0 ]]; then
   printf '\nProdOps doctor found %s issue(s).\n' "${failures}" >&2
+  printf 'Run the fix/* branches or repair the listed files.\n' >&2
   exit 1
 fi
 
