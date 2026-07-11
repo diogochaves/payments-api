@@ -53,14 +53,13 @@ gates:
   lint:
     cmd: "cd api && npm run lint"
     expect: exit0
-  unit:
-    cmd: "cd api && npm run test"
-    expect: exit0
+  # não há suites unitárias no repositório (jest em api/src encontra 0 testes
+  # e sai com código 1) — o gate de testes é o acceptance abaixo
   acceptance:
     cmd: "./scripts/test-acceptance.sh"
     expect: exit0
     when: behavior_or_contract_changed
-    note: "executa as 4 suítes de aceitação; requer LocalStack"
+    note: "executa as 4 suítes de aceitação; requer LocalStack (CI: service container)"
   build:
     cmd: "cd api && npm run build"
     expect: exit0
