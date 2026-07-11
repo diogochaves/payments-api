@@ -96,8 +96,7 @@ manifest.
 | Gate | Command | Pass criterion |
 |---|---|---|
 | `lint` | `cd api && npm run lint` | exit 0 — mandatory after every code change, not optional. Runs ESLint with `--fix`; auto-corrects Prettier and fixable violations; remaining errors must be fixed in source. Run after green phase, after refactor, and before commit. |
-| `unit` | `cd api && npm run test` | exit 0 |
-| `acceptance` | `./scripts/test-acceptance.sh` (or `cd api && npm run test:acceptance`) | exit 0 — required when payment behavior or contracts changed; runs the 4 acceptance suites and requires LocalStack |
+| `acceptance` | `./scripts/test-acceptance.sh` (or `cd api && npm run test:acceptance`) | exit 0 — the test gate (the repo has no unit suites); required when payment behavior or contracts changed; runs the 4 acceptance suites and requires LocalStack |
 | `no_mocks` | grep for `jest.fn(`, `.mockReturnValue(`, `.overrideProvider(`, `jest.mock(` in `api/src` and `api/test` | zero hits — see `references/workflow.md` (No Mocks Rule) |
 
 Required evidence for code changes:
