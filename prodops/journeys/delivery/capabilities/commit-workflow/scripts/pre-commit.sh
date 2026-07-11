@@ -35,11 +35,10 @@ run_if_exists() {
 
 has_script() {
   local file="$1" key="$2"
-  [[ -f "$file" ]] && python3 -c "
-import sys, json
-data = json.load(open('$file'))
-sys.exit(0 if '$key' in data.get('scripts', {}) else 1)
-" 2>/dev/null
+  [[ -f "$file" ]] && node -e "
+const data = require(process.argv[1]);
+process.exit(process.argv[2] in (data.scripts || {}) ? 0 : 1);
+" "$PWD/$file" "$key" 2>/dev/null
 }
 
 # ── 2. Formatter ─────────────────────────────────────────────────────────────
