@@ -344,8 +344,8 @@ EXP-003 and the missing EXP-004 reference.
 
 ### Artifacts Updated
 
-- `prodops/journeys/discovery/features/credit-card-payment.feature`
-- `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature`
+- `prodops/journeys/discovery/features/credit-card-payment.feature` (migrado: hoje `prodops/artifacts/bdd/credit-card-payment.feature`)
+- `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature` (removido: sem sucessor em `prodops/artifacts/bdd/`)
 
 ### Evidence
 

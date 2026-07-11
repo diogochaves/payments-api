@@ -69,13 +69,13 @@ EXP-002 and EXP-003.
 
 ### Artifacts Updated
 
-- `prodops/journeys/discovery/features/credit-card-payment.feature`
-- `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature`
+- `prodops/journeys/discovery/features/credit-card-payment.feature` (migrado: hoje `prodops/artifacts/bdd/credit-card-payment.feature`)
+- `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature` (removido: sem sucessor em `prodops/artifacts/bdd/`)
 
 ### Evidence
 
 - Migrated from `prodops/upstream/upstream-trail.md`.
-- `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature` is
+- `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature` (removido: sem sucessor em `prodops/artifacts/bdd/`) is
   referenced by the original trail but is not present in the workspace.
 
 ### Decision

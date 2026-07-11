@@ -141,7 +141,7 @@ O EXP-004 foi recuperado como registro de referência porque o trail global, o R
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/upstream-trail.md`
 - `prodops/journeys/assessment/risks.md`
-- `prodops/journeys/discovery/features/README.md`
+- `prodops/journeys/discovery/features/README.md` (removido: diretório consolidado em `prodops/artifacts/bdd/`)
 
 ### Decision
 
@@ -149,7 +149,7 @@ Pronto para Assessment.
 
 ### Notes
 
-A referência histórica a `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature` permanece como gap: o arquivo é referenciado por entradas do trail mas não está presente no workspace.
+A referência histórica a `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature` (removido: sem sucessor em `prodops/artifacts/bdd/`) permanece como gap: o arquivo é referenciado por entradas do trail mas não está presente no workspace.
 
 ## 2026-07-03 17:58
 
@@ -401,8 +401,8 @@ Uma nova BDD de prontidão da Feature Flag do Checkout foi adicionada para repre
 
 ### Artifacts Updated
 
-- `prodops/journeys/discovery/features/credit-card-payment.feature`
-- `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature`
+- `prodops/journeys/discovery/features/credit-card-payment.feature` (migrado: hoje `prodops/artifacts/bdd/credit-card-payment.feature`)
+- `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature` (removido: sem sucessor em `prodops/artifacts/bdd/`)
 
 ### Decision
 
@@ -468,7 +468,7 @@ O Validation Workbench agora permite que agentes e humanos explorem os shapes de
 - `prodops/upstream/experiments/001-credit-card-lifecycle/experiment.md`
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/learnings.md`
-- `prodops/journeys/discovery/features/credit-card-payment.feature`
+- `prodops/journeys/discovery/features/credit-card-payment.feature` (migrado: hoje `prodops/artifacts/bdd/credit-card-payment.feature`)
 - `prodops/product/tracking-list.md`
 - `prodops/journeys/assessment/risks.md`
 - `prodops/upstream/obcs/credit-card-authorization-confirmation.md`
