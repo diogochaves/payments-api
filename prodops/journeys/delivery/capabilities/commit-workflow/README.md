@@ -13,7 +13,7 @@ commit-workflow/
 │   ├── pre-commit         pré-commit: format → lint → unit tests
 │   ├── prepare-commit-msg aplica o template de mensagem (sem -m, merge ou squash)
 │   ├── commit-msg         valida Conventional Commits
-│   └── pre-push           pré-push: build → integration tests → contracts
+│   └── pre-push           pré-push: build → integration tests (contracts/quality gates somente com Makefile)
 ├── scripts/           ← lógica de validação: chamados pelos hooks e pela CI
 │   ├── pre-commit.sh
 │   ├── prepare-commit-msg.sh
@@ -33,7 +33,7 @@ Os **hooks** contêm apenas uma linha de delegação — toda a lógica reside n
 
 - **Git First** — sem Husky, sem commitlint, sem ferramentas externas.
 - **Language Agnostic** — descobre automaticamente os comandos do projeto; nunca codifica tecnologia específica.
-- **Zero dependência** — os hooks chamam scripts do próprio repositório.
+- **Zero dependência** — os hooks chamam scripts do próprio repositório; a única ferramenta externa usada é o `node` já exigido pelo projeto (para ler `package.json`).
 - **Reutilização máxima** — nunca duplica scripts que já existem no projeto.
 - **CI = Local** — a CI reutiliza exatamente os mesmos comandos usados localmente.
 
@@ -89,7 +89,7 @@ git ls-files --stage prodops/journeys/delivery/capabilities/commit-workflow/hook
 |---|---|---|
 | Antes do commit | `pre-commit` | Formatter → Lint → Unit tests |
 | Na mensagem | `commit-msg` | Conventional Commit format |
-| Antes do push | `pre-push` | Build → Integration tests → Contracts → Quality gates |
+| Antes do push | `pre-push` | Build → Integration tests → Contracts e Quality gates (somente quando houver `Makefile`) |
 
 Qualquer etapa com exit code ≠ 0 bloqueia o commit ou push. Não existe modo "warn only" — passa ou bloqueia.
 
@@ -113,8 +113,8 @@ Os scripts descobrem os comandos disponíveis nesta ordem:
 
 | Etapa | Comando |
 |---|---|
-| Formatter | `cd api && npm run lint` (inclui `--fix`) |
-| Lint | `cd api && npm run lint` |
+| Formatter | `cd api && npm run format` (prettier) |
+| Lint | `cd api && npm run lint` (inclui `--fix`) |
 | Unit tests | `cd api && npm run test` |
 | Build | `cd api && npm run build` |
 | Acceptance tests | `./scripts/test-acceptance.sh` |
@@ -199,7 +199,7 @@ ci: replace --runInBand with --maxWorkers=1 in acceptance tests
 ```
 Hack  → commit pequeno → pre-commit (format + lint + unit tests)
                        → commit-msg (Conventional Commit validado)
-Sync  → pre-push (build + integration tests + contracts)
+Sync  → pre-push (build + integration tests; contracts somente com Makefile)
 Finish → PR gerado com template
 ```
 
@@ -222,7 +222,7 @@ git log --oneline origin/HEAD..HEAD
 ### 2. Formatter + Lint
 
 ```bash
-cd api && npm run lint
+cd api && npm run format && npm run lint
 ```
 
 - [ ] Lint passa sem erros (exit 0).
