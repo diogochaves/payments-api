@@ -44,7 +44,7 @@ in the global trail.
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/upstream-trail.md`
 - `prodops/journeys/assessment/risks.md`
-- `prodops/journeys/discovery/features/README.md`
+- `prodops/journeys/discovery/features/README.md` (removido: diretório consolidado em `prodops/artifacts/bdd/`)
 
 ### Evidence
 
@@ -58,7 +58,7 @@ Ready for Assessment.
 
 ### Notes
 
-`prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature` is referenced
+`prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature` (removido: sem sucessor em `prodops/artifacts/bdd/`) is referenced
 by historical trail entries but is not present in the workspace.
 
 ## 2026-07-03 17:58
