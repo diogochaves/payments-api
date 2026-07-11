@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# commit-msg — Conventional Commits gate.
+#
+# Format:  <type>(<optional scope>)!: <summary>
+# Source of truth: the ProdOps manifest (vocabulary.commit_types and
+# vocabulary.commit_summary_max). The manifest is located via the
+# PRODOPS_MANIFEST env var, defaulting to prodops/exec/manifest.yaml.
+# When no manifest is readable, falls back to the 11 standard types and a
+# 72-character first line.
+#
+# Dependency-free bash: no node, no yaml parser.
+
+set -euo pipefail
+
+COMMIT_MSG_FILE="$1"
+MSG="$(head -1 "$COMMIT_MSG_FILE")"
+
+# Allow merge commits, git-generated reverts, and fixup/squash commits.
+case "$MSG" in
+  "Merge "*|"Revert "*|"fixup! "*|"squash! "*) exit 0 ;;
+esac
+
+# Defaults (used when no manifest is found).
+TYPES="feat|fix|docs|test|refactor|perf|build|ci|style|chore|revert"
+MAX=72
+
+MANIFEST="${PRODOPS_MANIFEST:-prodops/exec/manifest.yaml}"
+if [ -f "$MANIFEST" ]; then
+  M_TYPES="$(grep -E '^[[:space:]]+commit_types:' "$MANIFEST" \
+    | sed 's/.*\[//; s/\].*//; s/[[:space:]]//g; s/,/|/g' || true)"
+  M_MAX="$(grep -E '^[[:space:]]+commit_summary_max:' "$MANIFEST" \
+    | grep -oE '[0-9]+' | head -1 || true)"
+  [ -n "$M_TYPES" ] && TYPES="$M_TYPES"
+  [ -n "$M_MAX" ] && MAX="$M_MAX"
+fi
+
+PATTERN="^($TYPES)(\([a-zA-Z0-9/_-]+\))?!?: [^ ].*$"
+TYPES_HUMAN="$(echo "$TYPES" | tr '|' ' ')"
+
+if ! echo "$MSG" | grep -qE "$PATTERN"; then
+  echo ""
+  echo "  Commit message does not follow Conventional Commits format."
+  echo ""
+  echo "  Expected:  <type>(<scope>): <summary>"
+  echo "  Received:  $MSG"
+  echo ""
+  echo "  Valid types: $TYPES_HUMAN"
+  echo "  Example:   feat(invoices): add hosted checkout flow"
+  echo ""
+  exit 1
+fi
+
+if [ "${#MSG}" -gt "$MAX" ]; then
+  echo ""
+  echo "  Commit summary is ${#MSG} characters; the limit is $MAX."
+  echo "  Received:  $MSG"
+  echo ""
+  exit 1
+fi
+
+exit 0
