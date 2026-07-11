@@ -1,0 +1,114 @@
+# Trail Coupling
+#
+# Enforces the framework's core promise as a CI gate: code changes leave
+# evidence. Any pull request that touches files under `api/src/**` must
+# either:
+#
+#   1. Also update `prodops/artifacts/trails/release-trail.md` in the same
+#      pull request (the release trail records the evidence), or
+#   2. Carry the `no-trail-needed` label (explicit opt-out for changes that
+#      genuinely do not affect product behavior).
+#
+# The check recomputes on label changes (labeled/unlabeled) so applying the
+# escape label immediately turns the check green without a new push.
+#
+# Implementation notes:
+#   - Dependency-free: actions/checkout + bash only, no third-party actions.
+#   - Changed files are computed against the merge base with the PR base
+#     branch (`git diff --name-only origin/<base>...HEAD`), which requires
+#     full history (`fetch-depth: 0`).
+#   - Labels are read from the `github.event.pull_request.labels` payload
+#     already present in the event context — no API calls needed.
+
+name: Trail Coupling
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trail-coupling-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  trail-coupling:
+    name: trail-coupling
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check release-trail coupling
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          # JSON array of label names, e.g. ["bug","no-trail-needed"].
+          PR_LABELS_JSON: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: |
+          set -euo pipefail
+
+          TRAIL_FILE="prodops/artifacts/trails/release-trail.md"
+          ESCAPE_LABEL="no-trail-needed"
+          WATCHED_PREFIX="api/src/"
+
+          echo "Comparing against merge base of origin/${BASE_REF}...HEAD"
+          changed_files="$(git diff --name-only "origin/${BASE_REF}...HEAD")"
+
+          echo "Changed files:"
+          if [ -n "$changed_files" ]; then
+            printf '%s\n' "$changed_files" | sed 's/^/  /'
+          else
+            echo "  (none)"
+          fi
+
+          api_changed=false
+          trail_changed=false
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            case "$file" in
+              "$WATCHED_PREFIX"*) api_changed=true ;;
+            esac
+            if [ "$file" = "$TRAIL_FILE" ]; then
+              trail_changed=true
+            fi
+          done <<< "$changed_files"
+
+          if [ "$api_changed" = false ]; then
+            echo ""
+            echo "PASS: no files under ${WATCHED_PREFIX} changed — trail coupling not required."
+            exit 0
+          fi
+
+          if [ "$trail_changed" = true ]; then
+            echo ""
+            echo "PASS: ${WATCHED_PREFIX} changed and ${TRAIL_FILE} was updated in the same PR."
+            exit 0
+          fi
+
+          if printf '%s' "$PR_LABELS_JSON" | grep -Fq "\"$ESCAPE_LABEL\""; then
+            echo ""
+            echo "PASS: ${WATCHED_PREFIX} changed without a trail update, but the"
+            echo "'${ESCAPE_LABEL}' label is present — explicit opt-out accepted."
+            exit 0
+          fi
+
+          echo ""
+          echo "FAIL: this pull request changes files under ${WATCHED_PREFIX} but leaves no evidence trail."
+          echo ""
+          echo "Code changes to the API must be coupled to the release trail so that"
+          echo "every behavior change is traceable. To make this check pass, do ONE of:"
+          echo ""
+          echo "  1. Update the release trail in this same PR:"
+          echo "       -> ${TRAIL_FILE}"
+          echo "     Add an entry describing what changed and why."
+          echo ""
+          echo "  2. If this change genuinely needs no trail entry (pure refactor,"
+          echo "     comments, formatting), add the '${ESCAPE_LABEL}' label to the PR."
+          echo "     The check re-runs automatically when labels change."
+          echo ""
+          exit 1
