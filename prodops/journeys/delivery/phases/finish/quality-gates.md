@@ -12,7 +12,7 @@ Use este arquivo para registrar Quality Gates de release que se aplicam à imple
 
 ## Test Quality Gates
 
-> **Gate de enforcement do No Mocks Rule.** Este arquivo define o que bloqueia merge. Para a definição técnica e como aplicar no ciclo TDD, ver [`prodops/skills/hack/references/workflow.md § No Mocks Rule`](../../../../skills/hack/references/workflow.md). Para os Yellow Bar patterns aceitáveis (injeção de erro, unit tests), ver [`mocking-policy.md`](../../../../skills/hack/references/engineering/tdd-prodops/mocking-policy.md).
+> **Gate de enforcement do No Mocks Rule.** Este arquivo define o que bloqueia merge. Para a definição técnica e como aplicar no ciclo TDD, ver [`prodops/skills/hack/references/workflow.md § No Mocks Rule`](../../../../skills/hack/references/workflow.md). Para os Yellow Bar patterns aceitáveis (injeção de erro, unit tests), ver [`mocking-policy.md`](../../../../skills/references/engineering/tdd-prodops/mocking-policy.md).
 
 **Proibição de test doubles em testes de aceitação.** `api/test/` não deve conter substituições de serviço via `jest.fn()`, implementações de `jest.spyOn(...).mockXxx()` ou chamadas a `.overrideProvider()`. Violações bloqueiam o merge.
 
