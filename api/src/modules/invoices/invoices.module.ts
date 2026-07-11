@@ -2,11 +2,14 @@ import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { InvoiceController } from './controllers/invoice.controller';
 import { AsaasWebhookController } from './controllers/asaas-webhook.controller';
+import { AsaasSandboxController } from './controllers/asaas-sandbox.controller';
 import { InvoiceService } from './services/invoice.service';
 import { DynamoService } from '../../infra/dynamo.service';
 import { AsaasService } from '../../infra/asaas.service';
 import { InvoiceRepository } from './services/invoice-repository.service';
 import { ProviderRouterService } from './services/provider-router.service';
+import { AsaasWebhookQueueService } from './services/asaas-webhook-queue.service';
+import { AuthModule } from '../auth/auth.module';
 
 /**
  * Invoices Module
@@ -37,15 +40,25 @@ import { ProviderRouterService } from './services/provider-router.service';
  *    - Protagonista: PAYMENT_PROCESSED
  */
 @Module({
-  imports: [EventEmitterModule],
-  controllers: [InvoiceController, AsaasWebhookController],
+  imports: [EventEmitterModule, AuthModule],
+  controllers: [
+    InvoiceController,
+    AsaasWebhookController,
+    AsaasSandboxController,
+  ],
   providers: [
     InvoiceService,
     DynamoService,
     AsaasService,
     InvoiceRepository,
     ProviderRouterService,
+    AsaasWebhookQueueService,
   ],
-  exports: [InvoiceService, InvoiceRepository, ProviderRouterService],
+  exports: [
+    InvoiceService,
+    InvoiceRepository,
+    ProviderRouterService,
+    AsaasWebhookQueueService,
+  ],
 })
 export class InvoicesModule {}

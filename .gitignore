@@ -3,6 +3,8 @@
 node_modules/
 /build
 /tmp
+validation-workbench/dist/
+validation-workbench/.env
 
 # Logs
 logs
@@ -22,6 +24,9 @@ lerna-debug.log*
 # temp directory
 .temp
 .tmp
+
+# Claude Code agent worktrees (local, ephemeral)
+.claude/worktrees/
 
 .aws-sam
 .lambda_build_temp

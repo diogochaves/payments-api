@@ -7,6 +7,10 @@ export AWS_ENDPOINT_URL=http://localhost.localstack.cloud:4566
 export AWS_DEFAULT_REGION=us-east-1
 export AWS_ACCESS_KEY_ID=test
 export AWS_SECRET_ACCESS_KEY=test
+export ASAAS_WEBHOOK_TOKEN="${ASAAS_WEBHOOK_TOKEN:-local-webhook-token}"
+
+aws s3 mb s3://payments-gateway-prod \
+  --endpoint-url "$AWS_ENDPOINT_URL" >/dev/null 2>&1 || true
 
 sam deploy \
   --debug \
@@ -14,6 +18,18 @@ sam deploy \
   --stack-name payments-gateway \
   --s3-bucket payments-gateway-prod \
   --no-confirm-changeset \
+  --no-fail-on-empty-changeset \
+  --parameter-overrides \
+    EnvironmentName=local \
+    InvoiceRepository=dynamo \
+    DynamoMock=false \
+    AwsDynamoDbEndpoint=http://localhost.localstack.cloud:4566 \
+    EnabledPaymentProviders=ASAAS \
+    DefaultPaymentProvider=ASAAS \
+    AsaasMock=true \
+    AsaasWebhookToken="$ASAAS_WEBHOOK_TOKEN" \
+    WebhookProcessingMode=async \
+    DatadogEnabled=false \
   --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND
 
 # sam deploy \

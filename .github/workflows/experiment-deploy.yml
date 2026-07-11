@@ -1,0 +1,300 @@
+name: Experiment Sandbox Deploy
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Pipeline structure
+#
+#  quick-check ──► deploy-experiment   (action=deploy)
+#              └─► teardown-experiment (action=teardown)
+#
+#  quick-check       Lint + build only. No acceptance tests — the goal is to
+#                    reach real AWS fast. Full test suite is not a gate here.
+#
+#  deploy-experiment Deploys to REAL AWS. Isolated stack (experiment-*).
+#                    AsaasMock=false — hits real Asaas sandbox.
+#                    Uses GitHub Environment "experiment" (no approval gate).
+#                    Role: payments-api-github-experiment (experiment-* only).
+#
+#  teardown-experiment Deletes both CloudFormation stacks. Required when the
+#                    experiment concludes. No data is preserved after teardown.
+#
+# Trigger: workflow_dispatch only — never runs on push.
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Experiment branch to deploy'
+        required: true
+        type: string
+      experiment_id:
+        description: 'Experiment ID (e.g. EXP-007) — recorded in Job Summary'
+        required: true
+        type: string
+      action:
+        description: 'Action to perform'
+        required: true
+        type: choice
+        options:
+          - deploy
+          - teardown
+        default: deploy
+
+# One experiment deploy at a time. Never cancel mid-deploy.
+concurrency:
+  group: experiment-deploy
+  cancel-in-progress: false
+
+# id-token: write is required for OIDC keyless AWS authentication.
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  DYNAMO_STACK: payments-api-dynamo-experiment
+  LAMBDA_STACK: payments-api-experiment
+  ENVIRONMENT: experiment
+
+jobs:
+  # ── Job 1: Quick Check ──────────────────────────────────────────────────────
+  # Lint + build only. No acceptance tests — gate is intentionally lighter than
+  # staging so experiment iteration is fast.
+  quick-check:
+    name: Quick Check (Lint + Build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: api/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+  # ── Job 2: Deploy Experiment ────────────────────────────────────────────────
+  # Deploys REAL AWS infrastructure under the experiment-* prefix.
+  # Uses GitHub Environment "experiment" — no required reviewers.
+  # Role payments-api-github-experiment is scoped to experiment-* resources only.
+  deploy-experiment:
+    name: Deploy — Experiment Sandbox (AWS real)
+    needs: quick-check
+    if: inputs.action == 'deploy'
+    runs-on: ubuntu-latest
+
+    environment:
+      name: experiment
+      url: ${{ steps.get-url.outputs.api_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: api/package-lock.json
+
+      - name: Install dependencies
+        working-directory: api
+        run: npm ci
+
+      - name: Build
+        working-directory: api
+        run: |
+          npm run build
+          cp package.json package-lock.json dist/
+          npm ci --omit=dev --prefix dist
+
+      # ── Validate required secrets are present ───────────────────────────────
+      - name: Validate required secrets
+        env:
+          ASAAS_TOKEN: ${{ secrets.EXPERIMENT_ASAAS_TOKEN }}
+          ASAAS_WEBHOOK_TOKEN: ${{ secrets.EXPERIMENT_ASAAS_WEBHOOK_TOKEN }}
+          ADMIN_SECRET: ${{ secrets.EXPERIMENT_ADMIN_SECRET }}
+        run: |
+          MISSING=()
+          [[ -z "$ASAAS_TOKEN" ]]        && MISSING+=("EXPERIMENT_ASAAS_TOKEN")
+          [[ -z "$ASAAS_WEBHOOK_TOKEN" ]] && MISSING+=("EXPERIMENT_ASAAS_WEBHOOK_TOKEN")
+          [[ -z "$ADMIN_SECRET" ]]        && MISSING+=("EXPERIMENT_ADMIN_SECRET")
+          if [[ ${#MISSING[@]} -gt 0 ]]; then
+            echo "ERROR: The following required secrets are not set in the 'experiment' GitHub Environment:"
+            printf '  - %s\n' "${MISSING[@]}"
+            echo ""
+            echo "Create the 'experiment' GitHub Environment and add the secrets above."
+            exit 1
+          fi
+          echo "All required secrets are present."
+
+      # Role is scoped to experiment-* resources — cannot touch staging or production.
+      - name: Configure AWS credentials (OIDC — experiment role)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::985057277127:role/payments-api-github-experiment
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup SAM CLI
+        uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      # ── DynamoDB Tables ──────────────────────────────────────────────────────
+      - name: Deploy DynamoDB tables
+        run: |
+          aws cloudformation deploy \
+            --region "${{ env.AWS_REGION }}" \
+            --template-file api/infra/dynamodb.yaml \
+            --stack-name "${{ env.DYNAMO_STACK }}" \
+            --parameter-overrides EnvironmentName=${{ env.ENVIRONMENT }} \
+            --no-fail-on-empty-changeset \
+            --tags \
+              Environment=${{ env.ENVIRONMENT }} \
+              Project=payments-api \
+              ManagedBy=github-actions \
+              DeployedBy=github-actions \
+              ExperimentId=${{ inputs.experiment_id }} \
+              GitBranch=${{ inputs.branch }}
+
+      # ── Lambda Application ───────────────────────────────────────────────────
+      - name: Deploy Lambda application
+        working-directory: api
+        env:
+          EXPERIMENT_ASAAS_TOKEN: ${{ secrets.EXPERIMENT_ASAAS_TOKEN }}
+          EXPERIMENT_ASAAS_WEBHOOK_TOKEN: ${{ secrets.EXPERIMENT_ASAAS_WEBHOOK_TOKEN }}
+          EXPERIMENT_ADMIN_SECRET: ${{ secrets.EXPERIMENT_ADMIN_SECRET }}
+        run: |
+          sam deploy \
+            --config-file samconfig.toml \
+            --config-env experiment \
+            --region "${{ env.AWS_REGION }}" \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset \
+            --tags \
+              "Environment=${{ env.ENVIRONMENT }}" \
+              "Project=payments-api" \
+              "ManagedBy=sam" \
+              "DeployedBy=github-actions" \
+              "ExperimentId=${{ inputs.experiment_id }}" \
+              "GitBranch=${{ inputs.branch }}" \
+            --parameter-overrides \
+              EnvironmentName=experiment \
+              AsaasMock=false \
+              AsaasUrl=https://api-sandbox.asaas.com \
+              EnabledPaymentProviders=ASAAS \
+              DefaultPaymentProvider=ASAAS \
+              WebhookProcessingMode=async \
+              DatadogEnabled=false \
+              AsaasToken="$EXPERIMENT_ASAAS_TOKEN" \
+              AsaasWebhookToken="$EXPERIMENT_ASAAS_WEBHOOK_TOKEN" \
+              AdminSecret="$EXPERIMENT_ADMIN_SECRET"
+
+      # ── Retrieve deployed API URL ────────────────────────────────────────────
+      - name: Get API URL
+        id: get-url
+        run: |
+          API_URL=$(aws cloudformation describe-stacks \
+            --region "${{ env.AWS_REGION }}" \
+            --stack-name "${{ env.LAMBDA_STACK }}" \
+            --query "Stacks[0].Outputs[?OutputKey=='ApiFunctionUrl'].OutputValue" \
+            --output text)
+          echo "api_url=${API_URL}" >> "$GITHUB_OUTPUT"
+          echo "Deployed to: ${API_URL}"
+
+      # ── Register webhook URL with Asaas sandbox ──────────────────────────────
+      - name: Update Asaas sandbox webhook URL
+        env:
+          ASAAS_TOKEN: ${{ secrets.EXPERIMENT_ASAAS_TOKEN }}
+          ASAAS_WEBHOOK_TOKEN: ${{ secrets.EXPERIMENT_ASAAS_WEBHOOK_TOKEN }}
+          ASAAS_URL: https://api-sandbox.asaas.com
+          WEBHOOK_URL: ${{ steps.get-url.outputs.api_url }}webhook/payments
+        run: ./scripts/update-asaas-webhook.sh
+        continue-on-error: true
+
+      - name: Deployment summary
+        run: |
+          {
+            echo "### Experiment Sandbox Deployment"
+            echo ""
+            echo "| Field | Value |"
+            echo "| --- | --- |"
+            echo "| **Experiment** | ${{ inputs.experiment_id }} |"
+            echo "| **Branch** | \`${{ inputs.branch }}\` |"
+            echo "| **API URL** | ${{ steps.get-url.outputs.api_url }} |"
+            echo "| **Webhook** | \`${{ steps.get-url.outputs.api_url }}webhook/payments\` |"
+            echo "| **DynamoDB stack** | \`${{ env.DYNAMO_STACK }}\` |"
+            echo "| **Lambda stack** | \`${{ env.LAMBDA_STACK }}\` |"
+            echo "| **Deployed at** | $(date -u '+%Y-%m-%d %H:%M:%S UTC') |"
+            echo ""
+            echo "> **Teardown obligation:** run this workflow with \`action=teardown\` when the experiment concludes."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ── Job 3: Teardown Experiment ──────────────────────────────────────────────
+  # Deletes both CloudFormation stacks. Required at experiment conclusion.
+  # DynamoDB tables are deleted — no data is preserved after teardown.
+  teardown-experiment:
+    name: Teardown — Experiment Sandbox
+    needs: quick-check
+    if: inputs.action == 'teardown'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS credentials (OIDC — experiment role)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::985057277127:role/payments-api-github-experiment
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Delete Lambda stack
+        run: |
+          echo "Deleting Lambda stack: ${{ env.LAMBDA_STACK }}"
+          aws cloudformation delete-stack \
+            --region "${{ env.AWS_REGION }}" \
+            --stack-name "${{ env.LAMBDA_STACK }}"
+          aws cloudformation wait stack-delete-complete \
+            --region "${{ env.AWS_REGION }}" \
+            --stack-name "${{ env.LAMBDA_STACK }}" || echo "Stack already deleted or not found."
+
+      - name: Delete DynamoDB stack
+        run: |
+          echo "Deleting DynamoDB stack: ${{ env.DYNAMO_STACK }}"
+          aws cloudformation delete-stack \
+            --region "${{ env.AWS_REGION }}" \
+            --stack-name "${{ env.DYNAMO_STACK }}"
+          aws cloudformation wait stack-delete-complete \
+            --region "${{ env.AWS_REGION }}" \
+            --stack-name "${{ env.DYNAMO_STACK }}" || echo "Stack already deleted or not found."
+
+      - name: Teardown summary
+        if: always()
+        run: |
+          {
+            echo "### Experiment Sandbox Teardown"
+            echo ""
+            echo "| Field | Value |"
+            echo "| --- | --- |"
+            echo "| **Experiment** | ${{ inputs.experiment_id }} |"
+            echo "| **Lambda stack** | \`${{ env.LAMBDA_STACK }}\` — deleted |"
+            echo "| **DynamoDB stack** | \`${{ env.DYNAMO_STACK }}\` — deleted |"
+            echo "| **Torn down at** | $(date -u '+%Y-%m-%d %H:%M:%S UTC') |"
+          } >> "$GITHUB_STEP_SUMMARY"

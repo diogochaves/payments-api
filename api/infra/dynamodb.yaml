@@ -1,14 +1,23 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Payments Gateway DynamoDB Tables
 
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: dev
+    AllowedPattern: '^[a-zA-Z0-9-]+$'
+    Description: Environment prefix for all table names (e.g. staging, production).
+
 Resources:
 
   TransactionsTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: TransactionsTable
-      BillingMode: PAY_PER_REQUEST
-
+      TableName: !Sub "${EnvironmentName}-TransactionsTable"
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       AttributeDefinitions:
         - AttributeName: PK
           AttributeType: S
@@ -18,13 +27,11 @@ Resources:
           AttributeType: S
         - AttributeName: GSI1SK
           AttributeType: S
-
       KeySchema:
         - AttributeName: PK
           KeyType: HASH
         - AttributeName: SK
           KeyType: RANGE
-
       GlobalSecondaryIndexes:
         - IndexName: GSI1
           KeySchema:
@@ -34,12 +41,25 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Project
+          Value: payments-api
+        - Key: ManagedBy
+          Value: cloudformation
 
   TenantsTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: TenantsTable
-      BillingMode: PAY_PER_REQUEST
+      TableName: !Sub "${EnvironmentName}-TenantsTable"
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       AttributeDefinitions:
         - AttributeName: PK
           AttributeType: S
@@ -50,12 +70,22 @@ Resources:
           KeyType: HASH
         - AttributeName: SK
           KeyType: RANGE
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Project
+          Value: payments-api
+        - Key: ManagedBy
+          Value: cloudformation
 
   ProvidersTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: ProvidersTable
-      BillingMode: PAY_PER_REQUEST
+      TableName: !Sub "${EnvironmentName}-ProvidersTable"
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       AttributeDefinitions:
         - AttributeName: PK
           AttributeType: S
@@ -66,12 +96,22 @@ Resources:
           KeyType: HASH
         - AttributeName: SK
           KeyType: RANGE
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Project
+          Value: payments-api
+        - Key: ManagedBy
+          Value: cloudformation
 
   CustomersTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: CustomersTable
-      BillingMode: PAY_PER_REQUEST
+      TableName: !Sub "${EnvironmentName}-CustomersTable"
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       AttributeDefinitions:
         - AttributeName: PK
           AttributeType: S
@@ -82,12 +122,22 @@ Resources:
           KeyType: HASH
         - AttributeName: SK
           KeyType: RANGE
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Project
+          Value: payments-api
+        - Key: ManagedBy
+          Value: cloudformation
 
   PaymentsTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: PaymentsTable
-      BillingMode: PAY_PER_REQUEST
+      TableName: !Sub "${EnvironmentName}-PaymentsTable"
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       AttributeDefinitions:
         - AttributeName: PK
           AttributeType: S
@@ -115,6 +165,9 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
         - IndexName: PaymentStatusIndex
           KeySchema:
             - AttributeName: GSI2PK
@@ -123,13 +176,81 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Project
+          Value: payments-api
+        - Key: ManagedBy
+          Value: cloudformation
+
+  WebhooksTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${EnvironmentName}-WebhooksTable"
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: TenantWebhooksIndex
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Project
+          Value: payments-api
+        - Key: ManagedBy
+          Value: cloudformation
 
 Outputs:
   PaymentsTableName:
     Value: !Ref PaymentsTable
+    Export:
+      Name: !Sub "${EnvironmentName}-PaymentsTableName"
+  TransactionsTableName:
+    Value: !Ref TransactionsTable
+    Export:
+      Name: !Sub "${EnvironmentName}-TransactionsTableName"
   CustomersTableName:
     Value: !Ref CustomersTable
+    Export:
+      Name: !Sub "${EnvironmentName}-CustomersTableName"
   TenantsTableName:
     Value: !Ref TenantsTable
+    Export:
+      Name: !Sub "${EnvironmentName}-TenantsTableName"
   ProvidersTableName:
     Value: !Ref ProvidersTable
+    Export:
+      Name: !Sub "${EnvironmentName}-ProvidersTableName"
+  WebhooksTableName:
+    Value: !Ref WebhooksTable
+    Export:
+      Name: !Sub "${EnvironmentName}-WebhooksTableName"

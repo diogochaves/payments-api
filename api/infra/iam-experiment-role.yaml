@@ -1,0 +1,207 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  IAM role for GitHub Actions experiment sandbox deploys.
+  Scoped to experiment-* resources only — cannot touch staging or production stacks.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Usage (one-time setup by AWS admin):
+#
+#   aws cloudformation deploy \
+#     --template-file api/infra/iam-experiment-role.yaml \
+#     --stack-name payments-api-iam-experiment-role \
+#     --capabilities CAPABILITY_NAMED_IAM \
+#     --parameter-overrides GitHubOrg=<org> GitHubRepo=<repo>
+#
+# The created role ARN is:
+#   arn:aws:iam::985057277127:role/payments-api-github-experiment
+#
+# Reference this ARN in .github/workflows/experiment-deploy.yml
+# under role-to-assume.
+# ─────────────────────────────────────────────────────────────────────────────
+
+Parameters:
+  GitHubOrg:
+    Type: String
+    Description: GitHub organisation or user that owns the repository
+  GitHubRepo:
+    Type: String
+    Description: Repository name (without org prefix)
+  AccountId:
+    Type: String
+    Default: '985057277127'
+    Description: AWS account ID — used in resource ARN conditions
+
+Resources:
+
+  ExperimentDeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: payments-api-github-experiment
+      Description: GitHub Actions OIDC role for experiment sandbox deploys — experiment-* scope only
+
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !Sub 'arn:aws:iam::${AccountId}:oidc-provider/token.actions.githubusercontent.com'
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com'
+              StringLike:
+                'token.actions.githubusercontent.com:sub': !Sub 'repo:${GitHubOrg}/${GitHubRepo}:*'
+
+      Policies:
+        - PolicyName: ExperimentSandboxDeploy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+
+              # ── CloudFormation — experiment stacks only ─────────────────────
+              - Sid: CloudFormationExperiment
+                Effect: Allow
+                Action:
+                  - cloudformation:CreateStack
+                  - cloudformation:UpdateStack
+                  - cloudformation:DeleteStack
+                  - cloudformation:DescribeStacks
+                  - cloudformation:DescribeStackEvents
+                  - cloudformation:DescribeStackResource
+                  - cloudformation:DescribeStackResources
+                  - cloudformation:GetTemplate
+                  - cloudformation:ListStackResources
+                  - cloudformation:ValidateTemplate
+                Resource:
+                  - !Sub 'arn:aws:cloudformation:us-east-1:${AccountId}:stack/payments-api-experiment/*'
+                  - !Sub 'arn:aws:cloudformation:us-east-1:${AccountId}:stack/payments-api-dynamo-experiment/*'
+
+              # ── CloudFormation — change sets ────────────────────────────────
+              - Sid: CloudFormationChangeSets
+                Effect: Allow
+                Action:
+                  - cloudformation:CreateChangeSet
+                  - cloudformation:DeleteChangeSet
+                  - cloudformation:DescribeChangeSet
+                  - cloudformation:ExecuteChangeSet
+                Resource:
+                  - !Sub 'arn:aws:cloudformation:us-east-1:${AccountId}:stack/payments-api-experiment/*'
+                  - !Sub 'arn:aws:cloudformation:us-east-1:${AccountId}:stack/payments-api-dynamo-experiment/*'
+                  - !Sub 'arn:aws:cloudformation:us-east-1:aws:transform/Serverless-2016-10-31'
+
+              # ── S3 — SAM deployment bucket (experiment prefix) ──────────────
+              - Sid: S3SamBucket
+                Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:GetObject
+                  - s3:ListBucket
+                  - s3:GetBucketLocation
+                Resource:
+                  - !Sub 'arn:aws:s3:::aws-sam-cli-managed-*'
+                  - !Sub 'arn:aws:s3:::aws-sam-cli-managed-*/payments-api/experiment/*'
+
+              # ── DynamoDB — experiment tables only ──────────────────────────
+              - Sid: DynamoDBExperiment
+                Effect: Allow
+                Action:
+                  - dynamodb:CreateTable
+                  - dynamodb:DeleteTable
+                  - dynamodb:DescribeTable
+                  - dynamodb:UpdateTable
+                  - dynamodb:ListTagsOfResource
+                  - dynamodb:TagResource
+                  - dynamodb:UntagResource
+                  - dynamodb:DescribeContinuousBackups
+                  - dynamodb:DescribeTimeToLive
+                Resource:
+                  - !Sub 'arn:aws:dynamodb:us-east-1:${AccountId}:table/experiment-*'
+
+              # ── Lambda — experiment functions only ──────────────────────────
+              - Sid: LambdaExperiment
+                Effect: Allow
+                Action:
+                  - lambda:CreateFunction
+                  - lambda:UpdateFunctionCode
+                  - lambda:UpdateFunctionConfiguration
+                  - lambda:DeleteFunction
+                  - lambda:GetFunction
+                  - lambda:GetFunctionConfiguration
+                  - lambda:AddPermission
+                  - lambda:RemovePermission
+                  - lambda:ListVersionsByFunction
+                  - lambda:PublishVersion
+                  - lambda:CreateAlias
+                  - lambda:DeleteAlias
+                  - lambda:GetAlias
+                  - lambda:UpdateAlias
+                  - lambda:ListTags
+                  - lambda:TagResource
+                  - lambda:UntagResource
+                  - lambda:CreateFunctionUrlConfig
+                  - lambda:UpdateFunctionUrlConfig
+                  - lambda:DeleteFunctionUrlConfig
+                  - lambda:GetFunctionUrlConfig
+                Resource:
+                  - !Sub 'arn:aws:lambda:us-east-1:${AccountId}:function:payments-api-experiment-*'
+
+              # ── SQS — experiment queues only ────────────────────────────────
+              - Sid: SQSExperiment
+                Effect: Allow
+                Action:
+                  - sqs:CreateQueue
+                  - sqs:DeleteQueue
+                  - sqs:GetQueueAttributes
+                  - sqs:SetQueueAttributes
+                  - sqs:ListQueueTags
+                  - sqs:TagQueue
+                  - sqs:UntagQueue
+                Resource:
+                  - !Sub 'arn:aws:sqs:us-east-1:${AccountId}:experiment-*'
+
+              # ── IAM — roles for experiment Lambda execution only ────────────
+              - Sid: IAMExperimentRoles
+                Effect: Allow
+                Action:
+                  - iam:CreateRole
+                  - iam:DeleteRole
+                  - iam:AttachRolePolicy
+                  - iam:DetachRolePolicy
+                  - iam:PutRolePolicy
+                  - iam:DeleteRolePolicy
+                  - iam:GetRole
+                  - iam:GetRolePolicy
+                  - iam:PassRole
+                  - iam:TagRole
+                  - iam:UntagRole
+                  - iam:ListRoleTags
+                Resource:
+                  - !Sub 'arn:aws:iam::${AccountId}:role/payments-api-experiment-*'
+
+              # ── CloudWatch Logs — experiment log groups only ────────────────
+              - Sid: CloudWatchLogsExperiment
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:DeleteLogGroup
+                  - logs:DescribeLogGroups
+                  - logs:PutRetentionPolicy
+                  - logs:TagLogGroup
+                Resource:
+                  - !Sub 'arn:aws:logs:us-east-1:${AccountId}:log-group:/aws/lambda/payments-api-experiment-*'
+
+              # ── CloudFormation stack status (read-only, no resource filter) ─
+              # Required for `aws cloudformation wait stack-delete-complete`
+              - Sid: CloudFormationDescribeAll
+                Effect: Allow
+                Action:
+                  - cloudformation:DescribeStacks
+                  - cloudformation:ListStacks
+                Resource: '*'
+
+Outputs:
+  RoleArn:
+    Description: ARN of the experiment deploy role
+    Value: !GetAtt ExperimentDeployRole.Arn
+    Export:
+      Name: payments-api-github-experiment-role-arn

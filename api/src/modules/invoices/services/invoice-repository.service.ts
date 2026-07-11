@@ -7,31 +7,21 @@ import {
   PaymentProvider,
 } from '../types/invoice.types';
 
+const PAYMENTS_TABLE = process.env.PAYMENTS_TABLE ?? 'PaymentsTable';
+const TRANSACTIONS_TABLE =
+  process.env.TRANSACTIONS_TABLE ?? 'TransactionsTable';
+const CUSTOMERS_TABLE = process.env.CUSTOMERS_TABLE ?? 'CustomersTable';
+
 @Injectable()
 export class InvoiceRepository {
-  private readonly invoices = new Map<string, InvoiceRecord>();
-  private readonly idempotency = new Map<string, string>();
-  private readonly customerLinks = new Map<string, CustomerProviderLink>();
-  private readonly rawProviderEvents = new Map<string, unknown>();
-  private readonly useDynamo = process.env.INVOICE_REPOSITORY === 'dynamo';
-
   constructor(private readonly dynamo: DynamoService) {}
 
   async findByIdempotencyKey(
     tenantId: string,
     idempotencyKey: string,
   ): Promise<InvoiceRecord | undefined> {
-    const key = this.idempotencyKey(tenantId, idempotencyKey);
-
-    if (!this.useDynamo) {
-      const invoiceId = this.idempotency.get(key);
-      return invoiceId
-        ? this.invoices.get(this.invoiceKey(tenantId, invoiceId))
-        : undefined;
-    }
-
     const item = await this.dynamo.getItem(
-      'PaymentsTable',
+      PAYMENTS_TABLE,
       `TENANT#${tenantId}`,
       `IDEMPOTENCY#${idempotencyKey}`,
     );
@@ -49,21 +39,9 @@ export class InvoiceRepository {
     invoice: InvoiceRecord,
     idempotencyKey: string,
   ): Promise<void> {
-    if (!this.useDynamo) {
-      this.invoices.set(
-        this.invoiceKey(invoice.tenantId, invoice.invoiceId),
-        invoice,
-      );
-      this.idempotency.set(
-        this.idempotencyKey(invoice.tenantId, idempotencyKey),
-        invoice.invoiceId,
-      );
-      return;
-    }
-
-    await this.dynamo.putItem('PaymentsTable', this.toPaymentItem(invoice));
+    await this.dynamo.putItem(PAYMENTS_TABLE, this.toPaymentItem(invoice));
     await this.saveExternalReferenceLookup(invoice);
-    await this.dynamo.putItem('PaymentsTable', {
+    await this.dynamo.putItem(PAYMENTS_TABLE, {
       PK: `TENANT#${invoice.tenantId}`,
       SK: `IDEMPOTENCY#${idempotencyKey}`,
       invoiceId: invoice.invoiceId,
@@ -78,15 +56,7 @@ export class InvoiceRepository {
     idempotencyKey: string,
     invoice: InvoiceRecord,
   ): Promise<void> {
-    if (!this.useDynamo) {
-      this.idempotency.set(
-        this.idempotencyKey(tenantId, idempotencyKey),
-        invoice.invoiceId,
-      );
-      return;
-    }
-
-    await this.dynamo.putItem('PaymentsTable', {
+    await this.dynamo.putItem(PAYMENTS_TABLE, {
       PK: `TENANT#${tenantId}`,
       SK: `IDEMPOTENCY#${idempotencyKey}`,
       invoiceId: invoice.invoiceId,
@@ -108,15 +78,7 @@ export class InvoiceRepository {
       updatedAt: new Date().toISOString(),
     };
 
-    if (!this.useDynamo) {
-      this.invoices.set(
-        this.invoiceKey(updated.tenantId, updated.invoiceId),
-        updated,
-      );
-      return updated;
-    }
-
-    await this.dynamo.putItem('PaymentsTable', this.toPaymentItem(updated));
+    await this.dynamo.putItem(PAYMENTS_TABLE, this.toPaymentItem(updated));
     await this.saveExternalReferenceLookup(updated);
     return updated;
   }
@@ -125,12 +87,8 @@ export class InvoiceRepository {
     tenantId: string,
     invoiceId: string,
   ): Promise<InvoiceRecord | undefined> {
-    if (!this.useDynamo) {
-      return this.invoices.get(this.invoiceKey(tenantId, invoiceId));
-    }
-
     const item = await this.dynamo.getItem(
-      'PaymentsTable',
+      PAYMENTS_TABLE,
       `TENANT#${tenantId}`,
       `INVOICE#${invoiceId}`,
     );
@@ -138,33 +96,15 @@ export class InvoiceRepository {
     return item?.invoice as InvoiceRecord | undefined;
   }
 
-  findByProviderPaymentId(
+  async findByProviderPaymentId(
     providerPaymentId: string,
   ): Promise<InvoiceRecord | undefined> {
-    if (!this.useDynamo) {
-      return Promise.resolve(
-        Array.from(this.invoices.values()).find(
-          (invoice) => invoice.providerPaymentId === providerPaymentId,
-        ),
-      );
-    }
-
     return this.findDynamoInvoiceByProviderPaymentId(providerPaymentId);
   }
 
-  findByExternalReference(
+  async findByExternalReference(
     externalReference: string,
   ): Promise<InvoiceRecord | undefined> {
-    if (!this.useDynamo) {
-      return Promise.resolve(
-        Array.from(this.invoices.values()).find(
-          (invoice) =>
-            invoice.externalReference === externalReference ||
-            invoice.orderId === externalReference,
-        ),
-      );
-    }
-
     return this.findDynamoInvoiceByExternalReference(externalReference);
   }
 
@@ -172,21 +112,8 @@ export class InvoiceRepository {
     eventKey: string,
     payload: unknown,
   ): Promise<boolean> {
-    if (!this.useDynamo) {
-      if (this.rawProviderEvents.has(eventKey)) {
-        return false;
-      }
-
-      this.rawProviderEvents.set(eventKey, {
-        eventKey,
-        payload,
-        receivedAt: new Date().toISOString(),
-      });
-      return true;
-    }
-
     const existing = await this.dynamo.getItem(
-      'TransactionsTable',
+      TRANSACTIONS_TABLE,
       `PROVIDER_EVENT#${eventKey}`,
       'RAW',
     );
@@ -195,7 +122,7 @@ export class InvoiceRepository {
       return false;
     }
 
-    await this.dynamo.putItem('TransactionsTable', {
+    await this.dynamo.putItem(TRANSACTIONS_TABLE, {
       PK: `PROVIDER_EVENT#${eventKey}`,
       SK: 'RAW',
       eventKey,
@@ -206,12 +133,8 @@ export class InvoiceRepository {
   }
 
   async hasRawProviderEvent(eventKey: string): Promise<boolean> {
-    if (!this.useDynamo) {
-      return this.rawProviderEvents.has(eventKey);
-    }
-
     const existing = await this.dynamo.getItem(
-      'TransactionsTable',
+      TRANSACTIONS_TABLE,
       `PROVIDER_EVENT#${eventKey}`,
       'RAW',
     );
@@ -223,14 +146,8 @@ export class InvoiceRepository {
     customerId: string,
     provider: PaymentProvider,
   ): Promise<CustomerProviderLink | undefined> {
-    const key = this.customerLinkKey(tenantId, customerId, provider);
-
-    if (!this.useDynamo) {
-      return this.customerLinks.get(key);
-    }
-
     const item = await this.dynamo.getItem(
-      'CustomersTable',
+      CUSTOMERS_TABLE,
       `TENANT#${tenantId}`,
       `CUSTOMER#${customerId}#PROVIDER#${provider}`,
     );
@@ -239,15 +156,7 @@ export class InvoiceRepository {
   }
 
   async saveCustomerLink(link: CustomerProviderLink): Promise<void> {
-    if (!this.useDynamo) {
-      this.customerLinks.set(
-        this.customerLinkKey(link.tenantId, link.customerId, link.provider),
-        link,
-      );
-      return;
-    }
-
-    await this.dynamo.putItem('CustomersTable', {
+    await this.dynamo.putItem(CUSTOMERS_TABLE, {
       PK: `TENANT#${link.tenantId}`,
       SK: `CUSTOMER#${link.customerId}#PROVIDER#${link.provider}`,
       link,
@@ -285,7 +194,7 @@ export class InvoiceRepository {
 
     for (const provider of providers) {
       const [item] = await this.dynamo.queryByIndex(
-        'PaymentsTable',
+        PAYMENTS_TABLE,
         'ProviderPaymentIndex',
         'GSI1PK',
         `PROVIDER#${provider}`,
@@ -305,13 +214,12 @@ export class InvoiceRepository {
     externalReference: string,
   ): Promise<InvoiceRecord | undefined> {
     const item = await this.dynamo.getItem(
-      'PaymentsTable',
+      PAYMENTS_TABLE,
       `EXTERNAL_REFERENCE#${externalReference}`,
       'INVOICE',
     );
     const tenantId = typeof item?.tenantId === 'string' ? item.tenantId : '';
-    const invoiceId =
-      typeof item?.invoiceId === 'string' ? item.invoiceId : '';
+    const invoiceId = typeof item?.invoiceId === 'string' ? item.invoiceId : '';
 
     if (!tenantId || !invoiceId) {
       return undefined;
@@ -323,7 +231,7 @@ export class InvoiceRepository {
   private async saveExternalReferenceLookup(
     invoice: InvoiceRecord,
   ): Promise<void> {
-    await this.dynamo.putItem('PaymentsTable', {
+    await this.dynamo.putItem(PAYMENTS_TABLE, {
       PK: `EXTERNAL_REFERENCE#${invoice.externalReference}`,
       SK: 'INVOICE',
       tenantId: invoice.tenantId,
@@ -332,21 +240,5 @@ export class InvoiceRepository {
       provider: invoice.provider,
       updatedAt: invoice.updatedAt,
     });
-  }
-
-  private invoiceKey(tenantId: string, invoiceId: string) {
-    return `${tenantId}:${invoiceId}`;
-  }
-
-  private idempotencyKey(tenantId: string, idempotencyKey: string) {
-    return `${tenantId}:${idempotencyKey}`;
-  }
-
-  private customerLinkKey(
-    tenantId: string,
-    customerId: string,
-    provider: PaymentProvider,
-  ) {
-    return `${tenantId}:${provider}:${customerId}`;
   }
 }

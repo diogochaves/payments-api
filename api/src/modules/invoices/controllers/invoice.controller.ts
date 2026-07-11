@@ -2,15 +2,19 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Headers,
   HttpCode,
   HttpStatus,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { ApiTokenGuard } from '../../auth/api-token.guard';
 import { InvoiceService } from '../services/invoice.service';
 import { CreateInvoiceDto } from '../dto/create-invoice.dto';
 
+@UseGuards(ApiTokenGuard)
 @Controller('invoices')
 export class InvoiceController {
   constructor(private invoiceService: InvoiceService) {}
@@ -27,6 +31,15 @@ export class InvoiceController {
       idempotencyKey,
       correlationId,
     );
+  }
+
+  @Get(':invoiceId')
+  @HttpCode(HttpStatus.OK)
+  async getInvoice(
+    @Param('invoiceId') invoiceId: string,
+    @Headers('x-tenant-id') tenantId: string,
+  ) {
+    return await this.invoiceService.getInvoice(tenantId, invoiceId);
   }
 
   @Delete(':invoiceId')
