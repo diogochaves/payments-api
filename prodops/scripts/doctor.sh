@@ -74,17 +74,32 @@ for extra_target in .codex .claude .github docs; do
   fi
 done
 
-legacy_refs="$(
-  rg -n \
-    "${legacy_pattern}" \
-    "${legacy_targets[@]}" \
-    -g '!prodops/framework/canonical-paths.md' \
-    -g '!prodops/journeys/discovery/upstream-trail.md' \
-    -g '!prodops/journeys/discovery/experiments/**/upstream-trail.md' \
-    -g '!prodops/journeys/discovery/experiments/**/experiment.md' \
-    -g '!prodops/documentation-review.md' \
-    || true
-)"
+# ripgrep quando disponível; fallback para grep (runners de CI não trazem rg).
+have_rg() { command -v rg >/dev/null 2>&1; }
+if ! have_rg; then
+  echo "doctor: ripgrep não encontrado — usando fallback com grep" >&2
+fi
+
+if have_rg; then
+  legacy_refs="$(
+    rg -n \
+      "${legacy_pattern}" \
+      "${legacy_targets[@]}" \
+      -g '!prodops/framework/canonical-paths.md' \
+      -g '!prodops/journeys/discovery/upstream-trail.md' \
+      -g '!prodops/journeys/discovery/experiments/**/upstream-trail.md' \
+      -g '!prodops/journeys/discovery/experiments/**/experiment.md' \
+      -g '!prodops/documentation-review.md' \
+      || true
+  )"
+else
+  legacy_refs="$(
+    grep -rEn "${legacy_pattern}" "${legacy_targets[@]}" 2>/dev/null \
+      | grep -vE '^(prodops/framework/canonical-paths\.md|prodops/journeys/discovery/upstream-trail\.md|prodops/documentation-review\.md):' \
+      | grep -vE '^prodops/journeys/discovery/experiments/[^:]*/(upstream-trail|experiment)\.md:' \
+      || true
+  )"
+fi
 
 if [[ -n "${legacy_refs}" ]]; then
   printf '%s\n' "${legacy_refs}" >&2
@@ -98,18 +113,28 @@ fi
 # expected to point at the current location, so trails are not exempt here.
 stale_pattern='api/test/create-invoice\.acceptance\.e2e-spec\.ts|prodops/journeys/discovery/features/'
 
-stale_refs="$(
-  rg -n \
-    "${stale_pattern}" \
-    --hidden \
-    -g '*.md' \
-    -g '!.git/**' \
-    -g '!node_modules/**' \
-    -g '!api/node_modules/**' \
-    -g '!prodops/framework/canonical-paths.md' \
-    -g '!prodops/documentation-review.md' \
-    || true
-)"
+if have_rg; then
+  stale_refs="$(
+    rg -n \
+      "${stale_pattern}" \
+      --hidden \
+      -g '*.md' \
+      -g '!.git/**' \
+      -g '!node_modules/**' \
+      -g '!api/node_modules/**' \
+      -g '!prodops/framework/canonical-paths.md' \
+      -g '!prodops/documentation-review.md' \
+      || true
+  )"
+else
+  stale_refs="$(
+    grep -rEn --include='*.md' --exclude-dir=.git --exclude-dir=node_modules \
+      "${stale_pattern}" . 2>/dev/null \
+      | sed 's|^\./||' \
+      | grep -vE '^(prodops/framework/canonical-paths\.md|prodops/documentation-review\.md):' \
+      || true
+  )"
+fi
 
 if [[ -n "${stale_refs}" ]]; then
   printf '%s\n' "${stale_refs}" >&2
