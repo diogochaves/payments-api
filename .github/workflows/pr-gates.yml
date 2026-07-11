@@ -74,15 +74,32 @@ jobs:
       - name: Lint (no --fix, zero warnings)
         run: npx eslint "{src,apps,libs,test}/**/*.ts" --max-warnings 0
 
-  # ── Gate: unit ──────────────────────────────────────────────────────────────
-  # Manifest: gates.unit ("cd api && npm run test", expect exit0).
-  # Same test env as release.yml: in-memory repository, Asaas mocked.
-  unit:
-    name: unit
+  # ── Gate: acceptance ────────────────────────────────────────────────────────
+  # Manifest: gates.acceptance. The repo has no unit suites (jest on api/src
+  # finds 0 tests); the acceptance e2e suites are the test gate. They need
+  # LocalStack — the app fixture provisions DynamoDB tables even with the
+  # in-memory repository — so this mirrors staging-deploy.yml's service
+  # container pattern.
+  acceptance:
+    name: acceptance
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: api
+
+    services:
+      localstack:
+        image: localstack/localstack:4
+        ports:
+          - 4566:4566
+        env:
+          SERVICES: dynamodb,sqs
+          DEBUG: '0'
+        options: >-
+          --health-cmd "curl -sf http://localhost:4566/_localstack/health"
+          --health-interval 5s
+          --health-timeout 10s
+          --health-retries 12
 
     env:
       NODE_ENV: test
@@ -90,6 +107,11 @@ jobs:
       ENABLED_PAYMENT_PROVIDERS: ASAAS
       DEFAULT_PAYMENT_PROVIDER: ASAAS
       ASAAS_MOCK: 'true'
+      AWS_DYNAMODB_ENDPOINT: http://localhost:4566
+      AWS_SQS_ENDPOINT: http://localhost:4566
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
 
     steps:
       - name: Checkout
@@ -105,8 +127,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Unit tests
-        run: npm run test
+      - name: Acceptance tests
+        run: npm run test:acceptance
 
   # ── Gate: build ─────────────────────────────────────────────────────────────
   # Manifest: gates.build ("cd api && npm run build", expect exit0).
