@@ -11,8 +11,10 @@ manifest e nos artefatos do card — **não pré-leia a documentação do framew
 2. **Exploração:** `/upstream`. **Implementação governada:** `/downstream`.
 3. **Paths canônicos, quality gates e vocabulário:** `prodops/exec/manifest.yaml`
    — fonte única, legível por máquina. Consistência: `./prodops/scripts/validate-manifest.sh`.
-4. **Contexto da tarefa:** o OBC e a BDD Feature do card (localizações no
-   manifest). Leia-os antes de alterar código de produção — e somente eles.
+4. **Contexto da tarefa:** a context capsule do card —
+   `prodops/exec/cards/<card>/context.md`, gerada pelo `/bootstrap`. Leia-a
+   antes de alterar código de produção — e somente ela. Se não existir, rode
+   `/bootstrap` primeiro.
 
 ## Regras invioláveis
 
