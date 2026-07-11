@@ -113,6 +113,12 @@ fi
 # expected to point at the current location, so trails are not exempt here.
 stale_pattern='api/test/create-invoice\.acceptance\.e2e-spec\.ts|prodops/journeys/discovery/features/'
 
+# Referências históricas anotadas com (migrado:|removido:|renomeado:) apontam
+# para a localização atual preservando a leitura append-only dos trails —
+# são consideradas resolvidas. PROJECT-REVIEW.md discute os paths como
+# findings de auditoria, mesma classe de documentation-review.md.
+stale_annotation='\((migrado|removido|renomeado):'
+
 if have_rg; then
   stale_refs="$(
     rg -n \
@@ -124,6 +130,8 @@ if have_rg; then
       -g '!api/node_modules/**' \
       -g '!prodops/framework/canonical-paths.md' \
       -g '!prodops/documentation-review.md' \
+      -g '!PROJECT-REVIEW.md' \
+      | grep -vE "${stale_annotation}" \
       || true
   )"
 else
@@ -131,7 +139,8 @@ else
     grep -rEn --include='*.md' --exclude-dir=.git --exclude-dir=node_modules \
       "${stale_pattern}" . 2>/dev/null \
       | sed 's|^\./||' \
-      | grep -vE '^(prodops/framework/canonical-paths\.md|prodops/documentation-review\.md):' \
+      | grep -vE '^(prodops/framework/canonical-paths\.md|prodops/documentation-review\.md|PROJECT-REVIEW\.md):' \
+      | grep -vE "${stale_annotation}" \
       || true
   )"
 fi
