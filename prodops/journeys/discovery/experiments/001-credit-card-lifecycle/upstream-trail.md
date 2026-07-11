@@ -31,8 +31,8 @@ EXP-003 and the missing EXP-004 reference.
 
 ### Artifacts Updated
 
-- `prodops/journeys/discovery/features/credit-card-payment.feature`
-- `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature`
+- `prodops/journeys/discovery/features/credit-card-payment.feature` (migrado: hoje em `prodops/artifacts/bdd/credit-card-payment.feature`)
+- `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature` (removido: sem sucessor em `prodops/artifacts/bdd/`; gap registrado no trail global de Discovery)
 
 ### Evidence
 
@@ -71,7 +71,7 @@ confirmed or received.
 
 - `api/src/modules/invoices/dto/create-invoice.dto.ts`
 - `api/src/modules/invoices/services/invoice.service.ts`
-- `api/test/create-invoice.acceptance.e2e-spec.ts`
+- `api/test/create-invoice.acceptance.e2e-spec.ts` (renomeado: hoje `api/test/criar-invoice.e2e-spec.ts`)
 
 ### Evidence
 
@@ -112,7 +112,7 @@ confirmation, refusal, cancellation and refund.
 - `prodops/journeys/discovery/experiments/001-credit-card-lifecycle/experiment.md`
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/learnings.md`
-- `prodops/journeys/discovery/features/credit-card-payment.feature`
+- `prodops/journeys/discovery/features/credit-card-payment.feature` (migrado: hoje em `prodops/artifacts/bdd/credit-card-payment.feature`)
 - `prodops/product/tracking-list.md`
 - `prodops/journeys/assessment/risks.md`
 - `prodops/upstream/obcs/credit-card-authorization-confirmation.md`
