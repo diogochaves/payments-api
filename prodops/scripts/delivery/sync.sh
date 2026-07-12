@@ -13,7 +13,7 @@
 #   sync.sh rebase                   rebase step only
 #   sync.sh align                    align step only
 #   sync.sh --base <branch>          explicit base branch (default: inferred)
-#   sync.sh --strategy rebase        use git rebase instead of merge (default: merge)
+#   sync.sh --strategy merge         use git merge instead of rebase (default: rebase)
 #   sync.sh --no-test                skip lint and test after rebase
 #   sync.sh --dry-run                print git commands without executing them
 #   sync.sh -h | --help              show this help
@@ -30,7 +30,7 @@ BLUE='\033[0;34m'; BOLD='\033[1m'; DIM='\033[2m'; NC='\033[0m'
 # ─── state ────────────────────────────────────────────────────────────────────
 STEP=""          # rebase | align | "" (both)
 BASE_BRANCH=""
-STRATEGY="merge" # merge | rebase
+STRATEGY="rebase" # rebase | merge
 DRY_RUN=false
 NO_TEST=false
 ISSUES=0
@@ -228,6 +228,25 @@ step_rebase() {
     return 1
   fi
   pass "Integration complete (no conflicts)"
+
+  # ── 5b. push after rebase if branch tracks a remote ─────────────────────────
+  if [[ "${STRATEGY}" == "rebase" ]]; then
+    local remote_tracking
+    remote_tracking=$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" 2>/dev/null || true)
+    if [[ -n "${remote_tracking}" ]]; then
+      section "5b/7  Push rebased branch (--force-with-lease)"
+      if [[ "${DRY_RUN}" == "false" ]]; then
+        git push --force-with-lease && pass "Branch pushed" || {
+          fail "--force-with-lease rejected: remote was updated since last fetch."
+          fail "Run: git fetch && git log --oneline -5 ${remote_tracking}"
+          fail "Then resolve the divergence before pushing."
+          return 1
+        }
+      else
+        cmd "git push --force-with-lease"
+      fi
+    fi
+  fi
 
   # ── 6. preserve TDD ─────────────────────────────────────────────────────────
   section "6/7  TDD preservation check"

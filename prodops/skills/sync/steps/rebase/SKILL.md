@@ -50,8 +50,16 @@ If fast-forward fails, report the divergence — do not force it.
 
 ```bash
 git switch <work-branch>
-git merge <base>      # prefer merge; use rebase only when explicitly requested
+git rebase <base>     # prefer rebase; use merge only when explicitly requested
 ```
+
+If the branch has already been pushed to `origin`, follow the rebase with:
+
+```bash
+git push --force-with-lease
+```
+
+`--force-with-lease` is safe: it aborts the push if anyone else has modified the remote branch since the last fetch. Only use bare `--force` if explicitly requested.
 
 ### 5. Resolve conflicts
 
