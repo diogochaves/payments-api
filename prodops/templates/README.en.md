@@ -45,11 +45,11 @@ Create an `evidence/` directory next to the experiment when you need command out
 
 ---
 
-## Business Intents
+## Intents
 
 | Template | Usage | Canonical location |
 |---|---|---|
-| [business-intents/intent.md](business-intents/intent.md) | New Business Intent | `prodops/business-intents/<slug>.md` |
+| [business-intents/intent.md](business-intents/intent.md) | New Intent | `prodops/business-intents/<slug>.md` |
 
 ---
 

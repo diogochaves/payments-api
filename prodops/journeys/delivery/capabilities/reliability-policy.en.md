@@ -6,7 +6,7 @@ Reliability is planned before implementation and validated before promotion.
 
 Every Downstream capability requires an entry in the Reliability Plan. The plan defines:
 - Risks and mitigations
-- OBCs (Outcome-Based Criteria) with measurable success thresholds
+- OBCs (Observable Business Contracts) with measurable success thresholds
 - SLO suggestions for events on the critical path
 
 The Reliability Plan is located at: `prodops/journeys/assessment/reliability-plans/`

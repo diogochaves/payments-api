@@ -1,16 +1,9 @@
-# Tracking List — Payments API
+# Iteration Backlog — Demandas Operacionais
 
-> **Atenção — este arquivo não é o backlog de entrega da iteração.**
-> É uma lista de demandas operacionais e de stakeholders (Analytics, DataDog, ITSM) ainda em avaliação, derivadas do Premortem.
-> Esses itens precisam de refinamento antes de entrar em um OBC ou Iteration Plan.
+> **Propósito:** Demandas operacionais e de stakeholders ainda em avaliação (Analytics, DataDog, ITSM). Derivado do Premortem da release de Payments. Itens aqui precisam de refinamento antes de entrar em um OBC ou Iteration Plan.
 >
-> Para o escopo de entrega aprovado (Entrou / Saiu / Adiada), consulte:
-> [`prodops/artifacts/plans/iteration-plan.md`](iteration-plan.md)
->
-> Existe uma segunda Tracking List de itens de produto e engenharia derivados de experimentos Upstream em:
-> [`prodops/artifacts/product/tracking-list.md`](../product/tracking-list.md)
-
-> Derivado das solicitações associadas identificadas no Premortem da release de Payments.
+> → [Hierarquia de backlogs](../../framework/backlogs.md)
+> → [Escopo de entrega aprovado](iteration-plan.md) — para ver o que entrou/saiu/foi adiado
 
 ## Objetivo
 
@@ -25,9 +18,9 @@ Registrar demandas conhecidas que ainda precisam de refinamento, avaliação ou 
 
 ---
 
-# Critérios para saída da Tracking List
+# Critérios para saída do Iteration Backlog
 
-Um item deixa a Tracking List quando:
+Um item deixa o Iteration Backlog quando:
 
 - Foi refinado suficientemente para compor um OBC.
 - Foi descartado por decisão de negócio.

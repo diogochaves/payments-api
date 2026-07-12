@@ -28,6 +28,8 @@ lerna-debug.log*
 # Claude Code agent worktrees (local, ephemeral)
 .claude/worktrees/
 
+.grok/
+
 .aws-sam
 .lambda_build_temp
 

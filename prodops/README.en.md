@@ -53,4 +53,4 @@ Execution Mode → Journey → Phase → Practice → Delivery Capability → Ar
 | [templates/](templates/) | Centralized templates by area |
 | [skills/](skills/) | Executable skills for agents |
 | [journeys/delivery/capabilities/commit-workflow/](journeys/delivery/capabilities/commit-workflow/) | Commit Workflow: native Git hooks, scripts, documentation |
-| [documentation-review.md](documentation-review.md) | Framework documentation review and state |
+| [documentation-review.en.md](documentation-review.en.md) | Framework documentation review and state |

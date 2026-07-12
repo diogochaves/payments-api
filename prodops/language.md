@@ -1,5 +1,7 @@
 # Why this project is in Portuguese
 
+> **Note:** This file is an intentional exception to the bilingual policy it describes. It exists only in English — there is no `language.md` in Portuguese and no `language.en.md` pair. The reason is self-referential: a document explaining *why* the canonical language is Portuguese does not gain anything from being translated into Portuguese; its audience is precisely the reader who arrived expecting English. Creating a pt-BR version would be redundant, and a `.en.md` duplicate of a file that is already entirely in English would be meaningless.
+
 This repository is built with contributions from students of **ProdOps University**, a Brazilian institution for product and engineering education. Portuguese is the native language of the program — it is in their mother tongue that new concepts are learned with the most precision, that product discussions carry the most nuance, and that documentation best reflects the real decisions made by the team.
 
 The ProdOps Framework was born in Portuguese for this reason. Canonical definitions, principles, glossaries, and management artifacts are written first in Portuguese — the language in which they were conceived.

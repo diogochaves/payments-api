@@ -2,8 +2,8 @@
 
 > **Purpose:** Entry point of the ProdOps Framework. Captures any signal not yet understood well enough to be treated as a recognized Intent. Items here have no delivery commitment.
 >
-> → [Backlog hierarchy](../../framework/backlogs.md)
-> → [Icebox Backlog](icebox-backlog.md) — next level; where the OBC is born
+> → [Backlog hierarchy](../../framework/backlogs.en.md)
+> → [Icebox Backlog](icebox-backlog.en.md) — next level; where the OBC is born
 
 | Item | Origin | Dimension | Owner | Status | Next action |
 | --- | --- | --- | --- | --- | --- |

@@ -45,11 +45,11 @@ Crie um diretório `evidence/` ao lado do experimento quando precisar de outputs
 
 ---
 
-## Business Intents
+## Intents
 
 | Template | Uso | Localização canônica |
 |---|---|---|
-| [business-intents/intent.md](business-intents/intent.md) | Novo Business Intent | `prodops/business-intents/<slug>.md` |
+| [business-intents/intent.md](business-intents/intent.md) | Nova Intent | `prodops/business-intents/<slug>.md` |
 
 ---
 

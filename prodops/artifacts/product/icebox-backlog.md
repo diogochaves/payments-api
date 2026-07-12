@@ -75,9 +75,9 @@ Score = ((Reach * Impact * Confidence) + Operational Risk) / Effort
 
 | ID | Título | Tipo | Outcome esperado | Status | Score inicial | Fonte |
 | --- | --- | --- | --- | --- | --- | --- |
-| PAY-ICE-001 | Criar invoice via gateway com contrato único | Feature | Ecommerce emite cobranças sem acoplamento direto ao provedor Asaas. | Icebox | 16.4 | [create-invoice.feature](../bdd/create-invoice.feature) |
-| PAY-ICE-002 | Confirmar pagamento por webhook confiável | Feature | Pedido e ecommerce recebem confirmação uma única vez, com eventos auditáveis. | Icebox | 20.8 | [payment-confirmation.feature](../bdd/payment-confirmation.feature) |
-| PAY-ICE-003 | Cancelar invoice pendente com idempotência | Feature | Cobranças abertas podem ser canceladas sem pagamento indevido ou evento duplicado. | Icebox | 13.7 | [cancel-invoice.feature](../bdd/cancel-invoice.feature) |
+| PAY-ICE-001 | Criar invoice via gateway com contrato único | Feature | Ecommerce emite cobranças sem acoplamento direto ao provedor Asaas. | Delivery | 16.4 | [create-invoice.feature](../bdd/create-invoice.feature) |
+| PAY-ICE-002 | Confirmar pagamento por webhook confiável | Feature | Pedido e ecommerce recebem confirmação uma única vez, com eventos auditáveis. | Delivery | 20.8 | [payment-confirmation.feature](../bdd/payment-confirmation.feature) |
+| PAY-ICE-003 | Cancelar invoice pendente com idempotência | Feature | Cobranças abertas podem ser canceladas sem pagamento indevido ou evento duplicado. | Ready for Delivery | 13.7 | [cancel-invoice.feature](../bdd/cancel-invoice.feature) |
 
 ## 7. Itens detalhados
 
@@ -97,7 +97,7 @@ Score = ((Reach * Impact * Confidence) + Operational Risk) / Effort
 | Telemetria mínima | Evento de invoice criada, tentativa de chamada ao provedor, provider latency, provider error code, idempotency hit/miss, audit log de rejeição. |
 | Critérios de aceite | Cenários do arquivo [create-invoice.feature](../bdd/create-invoice.feature) passam; retry com mesma chave não chama o provedor; falha 5xx não retorna invoice `OPEN` sem `providerPaymentId`; erro de validação é auditável sem segredo. |
 | Score | Reach 4, Impact 5, Confidence 4, Effort 5, Operational Risk 2 = 16.4 |
-| Status | Icebox |
+| Status | Delivery — OBC committed em `prodops/artifacts/obcs/create-invoice.md`. Entrou no Iteration Plan. |
 
 **Perguntas de discovery**
 
@@ -121,7 +121,7 @@ Score = ((Reach * Impact * Confidence) + Operational Risk) / Effort
 | Telemetria mínima | Webhook received, webhook rejected, event deduplication, invoice status transition, canonical event published, lag entre recebimento e publicação. |
 | Critérios de aceite | Cenários do arquivo [payment-confirmation.feature](../bdd/payment-confirmation.feature) passam; webhook inválido não altera invoice; evento duplicado retorna sucesso técnico sem republicar; `PAYMENT_RECEIVED` não libera pedido pela segunda vez. |
 | Score | Reach 5, Impact 5, Confidence 4, Effort 5, Operational Risk 4 = 20.8 |
-| Status | Icebox |
+| Status | Delivery — OBC committed em `prodops/artifacts/obcs/payment-confirmation.md`. Entrou no Iteration Plan. |
 
 **Perguntas de discovery**
 
@@ -145,7 +145,7 @@ Score = ((Reach * Impact * Confidence) + Operational Risk) / Effort
 | Telemetria mínima | Cancel request, provider delete latency/error, status transition, idempotency hit/miss, webhook `PAYMENT_DELETED`, canonical cancellation published. |
 | Critérios de aceite | Cenários do arquivo [cancel-invoice.feature](../bdd/cancel-invoice.feature) passam; invoice `CONFIRMED` não é cancelada; retry com mesma chave não chama o provedor; 404 não publica `payment.cancelled` sem decisão explícita. |
 | Score | Reach 3, Impact 4, Confidence 4, Effort 4, Operational Risk 2 = 13.7 |
-| Status | Icebox |
+| Status | Ready for Delivery — OBC committed em `prodops/artifacts/obcs/cancel-invoice.md`. Adiado para próxima iteração. |
 
 **Perguntas de discovery**
 
