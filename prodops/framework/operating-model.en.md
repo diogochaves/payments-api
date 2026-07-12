@@ -1,0 +1,179 @@
+# ProdOps Operating Model
+
+## Operating model
+
+ProdOps organizes product and engineering work in hierarchical layers, with traceable origin from the source of the need through to the produced artifacts:
+
+```
+Origin Stream (Business | Enterprise | Team | Technology)
+  ↓
+Intent
+  ↓
+Exploration
+  ↓
+Observable Business Contract (OBC)
+  ↓
+Continuous Assessment
+  ↓
+Backlog Management (Diligence)        ← Tracking List → Icebox → Roadmap → Release → Iteration
+  ↓
+Execution Mode
+├── Upstream
+└── Downstream
+  ↓
+Journey
+├── Discovery
+├── Delivery
+├── Operation
+├── Assessment
+└── Diligence
+  ↓
+Phase
+├── Bootstrap
+├── Hack
+├── Sync
+├── Finish
+├── Ship
+├── Validate
+└── Promote
+  ↓
+Practice
+└── ProdOps TDD
+  ↓
+Delivery Capability
+├── Commit Workflow
+├── Contract Management
+├── Evidence Management
+├── Observability
+└── Reliability
+  ↓
+Artifacts
+├── OBCs
+├── BDD Features
+├── Plans
+├── Trails
+└── Evidence
+```
+
+→ [Full flow: how each step works](flow.md)
+→ [Origin Streams: the four types of origin](origin-streams.md)
+→ [Backlog hierarchy: definitions and official model](backlogs.md)
+
+---
+
+**Origin Stream** — the classification of the origin of an Intent. Four possibilities: Business (market, customer, product), Enterprise (compliance, regulation, governance), Team (process, automations, productivity), Technology (platform, security, infrastructure). Every Intent has exactly one Origin Stream. See [`origin-streams.md`](origin-streams.md).
+
+**Intent** — Framework entry point. An intention to generate value not yet committed. The Intent registers the "why" without prescribing the "how". *Formerly called Business Intent.*
+
+**Exploration** — the step between Intent and OBC. Reduces uncertainty by transforming hypotheses into validated knowledge. Implemented by the Discovery Journey in Upstream mode. See [`flow.md`](flow.md).
+
+**OBC (Observable Business Contract)** — the transformation of a sufficiently understood Intent into observable and verifiable success criteria. It is the result of Exploration, not the Framework entry point. *Formerly incorrectly defined as Outcome-Based Criterion.*
+
+**Continuous Assessment** — continuously evaluates risks, opportunities, and decides the next step.
+
+**Execution Mode** — the level of commitment and quality criteria applied:
+- **Upstream** — exploration, low commitment, focus on learning
+- **Downstream** — governed delivery, mandatory criteria, complete traceability
+
+**Journey** — the work path within an execution mode:
+- Discovery, Delivery, Operation — classic journeys
+- Assessment, Diligence — cross-cutting journeys
+
+**Phase** — the sequence of stages within the Delivery journey:
+- CI Sync: Bootstrap → Hack → Sync → Finish
+- CI Async: Ship → Validate → Promote
+
+**Practice** — the method used during a phase:
+- ProdOps TDD (used by Hack)
+
+**Delivery Capability** — reusable technical competencies consumed by the phases:
+- Commit Workflow
+- Contract Management
+- Evidence Management
+- Observability
+- Reliability
+
+**Artifacts** — artifacts produced and consumed by the Framework:
+- OBCs, BDD Features, Plans, Trails, Evidence
+
+---
+
+## Journeys
+
+### Discovery
+
+Exploration. Implements the Exploration step of the flow. Transforms hypotheses into validated knowledge. No delivery commitment — only a learning commitment.
+
+→ [prodops/journeys/discovery/README.md](../journeys/discovery/README.md)
+
+### Delivery
+
+Governed implementation. Uses the knowledge validated by Exploration to deliver with confidence. Requires committed OBC before starting.
+
+→ [prodops/journeys/delivery/README.md](../journeys/delivery/README.md)
+
+### Operation
+
+Continuous operation. Runbooks, incidents, postmortems, operational trail.
+
+→ [prodops/journeys/operation/](../journeys/operation/)
+
+### Assessment
+
+Cross-cutting journey. Evaluates risks, opportunities, OBCs, and Iteration Plans.
+
+→ [prodops/journeys/assessment/README.md](../journeys/assessment/README.md)
+
+### Diligence
+
+Cross-cutting journey. Guardian of ProdOps work system consistency. Ensures that the state of each OBC remains synchronized across all backlogs, tools, and management artifacts, without modifying product code.
+
+→ [prodops/journeys/diligence/README.md](../journeys/diligence/README.md)
+→ [Managed backlog hierarchy](backlogs.md)
+
+---
+
+## Execution Modes
+
+→ [prodops/execution-model/README.md](../execution-model/README.md)
+
+---
+
+## Product Capability lifecycle
+
+```
+Origin Stream (Business | Enterprise | Team | Technology)
+  ↓ generates
+Intent
+  ↓ enters
+Exploration — Upstream (Discovery)
+  Experiment → learning → Decision Package
+  ↓ when hypothesis answered
+OBC committed + BDD Feature committed
+  ↓ Assessment Review
+Decision Package review (PM + Tech Lead)
+  ↓ if approved
+Iteration Plan (status: Entrou) + Reliability Plan
+  ↓ Downstream (Delivery)
+Bootstrap → Hack → Sync → Finish → Ship → Validate → Promote
+  ↓
+Operation
+```
+
+---
+
+## Principles
+
+→ [principles.md](principles.md)
+
+## Glossary
+
+→ [glossary.md](glossary.md)
+
+## Full flow
+
+→ [flow.md](flow.md)
+
+## Origin Streams
+
+→ [origin-streams.md](origin-streams.md)
