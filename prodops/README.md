@@ -1,3 +1,5 @@
+[English](README.en.md) · [Por que este projeto é em português?](language.md)
+
 # ProdOps Framework
 
 Este diretório é a fonte canônica do Framework ProdOps neste repositório.

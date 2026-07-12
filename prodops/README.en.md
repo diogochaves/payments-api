@@ -1,0 +1,56 @@
+# ProdOps Framework
+
+This directory is the canonical source of the ProdOps Framework in this repository.
+
+> **Language note:** This framework is authored in Portuguese. See [why this project is in Portuguese](language.md).
+
+## Official flow
+
+```
+Origin Stream → Intent → Exploration → OBC → Iteration Plan → Reliability Plan → Delivery → Operation
+```
+
+→ [Full flow explained](framework/flow.en.md)
+→ [The four Origin Streams](framework/origin-streams.en.md)
+
+## Operating model
+
+```
+Origin Stream (Business | Enterprise | Team | Technology)
+  ↓
+Intent
+  ↓
+Continuous Assessment
+  ↓
+Execution Mode → Journey → Phase → Practice → Delivery Capability → Artifacts
+```
+
+→ [Full operating model](framework/operating-model.en.md)
+
+## Reading order
+
+1. `framework/principles.en.md` — principles
+2. `framework/glossary.en.md` — canonical terms
+3. `framework/canonical-paths.en.md` — canonical locations
+4. `framework/flow.en.md` — official Framework flow
+5. `framework/origin-streams.en.md` — the four Origin Streams
+6. `framework/operating-model.en.md` — full operating model
+7. `execution-model/README.en.md` — Upstream vs Downstream
+8. `journeys/README.en.md` — the 5 journeys
+9. The specific journey for the task
+10. The phase within the journey
+11. The phase capabilities
+
+## Portal
+
+| Area | Description |
+|---|---|
+| [framework/](framework/) | Principles, glossary, flow, Origin Streams, operating model |
+| [business-intents/](business-intents/) | Registered Intents (Framework entry point) |
+| [execution-model/](execution-model/) | Upstream and Downstream as execution modes |
+| [journeys/](journeys/) | The 5 journeys: Discovery, Delivery, Operation, Assessment, Diligence |
+| [artifacts/](artifacts/) | Produced artifacts: OBCs, BDD Features, plans, trails, evidence |
+| [templates/](templates/) | Centralized templates by area |
+| [skills/](skills/) | Executable skills for agents |
+| [journeys/delivery/capabilities/commit-workflow/](journeys/delivery/capabilities/commit-workflow/) | Commit Workflow: native Git hooks, scripts, documentation |
+| [documentation-review.md](documentation-review.md) | Framework documentation review and state |
