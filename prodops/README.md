@@ -1,4 +1,4 @@
-[English](README.en.md)
+[English](README.en.md) · [Por que este projeto é em português?](language.md)
 
 # ProdOps Framework
 
