@@ -169,7 +169,7 @@ Internal links updated in all moved files and in the following reference files:
 - `AGENTS.md` — rewritten with new paths
 - `CLAUDE.md` — routing paths updated
 - `prodops/README.md` — rewritten as portal
-- `prodops/framework/operating-model.md` — hierarchy updated to 7 layers
+- `prodops/framework/operating-model.md` — hierarchy updated to 9 layers
 - `prodops/framework/glossary.md` — path references updated
 - `prodops/artifacts/obcs/*.md` — BDD Features and OBCs references updated
 - `prodops/artifacts/plans/iteration-plan.md` — feature references updated
@@ -197,7 +197,7 @@ Internal links updated in all moved files and in the following reference files:
 ## Final Hierarchical Architecture
 
 ```
-Business → Business Intent → Assessment → Execution Mode → Journey → Phase → Practice → Capability → Artifacts
+Origin Stream (Business | Enterprise | Team | Technology) → Intent → Assessment → Execution Mode → Journey → Phase → Practice → Capability → Artifacts
 ```
 
-7 context layers for any product and engineering task.
+9 context layers for any product and engineering task.

@@ -4,9 +4,9 @@ An **Origin Stream** identifies the origin of an Intent in the ProdOps Framework
 
 Every change starts with an Intent. The Intent always has exactly one Origin Stream — the classification of where the need was born and who owns it. The Origin Stream does not determine how the work will be executed (that is the function of the Execution Mode), but it informs the context, the language, and the success criteria that the Intent carries.
 
-→ [Full Framework flow](flow.md)
-→ [Operating model](operating-model.md)
-→ [Glossary](glossary.md)
+→ [Full Framework flow](flow.en.md)
+→ [Operating model](operating-model.en.md)
+→ [Glossary](glossary.en.md)
 
 ---
 
@@ -70,7 +70,7 @@ flowchart TD
 - Open questions about the value to generate
 
 **How it evolves to OBC:**
-The Business Intent enters Exploration with questions about business value, user experience, and technical feasibility. The resulting OBC defines observable product success criteria — typically expressed as verifiable behavior via BDD Feature.
+An Intent with Business Origin Stream enters Exploration with questions about business value, user experience, and technical feasibility. The resulting OBC defines observable product success criteria — typically expressed as verifiable behavior via BDD Feature.
 
 ---
 
@@ -187,8 +187,8 @@ The Technology Intent evolves to an OBC with measurable technical criteria — S
 
 ## References
 
-→ [Full Framework flow](flow.md)
-→ [Glossary: canonical definitions](glossary.md)
-→ [Operating model: Origin layer at the top of the hierarchy](operating-model.md)
-→ [Intent templates](../templates/business-intents/intent.md)
-→ [Active Business Intents](../business-intents/README.md)
+→ [Full Framework flow](flow.en.md)
+→ [Glossary: canonical definitions](glossary.en.md)
+→ [Operating model: Origin layer at the top of the hierarchy](operating-model.en.md)
+→ [Intent templates](../templates/business-intents/intent.en.md)
+→ [Active Intents](../business-intents/README.en.md)

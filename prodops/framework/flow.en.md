@@ -8,9 +8,9 @@ Origin Stream → Intent → Exploration → OBC → Iteration Plan → Reliabil
 
 This document is the canonical reference for understanding **what happens at each step**, **what is produced**, and **when to advance**.
 
-→ [Origin Streams: the four possible origins](origin-streams.md)
-→ [Operating model: Framework hierarchy](operating-model.md)
-→ [Glossary: canonical definitions](glossary.md)
+→ [Origin Streams: the four possible origins](origin-streams.en.md)
+→ [Operating model: Framework hierarchy](operating-model.en.md)
+→ [Glossary: canonical definitions](glossary.en.md)
 
 ---
 
@@ -20,11 +20,11 @@ This document is the canonical reference for understanding **what happens at eac
 flowchart TD
     OS["Origin Stream\n(Business | Enterprise | Team | Technology)"]
     I["Intent"]
-    EX["Exploration\n(Jornada: Discovery, Modo: Upstream)"]
+    EX["Exploration\n(Journey: Discovery, Mode: Upstream)"]
     OBC["Observable Business Contract\n(OBC)"]
     IP["Iteration Plan"]
     RP["Reliability Plan"]
-    D["Delivery\n(Jornada: Delivery, Modo: Downstream)"]
+    D["Delivery\n(Journey: Delivery, Mode: Downstream)"]
     OP["Operation\n(Jornada: Operation)"]
 
     OS --> I
@@ -35,8 +35,8 @@ flowchart TD
     RP --> D
     D --> OP
 
-    EX -.->|"Descarte (aprendizado suficiente)"| X[Fechar sem avançar]
-    EX -.->|"Requer mais exploração"| EX
+    EX -.->|"Discard (sufficient learning)"| X[Close without advancing]
+    EX -.->|"Requires further exploration"| EX
 
     style OS fill:#e2e3e5,stroke:#6c757d
     style OBC fill:#cce5ff,stroke:#004085
@@ -58,7 +58,7 @@ flowchart TD
 
 **When to advance:** As soon as the origin is clear and Intent registration can begin.
 
-→ [Definition of each Origin Stream](origin-streams.md)
+→ [Definition of each Origin Stream](origin-streams.en.md)
 
 ---
 
@@ -78,7 +78,7 @@ flowchart TD
 
 > The OBC is **not** the Framework entry point. It is the output of Exploration — the transformation of a sufficiently understood Intent into an observable contract.
 
-→ [Intent template](../templates/business-intents/intent.md)
+→ [Intent template](../templates/business-intents/intent.en.md)
 
 ---
 
@@ -99,8 +99,8 @@ flowchart TD
 
 **When not to advance:** If the hypothesis was refuted, uncertainty is still too high, or an external business decision is missing. In these cases: record the learning and close the experiment without promoting.
 
-→ [Discovery Journey](../journeys/discovery/README.md)
-→ [Execution Mode Upstream](../execution-model/upstream.md)
+→ [Discovery Journey](../journeys/discovery/README.en.md)
+→ [Execution Mode Upstream](../execution-model/upstream.en.md)
 
 ---
 
@@ -117,7 +117,7 @@ flowchart TD
 **When to advance:** OBC is in `prodops/artifacts/obcs/`, BDD Feature is in `prodops/artifacts/bdd/`, both reviewed and approved.
 
 → [OBC artifacts](../artifacts/obcs/)
-→ [Promotion process](../journeys/discovery/README.md#processo-de-promoção-para-downstream)
+→ [Promotion process](../journeys/discovery/README.en.md#promotion-to-downstream-process)
 
 ---
 
@@ -125,15 +125,15 @@ flowchart TD
 
 **Objective:** Formally commit the capability to the next delivery iteration.
 
-**What happens:** The approved OBC enters the Iteration Plan with status `Entrou`. This represents the formal delivery commitment — the item leaves the Backlog and enters the executable plan.
+**What happens:** The approved OBC enters the Iteration Plan with status `In`. This represents the formal delivery commitment — the item leaves the Backlog and enters the executable plan.
 
 **What is produced:**
-- Entry in the Iteration Plan in `prodops/artifacts/plans/iteration-plan.md` with status `Entrou`
+- Entry in the Iteration Plan in `prodops/artifacts/plans/iteration-plan.md` with status `In`
 - Tracking List update if the item was there
 
-**When to advance:** Item in the Iteration Plan with status `Entrou`.
+**When to advance:** Item in the Iteration Plan with status `In`.
 
-→ [Iteration Plan](../artifacts/plans/iteration-plan.md)
+→ [Iteration Plan](../artifacts/plans/iteration-plan.en.md)
 
 ---
 
@@ -167,8 +167,8 @@ flowchart TD
 
 **When to advance:** Promote completed, Release Trail updated, OBC validated in production.
 
-→ [Delivery Journey](../journeys/delivery/README.md)
-→ [Execution Mode Downstream](../execution-model/downstream.md)
+→ [Delivery Journey](../journeys/delivery/README.en.md)
+→ [Execution Mode Downstream](../execution-model/downstream.en.md)
 
 ---
 
@@ -208,8 +208,8 @@ When describing the macro flow, use **Exploration**. When referencing the specif
 
 ## References
 
-→ [Origin Streams](origin-streams.md)
-→ [Glossary](glossary.md)
-→ [Operating model](operating-model.md)
-→ [Execution Model](../execution-model/README.md)
-→ [Journeys](../journeys/README.md)
+→ [Origin Streams](origin-streams.en.md)
+→ [Glossary](glossary.en.md)
+→ [Operating model](operating-model.en.md)
+→ [Execution Model](../execution-model/README.en.md)
+→ [Journeys](../journeys/README.en.md)

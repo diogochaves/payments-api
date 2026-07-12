@@ -169,7 +169,7 @@ Links internos atualizados em todos os arquivos movidos e nos seguintes arquivos
 - `AGENTS.md` — reescrito com novos caminhos
 - `CLAUDE.md` — caminhos de routing atualizados
 - `prodops/README.md` — reescrito como portal
-- `prodops/framework/operating-model.md` — hierarquia atualizada para 7 camadas
+- `prodops/framework/operating-model.md` — hierarquia atualizada para 9 camadas
 - `prodops/framework/glossary.md` — referências de caminho atualizadas
 - `prodops/artifacts/obcs/*.md` — referências de BDD Features e OBCs atualizadas
 - `prodops/artifacts/plans/iteration-plan.md` — referências de features atualizadas
@@ -197,7 +197,7 @@ Links internos atualizados em todos os arquivos movidos e nos seguintes arquivos
 ## Arquitetura Hierárquica Final
 
 ```
-Business → Business Intent → Assessment → Execution Mode → Journey → Phase → Practice → Capability → Artifacts
+Origin Stream (Business | Enterprise | Team | Technology) → Intent → Assessment → Execution Mode → Journey → Phase → Practice → Capability → Artifacts
 ```
 
-7 camadas de contexto para qualquer tarefa de produto e engenharia.
+9 camadas de contexto para qualquer tarefa de produto e engenharia.

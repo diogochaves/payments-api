@@ -6,7 +6,7 @@ Confiabilidade é planejada antes da implementação e validada antes da promoç
 
 Toda capability Downstream requer uma entrada no Reliability Plan. O plano define:
 - Riscos e mitigações
-- OBCs (Outcome-Based Criteria) com thresholds de sucesso mensuráveis
+- OBCs (Observable Business Contracts) com thresholds de sucesso mensuráveis
 - Sugestões de SLO para eventos no caminho crítico
 
 O Reliability Plan fica em: `prodops/journeys/assessment/reliability-plans/`

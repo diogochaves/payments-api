@@ -1,16 +1,16 @@
 # ProdOps Framework
 
-ProdOps is a product-driven engineering framework. It organizes work into two paths — Upstream (explore and validate) and Downstream (govern and deliver) — connected by shared practices, contracts, and evidence.
+ProdOps é um framework de engenharia orientado a produto. Organiza o trabalho em dois caminhos — Upstream (explorar e validar) e Downstream (governar e entregar) — conectados por práticas compartilhadas, contratos e evidências.
 
-## Structure
+## Estrutura
 
-| Directory | Purpose |
+| Diretório | Propósito |
 |---|---|
-| `framework/` | Core principles and shared vocabulary |
-| `journeys/delivery/` | Delivery phases and coding practices |
-| `skills/` | Executable skills for agents |
-| `templates/` | Reusable templates for plans, trails, and checklists |
+| `framework/` | Princípios fundamentais e vocabulário compartilhado |
+| `journeys/delivery/` | Fases de delivery e práticas de código |
+| `skills/` | Skills executáveis para agentes |
+| `templates/` | Templates reutilizáveis para planos, trilhas e checklists |
 
-For work context, see the [assessment](../journeys/assessment/README.md), [product](../artifacts/product/), and [downstream](../execution-model/downstream.md) directories.
+Para contexto de trabalho, ver os diretórios [assessment](../journeys/assessment/README.md), [product](../artifacts/product/) e [downstream](../execution-model/downstream.md).
 
-For agent execution, see [AGENTS.md](../../AGENTS.md) and [skills/](../skills/).
+Para execução de agentes, ver [AGENTS.md](../../AGENTS.md) e [skills/](../skills/).

@@ -2,9 +2,9 @@
 
 Canonical terms of the ProdOps Framework. One concept = one name. One name = one concept.
 
-For the full Framework flow, see [`flow.md`](flow.md).
-For the four Origin Streams, see [`origin-streams.md`](origin-streams.md).
-For the backlog hierarchy, see [`backlogs.md`](backlogs.md).
+For the full Framework flow, see [`flow.md`](flow.en.md).
+For the four Origin Streams, see [`origin-streams.md`](origin-streams.en.md).
+For the backlog hierarchy, see [`backlogs.md`](backlogs.en.md).
 
 ---
 
@@ -20,7 +20,7 @@ For the backlog hierarchy, see [`backlogs.md`](backlogs.md).
 
 **The four Origin Streams:** Business | Enterprise | Team | Technology
 
-**Relationship with other concepts:** An Origin Stream generates an Intent. The Intent enters Exploration. See [`origin-streams.md`](origin-streams.md).
+**Relationship with other concepts:** An Origin Stream generates an Intent. The Intent enters Exploration. See [`origin-streams.md`](origin-streams.en.md).
 
 ---
 
@@ -36,7 +36,7 @@ For the backlog hierarchy, see [`backlogs.md`](backlogs.md).
 
 **Life cycle:** The Intent is born in the Tracking List as a signal not yet understood. When investigated and recognized as relevant, it enters the Icebox Backlog — at which point its OBC is created as a draft. From that point on, the OBC becomes the permanent identifier of the work.
 
-**Relationship with other concepts:** The Intent has an Origin Stream (Business | Enterprise | Team | Technology). The Intent is transformed into an OBC by Exploration. See [`flow.md`](flow.md), [`origin-streams.md`](origin-streams.md) and [`backlogs.md`](backlogs.md).
+**Relationship with other concepts:** The Intent has an Origin Stream (Business | Enterprise | Team | Technology). The Intent is transformed into an OBC by Exploration. See [`flow.md`](flow.en.md), [`origin-streams.md`](origin-streams.en.md) and [`backlogs.md`](backlogs.en.md).
 
 **Formerly called:** Business Intent. The name was simplified to Intent to eliminate the ambiguity that only "Business" needs are capturable. The directory `prodops/business-intents/` is preserved for backward compatibility.
 
@@ -54,7 +54,7 @@ For the backlog hierarchy, see [`backlogs.md`](backlogs.md).
 
 **Examples:** Split Payment (Pix + Card), new Boleto channel, subscription recurrence support.
 
-**Relationship with other concepts:** One of the four Origin Streams. See [`origin-streams.md`](origin-streams.md).
+**Relationship with other concepts:** One of the four Origin Streams. See [`origin-streams.md`](origin-streams.en.md).
 
 ---
 
@@ -70,7 +70,7 @@ For the backlog hierarchy, see [`backlogs.md`](backlogs.md).
 
 **Examples:** Compliance with Central Bank regulation, integration with financial ERP, LGPD data retention policy.
 
-**Relationship with other concepts:** One of the four Origin Streams. See [`origin-streams.md`](origin-streams.md).
+**Relationship with other concepts:** One of the four Origin Streams. See [`origin-streams.md`](origin-streams.en.md).
 
 ---
 
@@ -86,7 +86,7 @@ For the backlog hierarchy, see [`backlogs.md`](backlogs.md).
 
 **Examples:** Adoption of Conventional Commits, creation of Bootstrap skill, Commit Workflow documentation.
 
-**Relationship with other concepts:** One of the four Origin Streams. See [`origin-streams.md`](origin-streams.md).
+**Relationship with other concepts:** One of the four Origin Streams. See [`origin-streams.md`](origin-streams.en.md).
 
 ---
 
@@ -102,7 +102,7 @@ For the backlog hierarchy, see [`backlogs.md`](backlogs.md).
 
 **Examples:** Migration to DynamoDB, automatic credential rotation, adoption of OpenTelemetry, encryption at rest.
 
-**Relationship with other concepts:** One of the four Origin Streams. See [`origin-streams.md`](origin-streams.md).
+**Relationship with other concepts:** One of the four Origin Streams. See [`origin-streams.md`](origin-streams.en.md).
 
 ---
 
@@ -130,7 +130,7 @@ The OBC records the **living history of the work**: which backlogs it passed thr
 
 **When not to use:** Do not use the OBC as a substitute for an isolated technical task or bug ticket without a corresponding Intent.
 
-**Relationship with other concepts:** The OBC is born in the Icebox, refined by Exploration, and committed after Assessment Review. It anchors the BDD Feature, the Iteration Plan, the Reliability Plan, and all of Delivery. See [`flow.md`](flow.md) and [`backlogs.md`](backlogs.md).
+**Relationship with other concepts:** The OBC is born in the Icebox, refined by Exploration, and committed after Assessment Review. It anchors the BDD Feature, the Iteration Plan, the Reliability Plan, and all of Delivery. See [`flow.md`](flow.en.md) and [`backlogs.md`](backlogs.en.md).
 
 **Formerly incorrectly defined as:** "Outcome-Based Criterion". The canonical definition is **Observable Business Contract**.
 
@@ -154,7 +154,7 @@ The OBC records the **living history of the work**: which backlogs it passed thr
 | **Discovery** | Journey | The name of the Framework journey that implements Exploration |
 | **Upstream** | Execution Mode | The execution mode (low commitment) used during Discovery |
 
-See [`flow.md`](flow.md), [`../journeys/discovery/README.md`](../journeys/discovery/README.md) and [`../execution-model/upstream.md`](../execution-model/upstream.md).
+See [`flow.en.md`](flow.en.md), [`../journeys/discovery/README.en.md`](../journeys/discovery/README.en.md) and [`../execution-model/upstream.en.md`](../execution-model/upstream.en.md).
 
 ---
 
@@ -168,7 +168,7 @@ See [`flow.md`](flow.md), [`../journeys/discovery/README.md`](../journeys/discov
 
 **When not to use:** Discovery is not synonymous with Upstream (Upstream is the mode, Discovery is the journey). Discovery does not produce production software — it produces knowledge.
 
-**Relationship with other concepts:** Discovery is the journey that implements Exploration. Uses Upstream mode. See [`../journeys/discovery/README.md`](../journeys/discovery/README.md).
+**Relationship with other concepts:** Discovery is the journey that implements Exploration. Uses Upstream mode. See [`../journeys/discovery/README.en.md`](../journeys/discovery/README.en.md).
 
 ---
 
@@ -214,67 +214,67 @@ See [`flow.md`](flow.md), [`../journeys/discovery/README.md`](../journeys/discov
 
 ## CI Sync
 
-**Definition:** The synchronous grouping of ProdOps Delivery. Represents local, collaborative work driven by the engineer. Includes Bootstrap, Hack, Sync, and Finish. Produces: closed task, PR with narrative, evidence, organized commits, local validations executed. See [`journeys/delivery/README.md`](../journeys/delivery/README.md).
+**Definition:** The synchronous grouping of ProdOps Delivery. Represents local, collaborative work driven by the engineer. Includes Bootstrap, Hack, Sync, and Finish. Produces: closed task, PR with narrative, evidence, organized commits, local validations executed. See [`journeys/delivery/README.md`](../journeys/delivery/README.en.md).
 
 ---
 
 ## CI Async
 
-**Definition:** The asynchronous grouping of ProdOps Delivery. Represents work driven by the platform, pipelines, and environments. Includes Ship, Validate, and Promote. Produces: published artifact, deploy completed, runtime validation, controlled promotion. See [`journeys/delivery/README.md`](../journeys/delivery/README.md).
+**Definition:** The asynchronous grouping of ProdOps Delivery. Represents work driven by the platform, pipelines, and environments. Includes Ship, Validate, and Promote. Produces: published artifact, deploy completed, runtime validation, controlled promotion. See [`journeys/delivery/README.md`](../journeys/delivery/README.en.md).
 
 ---
 
 ## Bootstrap
 
-**Definition:** The first stage of CI Sync. Prepares the environment, creates the branch, and establishes the product context (OBC, BDD Feature, existing tests) before starting implementation. Produces no code — produces context. See [`journeys/delivery/phases/bootstrap/README.md`](../journeys/delivery/phases/bootstrap/README.md).
+**Definition:** The first stage of CI Sync. Prepares the environment, creates the branch, and establishes the product context (OBC, BDD Feature, existing tests) before starting implementation. Produces no code — produces context. See [`journeys/delivery/phases/bootstrap/README.en.md`](../journeys/delivery/phases/bootstrap/README.en.md).
 
 ---
 
 ## Upstream
 
-**Definition:** The exploratory execution mode. Objective: transform hypotheses into validated knowledge. Code is disposable until promoted to Downstream. Upstream selects flow steps as needed — there is no mandatory sequence. A typical Upstream cycle uses Bootstrap + Hack + Sync; Ship, Validate, and Promote are used only when the experiment needs staging validation or a promotion decision. See [`prodops/journeys/discovery/README.md`](../journeys/discovery/README.md).
+**Definition:** The exploratory execution mode. Objective: transform hypotheses into validated knowledge. Code is disposable until promoted to Downstream. Upstream selects flow steps as needed — there is no mandatory sequence. A typical Upstream cycle uses Bootstrap + Hack + Sync; Ship, Validate, and Promote are used only when the experiment needs staging validation or a promotion decision. See [`prodops/journeys/discovery/README.en.md`](../journeys/discovery/README.en.md).
 
 ---
 
 ## Downstream
 
-**Definition:** The governed delivery mode. Objective: deliver with confidence using validated knowledge. Every item requires OBC + BDD Feature + entry in the Reliability Plan. Downstream requires the full flow: `Bootstrap → Hack → Sync → Finish → Ship → Validate → Promote`. See [`prodops/execution-model/downstream.md`](../execution-model/downstream.md).
+**Definition:** The governed delivery mode. Objective: deliver with confidence using validated knowledge. Every item requires OBC + BDD Feature + entry in the Reliability Plan. Downstream requires the full flow: `Bootstrap → Hack → Sync → Finish → Ship → Validate → Promote`. See [`prodops/execution-model/downstream.en.md`](../execution-model/downstream.en.md).
 
 ---
 
 ## Hack Flow
 
-**Definition:** The coding phase in Upstream and Downstream. Second stage of CI Sync, follows Bootstrap. Defined in [`journeys/delivery/phases/hack/README.md`](../journeys/delivery/phases/hack/README.md). Execution mechanics in [`skills/hack/`](../skills/hack/).
+**Definition:** The coding phase in Upstream and Downstream. Second stage of CI Sync, follows Bootstrap. Defined in [`journeys/delivery/phases/hack/README.md`](../journeys/delivery/phases/hack/README.en.md). Execution mechanics in [`skills/hack/`](../skills/hack/).
 
 ---
 
 ## Sync
 
-**Definition:** The third stage of CI Sync. Has two independent steps: `rebase` (synchronizes the feature branch with the base — fetch, integration, conflicts, validation) and `align` (aligns ProdOps artifacts with the implementation — BDD Features, Event Storming, architecture, Release Trail). Invoked via `/sync rebase` and `/sync align`. See [`journeys/delivery/phases/sync/README.md`](../journeys/delivery/phases/sync/README.md).
+**Definition:** The third stage of CI Sync. Has two independent steps: `rebase` (synchronizes the feature branch with the base — fetch, integration, conflicts, validation) and `align` (aligns ProdOps artifacts with the implementation — BDD Features, Event Storming, architecture, Release Trail). Invoked via `/sync rebase` and `/sync align`. See [`journeys/delivery/phases/sync/README.en.md`](../journeys/delivery/phases/sync/README.en.md).
 
 ---
 
 ## Ship
 
-**Definition:** The first stage of CI Async. Transforms the finalized implementation into an executable artifact and conducts the deploy. Organized in two families: Preparation (Build, Package, Version, Sign, SBOM, Publish Artifact) and Deployment (Deploy, Progressive Delivery, Feature Flags, Rollout, Rollback, Infrastructure Validation). Build, Package, and Publish are internal capabilities of Ship — they are not independent steps of the main flow. See phases: [Ship](../journeys/delivery/phases/ship/README.md), [Validate](../journeys/delivery/phases/validate/README.md), [Promote](../journeys/delivery/phases/promote/README.md).
+**Definition:** The first stage of CI Async. Transforms the finalized implementation into an executable artifact and conducts the deploy. Organized in two families: Preparation (Build, Package, Version, Sign, SBOM, Publish Artifact) and Deployment (Deploy, Progressive Delivery, Feature Flags, Rollout, Rollback, Infrastructure Validation). Build, Package, and Publish are internal capabilities of Ship — they are not independent steps of the main flow. See phases: [Ship](../journeys/delivery/phases/ship/README.en.md), [Validate](../journeys/delivery/phases/validate/README.en.md), [Promote](../journeys/delivery/phases/promote/README.en.md).
 
 ---
 
 ## Validate
 
-**Definition:** The second stage of CI Async. Verifies the delivery running in the target environment. Capabilities: Smoke Tests, Runtime Contract Validation, Synthetic Monitoring, Health Checks, Observability Validation, SLO Validation, Business Validation, Incident Signals. See phases: [Ship](../journeys/delivery/phases/ship/README.md), [Validate](../journeys/delivery/phases/validate/README.md), [Promote](../journeys/delivery/phases/promote/README.md).
+**Definition:** The second stage of CI Async. Verifies the delivery running in the target environment. Capabilities: Smoke Tests, Runtime Contract Validation, Synthetic Monitoring, Health Checks, Observability Validation, SLO Validation, Business Validation, Incident Signals. See phases: [Ship](../journeys/delivery/phases/ship/README.en.md), [Validate](../journeys/delivery/phases/validate/README.en.md), [Promote](../journeys/delivery/phases/promote/README.en.md).
 
 ---
 
 ## Promote
 
-**Definition:** The third stage of CI Async. Officially advances the version with formal approval and recorded evidence. Capabilities: Promotion Gates, Environment Promotion, Release Approval, Release Trail, Operational Evidence, Release Documentation, Rollback Readiness. See phases: [Ship](../journeys/delivery/phases/ship/README.md), [Validate](../journeys/delivery/phases/validate/README.md), [Promote](../journeys/delivery/phases/promote/README.md).
+**Definition:** The third stage of CI Async. Officially advances the version with formal approval and recorded evidence. Capabilities: Promotion Gates, Environment Promotion, Release Approval, Release Trail, Operational Evidence, Release Documentation, Rollback Readiness. See phases: [Ship](../journeys/delivery/phases/ship/README.en.md), [Validate](../journeys/delivery/phases/validate/README.en.md), [Promote](../journeys/delivery/phases/promote/README.en.md).
 
 ---
 
 ## ProdOps TDD
 
-**Definition:** The practice used within the Hack Flow to produce observable and reliable code. Defined in [`journeys/delivery/practices/prodops-tdd.md`](../journeys/delivery/practices/prodops-tdd.md).
+**Definition:** The practice used within the Hack Flow to produce observable and reliable code. Defined in [`journeys/delivery/practices/prodops-tdd.md`](../journeys/delivery/practices/prodops-tdd.en.md).
 
 ---
 
@@ -316,13 +316,13 @@ See [`flow.md`](flow.md), [`../journeys/discovery/README.md`](../journeys/discov
 
 ## Decision Trail
 
-**Definition:** Record of a decision made under uncertainty, including context, alternatives, and impact. Template: [`prodops/templates/assessment/decision-trail.md`](../templates/assessment/decision-trail.md).
+**Definition:** Record of a decision made under uncertainty, including context, alternatives, and impact. Template: [`prodops/templates/assessment/decision-trail.md`](../templates/assessment/decision-trail.en.md).
 
 ---
 
 ## Release Trail
 
-**Definition:** The append-only log of Downstream evidence. Lives in [`artifacts/trails/release-trail.md`](../artifacts/trails/release-trail.md).
+**Definition:** The append-only log of Downstream evidence. Lives in [`artifacts/trails/release-trail.md`](../artifacts/trails/release-trail.en.md).
 
 ---
 
@@ -340,7 +340,7 @@ See [`flow.md`](flow.md), [`../journeys/discovery/README.md`](../journeys/discov
 
 **Canonical artifact:** `prodops/artifacts/product/tracking-list.md`
 
-**Relationship with other concepts:** Precedes the Icebox Backlog in the hierarchy. See [`backlogs.md`](backlogs.md).
+**Relationship with other concepts:** Precedes the Icebox Backlog in the hierarchy. See [`backlogs.md`](backlogs.en.md).
 
 ---
 
@@ -358,7 +358,7 @@ See [`flow.md`](flow.md), [`../journeys/discovery/README.md`](../journeys/discov
 
 **Canonical artifact:** `prodops/artifacts/product/icebox-backlog.md`
 
-**Relationship with other concepts:** Second level of the hierarchy. Follows the Tracking List. Precedes the Roadmap Backlog. See [`backlogs.md`](backlogs.md).
+**Relationship with other concepts:** Second level of the hierarchy. Follows the Tracking List. Precedes the Roadmap Backlog. See [`backlogs.md`](backlogs.en.md).
 
 ---
 
@@ -374,7 +374,7 @@ See [`flow.md`](flow.md), [`../journeys/discovery/README.md`](../journeys/discov
 
 **Canonical artifact:** External management tool. The OBC records when the item entered the Roadmap.
 
-**Relationship with other concepts:** Third level of the hierarchy. Composed of Release Backlogs. See [`backlogs.md`](backlogs.md).
+**Relationship with other concepts:** Third level of the hierarchy. Composed of Release Backlogs. See [`backlogs.md`](backlogs.en.md).
 
 ---
 
@@ -388,9 +388,9 @@ See [`flow.md`](flow.md), [`../journeys/discovery/README.md`](../journeys/discov
 
 **When not to use:** Do not include items without a committed OBC and committed BDD Feature.
 
-**Canonical artifact:** `prodops/artifacts/plans/iteration-plan.md` (section "Recommended Iteration Plan", items with status `Entrou`).
+**Canonical artifact:** `prodops/artifacts/plans/iteration-plan.md` (section "Recommended Iteration Plan", items with status `In`).
 
-**Relationship with other concepts:** Fourth level of the hierarchy. Participates in a Roadmap Backlog or exists independently. Composed of Iteration Backlogs. See [`backlogs.md`](backlogs.md).
+**Relationship with other concepts:** Fourth level of the hierarchy. Participates in a Roadmap Backlog or exists independently. Composed of Iteration Backlogs. See [`backlogs.md`](backlogs.en.md).
 
 ---
 
@@ -404,11 +404,11 @@ See [`flow.md`](flow.md), [`../journeys/discovery/README.md`](../journeys/discov
 
 **When not to use:** The Iteration is not the delivery commitment — the Release Backlog is. The Iteration is the operational organization of how the Release will be executed.
 
-**Mandatory prerequisites to move from Iteration to Delivery:** Committed OBC, committed BDD Feature, entry in the Iteration Plan with status `Entrou`, documented risks, Reliability Plan.
+**Mandatory prerequisites to move from Iteration to Delivery:** Committed OBC, committed BDD Feature, entry in the Iteration Plan with status `In`, documented risks, Reliability Plan.
 
-**Canonical artifact:** `prodops/artifacts/plans/iteration-plan.md` (section "Identified Iteration Backlog").
+**Canonical artifact:** `prodops/artifacts/plans/iteration-backlog.md`
 
-**Relationship with other concepts:** Fifth level of the hierarchy — immediately before Delivery. See [`backlogs.md`](backlogs.md) and [`../execution-model/downstream.md`](../execution-model/downstream.md).
+**Relationship with other concepts:** Fifth level of the hierarchy — immediately before Delivery. See [`backlogs.md`](backlogs.en.md) and [`../execution-model/downstream.md`](../execution-model/downstream.en.md).
 
 ---
 
@@ -424,7 +424,7 @@ See [`flow.md`](flow.md), [`../journeys/discovery/README.md`](../journeys/discov
 
 **What it does not do:** Does not implement software. Does not create implementation Pull Requests. Does not modify product code. Does not make product decisions that belong to Assessment.
 
-**Relationship with other concepts:** Cross-cutting journey. Consumes Assessment artifacts and feeds Delivery with organized, traceable work. See [`../journeys/diligence/README.md`](../journeys/diligence/README.md) and [`backlogs.md`](backlogs.md).
+**Relationship with other concepts:** Cross-cutting journey. Consumes Assessment artifacts and feeds Delivery with organized, traceable work. See [`../journeys/diligence/README.md`](../journeys/diligence/README.en.md) and [`backlogs.md`](backlogs.en.md).
 
 ---
 
@@ -440,4 +440,4 @@ See [`flow.md`](flow.md), [`../journeys/discovery/README.md`](../journeys/discov
 
 **Tool independence:** The Framework is tool-independent. A GitHub Issue, a Jira Card, and an Azure DevOps Work Item are operational representations of the same OBC in different tools. The OBC is the source of truth; the Issue is the execution instance.
 
-**Relationship with other concepts:** Managed by Diligence. References the corresponding OBC. See [`backlogs.md`](backlogs.md) and [`../journeys/diligence/README.md`](../journeys/diligence/README.md).
+**Relationship with other concepts:** Managed by Diligence. References the corresponding OBC. See [`backlogs.md`](backlogs.en.md) and [`../journeys/diligence/README.md`](../journeys/diligence/README.en.md).

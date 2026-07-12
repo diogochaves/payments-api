@@ -2,8 +2,8 @@
 
 > **Purpose:** Operational and stakeholder demands still under evaluation (Analytics, DataDog, ITSM). Derived from the Payments release Premortem. Items here need refinement before entering an OBC or Iteration Plan.
 >
-> → [Backlog hierarchy](../../framework/backlogs.md)
-> → [Approved delivery scope](iteration-plan.md) — to see what's in/out/deferred
+> → [Backlog hierarchy](../../framework/backlogs.en.md)
+> → [Approved delivery scope](iteration-plan.en.md) — to see what's in/out/deferred
 
 ## Objective
 
@@ -18,9 +18,9 @@ Record known demands that still need refinement, evaluation or planning before b
 
 ---
 
-# Criteria to exit the Tracking List
+# Criteria to exit the Iteration Backlog
 
-An item leaves the Tracking List when:
+An item leaves the Iteration Backlog when:
 
 - It has been refined sufficiently to compose an OBC.
 - It has been discarded by business decision.
