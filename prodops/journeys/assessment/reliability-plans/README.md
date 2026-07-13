@@ -216,4 +216,4 @@ Estas melhorias estão relacionadas a funcionalidades que não fazem parte do es
 - `api/src/modules/invoices/services/invoice-repository.service.ts`
 - `api/src/infra/asaas.service.ts`
 - `api/infra/dynamodb.yaml`
-- `api/test/create-invoice.acceptance.e2e-spec.ts`
+- `api/test/criar-invoice.e2e-spec.ts`

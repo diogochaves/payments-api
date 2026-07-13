@@ -31,6 +31,7 @@ This boundary is a product and architecture decision. Effectively supported stat
 graph TB
     subgraph Externos["Sistemas Externos"]
         Checkout["Checkout\nWeb / App"]
+        Admin["Operador\nAdministrativo"]
         Asaas["Asaas\nGateway de Pagamento"]
         Consumer["Consumidor\nWebhook Callback"]
     end
@@ -41,10 +42,11 @@ graph TB
         end
 
         subgraph Controllers["Controllers"]
-            InvCtrl["InvoiceController\nPOST  /invoices\nDELETE /invoices/:id"]
+            InvCtrl["InvoiceController\nPOST   /invoices\nGET    /invoices/:invoiceId\nDELETE /invoices/:invoiceId"]
             WkCtrl["WebhookConfigController\nPOST   /webhooks\nGET    /webhooks\nDELETE /webhooks/:id"]
             AsaasWkCtrl["AsaasWebhookController\nPOST /webhook/payments\nGET  /webhook/payments/queue"]
             SandboxCtrl["AsaasSandboxController\nPOST /sandbox/asaas/payments/:id/confirm"]
+            AdminCtrl["AdminTokenController\nPOST   /admin/tokens\nGET    /admin/tokens/:tenantId\nDELETE /admin/tokens/:tenantId/:tokenId"]
         end
 
         subgraph Services["Services"]
@@ -71,12 +73,14 @@ graph TB
     Guard --> InvCtrl
     Guard --> WkCtrl
     Asaas -->|"asaas-access-token"| AsaasWkCtrl
+    Admin -->|"X-Admin-Secret"| AdminCtrl
 
     %% Controllers → Services
     InvCtrl --> InvSvc
     WkCtrl --> WkSvc
     AsaasWkCtrl --> InvSvc
     SandboxCtrl -->|"confirma pagamento\nna Sandbox"| Asaas
+    AdminCtrl -->|"tokens de API\nem TenantsTable"| DynPay
 
     %% Services → Storage
     InvSvc --> DynPay
@@ -115,4 +119,5 @@ graph TB
 | Date | Change |
 | --- | --- |
 | 2026-07-03 | Initial diagram creation. Modules: `InvoicesModule`, `AuthModule`, `WebhooksModule`, `ObservabilityModule`. Tables: `PaymentsTable`, `CustomersTable`, `TenantsTable`, `ProvidersTable`, `WebhooksTable`. |
+| 2026-07-11 | Added `AdminTokenController` (`POST /admin/tokens`, `GET /admin/tokens/:tenantId`, `DELETE /admin/tokens/:tenantId/:tokenId`, authentication via `X-Admin-Secret` header, tokens persisted in `TenantsTable`) and the `GET /invoices/:invoiceId` route on `InvoiceController`. |
 | 2026-07-12 | Consolidated the Payments SOR ↔ PSP boundary previously duplicated under `docs/`; no runtime contract changed. |

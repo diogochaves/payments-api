@@ -106,4 +106,4 @@ Fallback/Itau was excluded because it would greatly increase the Release size. T
 - `prodops/journeys/assessment/event-storming/plan.json`
 - `api/src/modules/invoices`
 - `api/src/infra/asaas.service.ts`
-- `api/test/create-invoice.acceptance.e2e-spec.ts`
+- `api/test/criar-invoice.e2e-spec.ts`

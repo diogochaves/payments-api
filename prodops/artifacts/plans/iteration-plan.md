@@ -106,4 +106,4 @@ Fallback/Itau ficou fora porque aumentaria muito o tamanho da Release. A oportun
 - `prodops/journeys/assessment/event-storming/plan.json`
 - `api/src/modules/invoices`
 - `api/src/infra/asaas.service.ts`
-- `api/test/create-invoice.acceptance.e2e-spec.ts`
+- `api/test/criar-invoice.e2e-spec.ts`

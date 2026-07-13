@@ -31,8 +31,8 @@ EXP-002 and the missing EXP-004 reference.
 
 ### Artifacts Updated
 
-- `prodops/journeys/discovery/features/credit-card-payment.feature`
-- `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature`
+- `prodops/journeys/discovery/features/credit-card-payment.feature` (migrated: now `prodops/artifacts/bdd/credit-card-payment.feature`)
+- `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature` (removed: no successor in `prodops/artifacts/bdd/`)
 
 ### Evidence
 
@@ -71,7 +71,7 @@ confirmed or received.
 
 - `api/src/modules/invoices/dto/create-invoice.dto.ts`
 - `api/src/modules/invoices/services/invoice.service.ts`
-- `api/test/create-invoice.acceptance.e2e-spec.ts`
+- `api/test/create-invoice.acceptance.e2e-spec.ts` (renamed: now `api/test/criar-invoice.e2e-spec.ts`)
 
 ### Evidence
 
@@ -108,7 +108,7 @@ Move to Downstream.
 
 ### Artifacts Updated
 
-- `prodops/journeys/discovery/features/credit-card-payment.feature` → `prodops/artifacts/bdd/credit-card-payment.feature`
+- `prodops/journeys/discovery/features/credit-card-payment.feature` (migrated: now `prodops/artifacts/bdd/credit-card-payment.feature`) → `prodops/artifacts/bdd/credit-card-payment.feature`
 - `prodops/journeys/discovery/obcs/credit-card-authorization-confirmation.md` → `prodops/artifacts/obcs/credit-card-authorization-confirmation.md` (draft marking removed)
 - `prodops/artifacts/plans/iteration-plan.md` — entry added: Create Credit Card Invoice (Hosted)
 - `prodops/artifacts/product/tracking-list.md` — status: Candidate → Promoted to Downstream

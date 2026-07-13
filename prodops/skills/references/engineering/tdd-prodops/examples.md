@@ -8,7 +8,7 @@
 
 ### Red Bar
 ```typescript
-// api/test/create-invoice.acceptance.e2e-spec.ts
+// api/test/criar-invoice.e2e-spec.ts
 it('should create invoice and return 201 with invoiceId', async () => {
   const res = await request(app.getHttpServer())
     .post('/invoices')
