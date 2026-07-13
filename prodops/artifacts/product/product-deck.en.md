@@ -13,13 +13,21 @@
 | Technical owner | `[Tech Lead Payments]` |
 | Main teams | Payments, Checkout, Order Management, Anti-fraud, Platform/SRE, Customer Service, Operations. |
 | Main channel | `[Slack/Teams: #payments-prodops]` |
-| Last updated | `[YYYY-MM-DD]` |
+| Last updated | `2026-07-12` |
 
 ## 2. Product Vision
 
 For customers who shop at Magazine Siara's ecommerce, the Payments product must enable reliable, fast, traceable and interchangeable payments, ensuring that every payment attempt has a clear response, observable confirmation and operational continuity even in the face of failures in gateways, Pix, anti-fraud or external integrations.
 
 Payments exists to protect conversion, GMV, customer trust and checkout operational capacity. The product must reduce entropy in the payment journey, allow rapid diagnosis and support changes such as payment method migration, new gateway, fallback and new commercial modalities.
+
+### Payments as the System of Record
+
+Payments is the internal, auditable and reconcilable source for invoices, charges and payment transitions associated with orders. Providers such as Asaas are external PSPs: they execute charges and send events, but do not govern Magazine Siara's operational truth.
+
+Payments maintains internal identifiers, order, tenant and customer associations, the selected provider, external identifiers, idempotency and transition history. External states and events must be translated into the canonical model without losing data required for audit and reconciliation.
+
+The technical boundary and currently implemented state are documented in the [Architecture Overview](../../journeys/assessment/architecture/overview.en.md). This vision does not automatically approve states, events or behaviors absent from committed OBCs and BDD Features.
 
 ## 3. Problems and opportunities
 

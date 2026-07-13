@@ -13,13 +13,21 @@
 | Dono técnico | `[Tech Lead Payments]` |
 | Times principais | Payments, Checkout, Order Management, Antifraude, Plataforma/SRE, Atendimento, Operação. |
 | Canal principal | `[Slack/Teams: #payments-prodops]` |
-| Última atualização | `[YYYY-MM-DD]` |
+| Última atualização | `2026-07-12` |
 
 ## 2. Product Vision
 
 Para clientes que compram no ecommerce da Magazine Siara, o produto Payments deve permitir pagamentos confiáveis, rápidos, rastreáveis e intercambiáveis, garantindo que cada tentativa de pagamento tenha resposta clara, confirmação observável e continuidade operacional mesmo diante de falhas em gateways, Pix, antifraude ou integrações externas.
 
 Payments existe para proteger conversão, GMV, confiança do cliente e capacidade operacional do checkout. O produto deve reduzir entropia na jornada de pagamento, permitir diagnóstico rápido e sustentar mudanças como migração de meios de pagamento, novo gateway, fallback e novas modalidades comerciais.
+
+### Payments como System of Record
+
+Payments é a fonte interna, auditável e reconciliável para invoices, cobranças e transições de pagamento associadas aos pedidos. Provedores como Asaas são PSPs externos: executam cobranças e enviam eventos, mas não governam a verdade operacional da Magazine Siara.
+
+Payments mantém os identificadores internos, a associação com pedido, tenant e cliente, o provedor selecionado, os identificadores externos, a idempotência e o histórico de transições. Estados e eventos externos devem ser traduzidos para o modelo canônico sem perder os dados necessários para auditoria e conciliação.
+
+A fronteira técnica e o estado atualmente implementado estão documentados no [Architecture Overview](../../journeys/assessment/architecture/overview.md). A adoção desta visão não aprova automaticamente estados, eventos ou comportamentos ainda ausentes dos OBCs e BDD Features committed.
 
 ## 3. Problemas e oportunidades
 

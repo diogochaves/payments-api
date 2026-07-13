@@ -1,5 +1,7 @@
 # OBCs
 
-Armazenar aqui OBCs específicos da release quando separados do material do Product Deck ou Service Deck.
+Este diretório contém os OBCs committed e é a fonte canônica dos contratos observáveis usados no Downstream.
 
-Não duplicar conteúdo de OBC entre arquivos. Quando um OBC permanecer definido no Product Deck, Service Deck, BDD Feature ou Reliability Plan, criar apenas um link para o documento canônico.
+Todo OBC committed deve ter arquivo próprio aqui. Product Decks, Service Decks, BDD Features, Reliability Plans e demais artefatos devem referenciar o OBC correspondente, sem duplicar sua definição.
+
+OBCs exploratórios permanecem no diretório do experimento em `prodops/journeys/discovery/experiments/<NNN-slug>/obcs/` até a promoção formal.

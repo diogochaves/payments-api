@@ -73,6 +73,7 @@ Use this table as the primary navigation source before reading or writing any ar
 | Opportunities | `prodops/journeys/assessment/opportunities.md` |
 | Event Storming | `prodops/journeys/assessment/event-storming/` |
 | Architecture overview | `prodops/journeys/assessment/architecture/overview.md` |
+| Product architecture Decision Trail | `prodops/journeys/assessment/architecture/decision-trail.md` |
 
 ---
 

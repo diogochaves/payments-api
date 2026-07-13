@@ -39,9 +39,9 @@ Itens explicitamente ignorados por não terem decisão exatamente `Entrou`: `Not
 
 | Funcionalidade | Inconsistência | Evidência | Risco |
 | --- | --- | --- | --- |
-| Habilitar novo gateway para o Checkout na jornada priorizada | Documentos antigos podem orientar Checkout para contrato divergente. | `docs/payment-gateway-mvp.md` cita outros caminhos; código usa `POST /invoices`. | Checkout integrar endpoint incorreto. |
+| Habilitar novo gateway para o Checkout na jornada priorizada | Consumidores podem usar contrato divergente. | Documentação legada removida em 2026-07-12; contrato canônico usa `POST /invoices`. | Checkout integrar endpoint incorreto. |
 | Criar invoice via Pix | ODD antigo referencia `/payments` e Asaas `/v3/paymentLinks`; código usa `/invoices` e `/v3/payments`. | `api/odd/create_invoice.yaml`; `AsaasService.createCharge`. | Observabilidade/contrato medir dependência errada. |
-| Confirmação de pagamento | Documento antigo descreve webhook em `/webhooks/asaas/payments`; código usa `/webhook/payments`. | `docs/payment-gateway-mvp.md`; `AsaasWebhookController`. | Webhook Asaas configurado em URL incorreta. |
+| Confirmação de pagamento | Consumidores podem configurar uma rota antiga de webhook. | Documentação legada removida em 2026-07-12; `AsaasWebhookController` usa `/webhook/payments`. | Webhook Asaas configurado em URL incorreta. |
 
 ## Principais riscos
 

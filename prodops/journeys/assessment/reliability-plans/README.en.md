@@ -39,9 +39,9 @@ Items explicitly ignored for not having a decision of exactly `In`: `Payment sta
 
 | Feature | Inconsistency | Evidence | Risk |
 | --- | --- | --- | --- |
-| Enable new gateway for Checkout on the prioritized journey | Old documents may direct Checkout to a divergent contract. | `docs/payment-gateway-mvp.md` mentions other paths; code uses `POST /invoices`. | Checkout integrating incorrect endpoint. |
+| Enable new gateway for Checkout on the prioritized journey | Consumers may use a divergent contract. | Legacy documentation removed on 2026-07-12; the canonical contract uses `POST /invoices`. | Checkout integrating incorrect endpoint. |
 | Create invoice via Pix | Old ODD references `/payments` and Asaas `/v3/paymentLinks`; code uses `/invoices` and `/v3/payments`. | `api/odd/create_invoice.yaml`; `AsaasService.createCharge`. | Observability/contract measuring wrong dependency. |
-| Payment confirmation | Old document describes webhook at `/webhooks/asaas/payments`; code uses `/webhook/payments`. | `docs/payment-gateway-mvp.md`; `AsaasWebhookController`. | Asaas webhook configured at incorrect URL. |
+| Payment confirmation | Consumers may configure a legacy webhook route. | Legacy documentation removed on 2026-07-12; `AsaasWebhookController` uses `/webhook/payments`. | Asaas webhook configured at incorrect URL. |
 
 ## Main Risks
 
