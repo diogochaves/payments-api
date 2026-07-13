@@ -308,7 +308,7 @@ preserves the provider HTTP status and the Sandbox controller maps this
 
 - `api/src/infra/asaas.service.ts`
 - `api/src/modules/invoices/controllers/asaas-sandbox.controller.ts`
-- `api/test/create-invoice.acceptance.e2e-spec.ts`
+- `api/test/create-invoice.acceptance.e2e-spec.ts` (renamed: now `api/test/criar-invoice.e2e-spec.ts`)
 - `prodops/upstream/experiments/002-sandbox-funding/upstream-trail.md`
 
 ### Evidence
@@ -344,8 +344,8 @@ EXP-003 and the missing EXP-004 reference.
 
 ### Artifacts Updated
 
-- `prodops/journeys/discovery/features/credit-card-payment.feature`
-- `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature`
+- `prodops/journeys/discovery/features/credit-card-payment.feature` (migrated: now `prodops/artifacts/bdd/credit-card-payment.feature`)
+- `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature` (removed: no successor in `prodops/artifacts/bdd/`)
 
 ### Evidence
 

@@ -216,4 +216,4 @@ These improvements are related to features that are not part of the scope of ris
 - `api/src/modules/invoices/services/invoice-repository.service.ts`
 - `api/src/infra/asaas.service.ts`
 - `api/infra/dynamodb.yaml`
-- `api/test/create-invoice.acceptance.e2e-spec.ts`
+- `api/test/criar-invoice.e2e-spec.ts`

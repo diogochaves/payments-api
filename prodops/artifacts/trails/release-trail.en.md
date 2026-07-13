@@ -18,7 +18,7 @@ Implemented in-repo Reliability Plan P0 hardening for payment confirmation: Dyna
 
 ### Tests
 
-- Tests created or updated: `api/test/create-invoice.acceptance.e2e-spec.ts`
+- Tests created or updated: `api/test/criar-invoice.e2e-spec.ts`
 - Validation executed: `cd api && npm run test:acceptance -- --runInBand`
 - Validation executed: `cd api && npm run build`
 
