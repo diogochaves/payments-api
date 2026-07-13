@@ -6,23 +6,20 @@ Codex-specific behavior:
 
 - Siga o fluxo ProdOps-first descrito em `AGENTS.md`; comece por
   `prodops/README.md` (portal e mapa de navegação).
-- Use `prodops/skills/` como guia canônico de execução das fases
-  (Bootstrap → Hack → Sync → Finish → Ship → Validate → Promote).
+- Use `prodops/skills/` como guia canônico de execução das fases.
 - Mantenha estas instruções curtas e específicas de ferramenta; contexto de
   produto pertence a `prodops/`.
+- Não duplicar contexto de negócio em arquivos específicos do Codex; adicionar
+  ou atualizar o arquivo apropriado em `prodops/`.
 
-## Caminhos canônicos
+## Organização do ProdOps Delivery
 
-| Assunto | Localização |
-|---|---|
-| Portal ProdOps | `prodops/README.md` |
-| Skills de execução | `prodops/skills/` |
-| OBCs (Observable Business Contracts) | `prodops/artifacts/obcs/` |
-| BDD Features | `prodops/artifacts/bdd/` |
-| Release Trail | `prodops/artifacts/trails/release-trail.md` |
-| Reliability Plans | `prodops/journeys/assessment/reliability-plans/` |
-| Upstream (exploração) | `prodops/execution-model/upstream.md` |
-| Downstream (entrega governada) | `prodops/execution-model/downstream.md` |
+```
+CI Sync   → Bootstrap → Hack → Sync → Finish    (trabalho local, síncrono)
+CI Async  → Ship → Validate → Promote            (plataforma, pipelines, ambientes)
+```
+
+Para todos os caminhos canônicos: `prodops/framework/canonical-paths.md`.
 
 ## Regras essenciais
 
