@@ -345,3 +345,25 @@ Corrigido também um bug de detecção de container: `docker inspect` em um cont
 ### Notes
 
 Esse gap não teria sido pego por CI, já que `.github/workflows/staging-deploy.yml` invoca os specs diretamente via `npx jest` (não via `test-acceptance.sh`) — o wrapper é usado apenas em fluxo local. Vale considerar, em um Sync futuro, se o CI e o script local devem compartilhar a mesma lista de specs para evitar essa classe de divergência se repetir.
+
+## 2026-07-12 — Consolidação e remoção de `docs/`
+
+### Summary
+
+Removida a árvore documental legada `docs/` após triagem. Contexto válido foi consolidado nas fontes canônicas sem alterar código ou promover novos comportamentos.
+
+### Artifacts Updated
+
+- Product Deck: incorporada a visão de Payments como System of Record e Asaas como PSP externo.
+- Architecture Overview: registrada a fronteira de responsabilidade Payments ↔ PSP.
+- Decision Trail: registrada a consolidação e as alternativas descartadas.
+- BDD index: adicionada a feature de cartão e corrigido o caminho de features exploratórias.
+- OBC index: reforçado que todo OBC committed possui arquivo próprio.
+- API README: substituído o conteúdo genérico do NestJS por instruções específicas da Payments API e da integração Asaas.
+- Reliability Plan: referências a contratos legados substituídas pelos caminhos vigentes.
+
+### Validation
+
+- Nenhuma BDD committed foi substituída pela especificação alternativa existente em `docs/`.
+- O Event Storming canônico em `prodops/journeys/assessment/event-storming/plan.json` foi preservado.
+- A mudança é exclusivamente documental; testes de aplicação não são requeridos.

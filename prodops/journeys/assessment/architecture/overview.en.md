@@ -3,7 +3,27 @@
 > Update whenever there is a structural change: new module, route, external
 > dependency, database table or event topic. See rule in `AGENTS.md`.
 >
-> Last update: 2026-07-03
+> Last update: 2026-07-12
+
+## Responsibility boundary
+
+Payments API is the System of Record for this product's payments domain. Checkout and other consumers use the internal Payments API contract; Asaas acts as an external PSP through an integration adapter.
+
+```text
+Checkout / consumers
+        |
+        | internal contract
+        v
+Payments API / Payments SOR
+        |
+        | provider contract
+        v
+Asaas / other PSPs
+```
+
+Payments owns `invoiceId`, the association with `orderId`, tenant and customer, provider selection, idempotency, internal state and transition history. The PSP owns external charge execution and its identifiers and events. Payments API normalizes external states; they must not be exposed as the product's operational truth.
+
+This boundary is a product and architecture decision. Effectively supported states and events remain defined by current OBCs, BDD Features, Event Storming and code; this document does not promote new behavior to Downstream.
 
 ## Component Diagram
 
@@ -95,3 +115,4 @@ graph TB
 | Date | Change |
 | --- | --- |
 | 2026-07-03 | Initial diagram creation. Modules: `InvoicesModule`, `AuthModule`, `WebhooksModule`, `ObservabilityModule`. Tables: `PaymentsTable`, `CustomersTable`, `TenantsTable`, `ProvidersTable`, `WebhooksTable`. |
+| 2026-07-12 | Consolidated the Payments SOR ↔ PSP boundary previously duplicated under `docs/`; no runtime contract changed. |

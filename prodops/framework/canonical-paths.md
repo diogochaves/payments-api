@@ -74,6 +74,7 @@ Use esta tabela como fonte primária de navegação antes de ler ou escrever qua
 | Oportunidades | `prodops/journeys/assessment/opportunities.md` |
 | Event Storming | `prodops/journeys/assessment/event-storming/` |
 | Architecture overview | `prodops/journeys/assessment/architecture/overview.md` |
+| Decision Trail — arquitetura do produto | `prodops/journeys/assessment/architecture/decision-trail.md` |
 
 ---
 
