@@ -1,152 +1,32 @@
-# Payments API Agent Operating Guide
+# Payments API — Guia do Agente
 
-ProdOps é a fonte canônica de contexto de produto e processo deste repositório.
+Este arquivo é um roteador mínimo. O contexto de execução vive nos skills, no
+manifest e nos artefatos do card — **não pré-leia a documentação do framework**.
 
----
+## Como trabalhar
 
-## Ordem de leitura
+1. **Trabalho de Delivery:** invoque o skill da fase — `/bootstrap`, `/hack`,
+   `/sync`, `/finish`, `/ship`, `/validate`, `/promote`. Cada skill é
+   autossuficiente e diz o que ler.
+2. **Exploração:** `/upstream`. **Implementação governada:** `/downstream`.
+3. **Paths canônicos, quality gates e vocabulário:** `prodops/exec/manifest.yaml`
+   — fonte única, legível por máquina. Consistência: `./prodops/scripts/validate-manifest.sh`.
+4. **Contexto da tarefa:** o OBC e a BDD Feature do card (localizações no
+   manifest). Leia-os antes de alterar código de produção — e somente eles.
 
-1. `prodops/README.md` — portal e mapa de navegação
-2. `prodops/framework/principles.md` — princípios obrigatórios
-3. `prodops/framework/glossary.md` — termos canônicos
-4. `prodops/framework/canonical-paths.md` — localizações canônicas
-5. `prodops/framework/flow.md` — fluxo oficial do Framework
-6. `prodops/framework/origin-streams.md` — os quatro Origin Streams
-7. `prodops/execution-model/README.md` — identificar o modo (Upstream ou Downstream)
-8. `prodops/journeys/README.md` — identificar a jornada
-9. A jornada identificada em `prodops/journeys/<journey>/`
-10. A fase em `prodops/journeys/delivery/phases/<phase>/README.md` (se for Delivery)
-11. A practice ou capability relevante
+## Regras invioláveis
 
----
+- Nunca inventar OBCs, SLOs, riscos ou critérios de aceite ausentes. Contexto
+  faltando → parar e reportar, não improvisar.
+- Downstream exige: OBC committed + BDD Feature committed + entrada no
+  Iteration Plan com status `Entrou` + riscos documentados.
+- Conflito entre diretriz nova e regra existente: preservar a regra existente e
+  registrar em Decision Trail (`prodops/templates/assessment/decision-trail.md`).
+- Commits seguem Conventional Commits (tipos e limite de summary: no manifest).
+- Toda entrega Downstream relevante gera append no release trail
+  (`prodops/artifacts/trails/release-trail.md`).
 
-## Source of Truth
+## Doutrina do framework (humanos; agentes somente sob demanda explícita)
 
-| Assunto | Localização |
-|---|---|
-| Fluxo oficial do Framework | `prodops/framework/flow.md` |
-| Origin Streams (Business, Enterprise, Team, Technology) | `prodops/framework/origin-streams.md` |
-| Intents registradas | `prodops/business-intents/` |
-| Contexto de produto | `prodops/artifacts/product/` |
-| BDD Features (committed) | `prodops/artifacts/bdd/` |
-| OBCs (Observable Business Contracts) | `prodops/artifacts/obcs/` |
-| Riscos | `prodops/journeys/assessment/risks.md` |
-| Iteration Plan | `prodops/artifacts/plans/iteration-plan.md` |
-| Reliability Plans | `prodops/journeys/assessment/reliability-plans/` |
-| Exploration / Discovery (Upstream) | `prodops/journeys/discovery/` |
-| Downstream | `prodops/execution-model/downstream.md` |
-| Release Trail | `prodops/artifacts/trails/release-trail.md` |
-| Operação | `prodops/journeys/operation/` |
-
----
-
-## Upstream Path
-
-Use Upstream para: explorar, experimentar, prototipar, validar hipóteses.
-
-- Registrar no trail do experimento: `prodops/journeys/discovery/experiments/<id>/upstream-trail.md`
-- Novos experimentos: `prodops/journeys/discovery/experiments/<id>/` com `experiment.md`, `upstream-trail.md`, `evidence/`
-
-→ [prodops/journeys/discovery/README.md](prodops/journeys/discovery/README.md)
-→ [prodops/execution-model/upstream.md](prodops/execution-model/upstream.md)
-
----
-
-## Downstream Path
-
-Use Downstream para implementar itens aprovados do Iteration Plan.
-
-Pré-condições obrigatórias:
-- OBC em `prodops/artifacts/obcs/`
-- BDD Feature em `prodops/artifacts/bdd/`
-- Entrada no Iteration Plan com status `Entrou`
-- Riscos documentados em `prodops/journeys/assessment/risks.md`
-
-Sequência obrigatória:
-
-```
-Bootstrap → Hack → Sync → Finish → Ship → Validate → Promote
-```
-
-Antes de alterar código de produção, leia:
-1. `prodops/artifacts/product/` — Product Deck, Service Decks, BDD Features
-2. `prodops/journeys/assessment/` — Reliability Plans, riscos
-3. O OBC (Observable Business Contract) e a BDD Feature da Product Capability sendo implementada
-
-→ [prodops/execution-model/downstream.md](prodops/execution-model/downstream.md)
-
----
-
-## Como executar o Hack
-
-Fase: `prodops/journeys/delivery/phases/hack/README.md`
-
-1. Bootstrap entregou: branch + ambiente + artefatos lidos + contrato verificado
-2. Escrever o teste de integração (Red Bar) a partir do contrato
-3. Implementar o mínimo para passar (Green Bar)
-4. Refatorar mantendo testes verdes
-5. Commit: `git commit -m "<type>(<scope>): <summary>"`
-6. Validar observabilidade (logs, correlationId, sem PII)
-7. Verificar confiabilidade (timeout, idempotência, exceções, HTTP codes)
-8. Registrar evidência
-
-### Checklist
-
-- [ ] Contrato identificado ou criado
-- [ ] Red Bar confirmado
-- [ ] Lint passa (`npm run lint` exit 0 em `api/`)
-- [ ] Formatter executado
-- [ ] `./scripts/test-acceptance.sh` — quando comportamento ou contratos mudaram
-- [ ] Observabilidade validada
-- [ ] Confiabilidade verificada
-- [ ] Commits seguem Conventional Commits
-- [ ] Evidências registradas
-
----
-
-## ProdOps TDD
-
-→ [prodops/journeys/delivery/practices/prodops-tdd.md](prodops/journeys/delivery/practices/prodops-tdd.md)
-
----
-
-## Commit Workflow
-
-```bash
-git config core.hooksPath prodops/journeys/delivery/capabilities/commit-workflow/hooks
-```
-
-→ [prodops/journeys/delivery/capabilities/commit-workflow/README.md](prodops/journeys/delivery/capabilities/commit-workflow/README.md)
-
----
-
-## Event Storming
-
-Mapa canônico: `prodops/journeys/assessment/event-storming/plan.json`
-
----
-
-## Arquitetura
-
-Diagrama canônico: `prodops/journeys/assessment/architecture/overview.md`
-
----
-
-## Release Trail
-
-Após cada tarefa Downstream relevante, append em:
-`prodops/artifacts/trails/release-trail.md`
-
----
-
-## Context Rules
-
-- Nunca inventar contexto, OBCs, SLOs, riscos ou critérios de aceite ausentes
-- Conflito entre nova diretriz e regra existente: preservar a existente e registrar em Decision Trail
-→ [prodops/templates/assessment/decision-trail.md](prodops/templates/assessment/decision-trail.md)
-
----
-
-## Skills
-
-→ [prodops/skills/](prodops/skills/)
+Princípios, glossário, fluxo oficial, Origin Streams e modelo operacional:
+`prodops/README.md` → `prodops/framework/`.
