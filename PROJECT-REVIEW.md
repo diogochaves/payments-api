@@ -11,6 +11,32 @@
 
 ---
 
+## Addendum — status as of 2026-07-13
+
+Written against the pre-2026-07-13 master. Since then upstream absorbed ~84 commits
+(PRs #12–#17) and this fork's branches were rebased onto the new master. Status of the
+§6 action plan:
+
+| § 6 item | Status |
+|---|---|
+| 1. Weaponize `doctor.sh` | Implemented in `feat/doctor-repo-wide` (pending PR); CI wiring still open |
+| 2. Progressive disclosure (§7 spec) | Implemented across `feat/exec-manifest`, `feat/agents-router`, `feat/hack-self-sufficient`, `feat/bootstrap-capsule` (pending PRs); **not** addressed upstream — upstream reading load unchanged |
+| 3. One taxonomy source | Manifest (`feat/exec-manifest`) is the start; upstream PR #16 fixed cross-file inconsistencies (partial) |
+| 4. Enum the gates / 72-vs-100 chars / python3 dep | `fix/hook-doc-mismatches` (pending PR); still broken upstream |
+| 5. Delete or quarantine `docs/` | **Done upstream** — PR #17 removed the `docs/` tree entirely; quarantine branch sunset |
+| 6. Couple code to trail in CI | `feat/ci-trail-coupling` (pending PR) |
+| 7. Immediate breakages | `fix/codex-instructions` and `fix/stale-artifact-refs` (pending PRs); `.codex` paths and `release.yml` test step still broken upstream |
+| 8. Refine issues #8–#11 | Largely landed upstream: hack refactored into `start → tdd → commit` steps, sync split into rebase/align, sync script + rebase default (PRs #12, #14) |
+| 9. Extract `prodops-core` | Preview package in `feat/prodops-core` (pending PR) |
+| 10. Speed up hooks | Open — not addressed anywhere yet |
+
+Also new upstream since this review: full English `.en.md` twins for all prodops docs
+(PR #15 — supersedes §7.8's "single language" recommendation with a bilingual convention)
+and the boleto acceptance suite. §8.3's adoption levels are drafted in
+`docs/adoption-levels` (pending PR).
+
+---
+
 ## 1. What is this repo?
 
 A **teaching/reference project from ProdOps University** with two intertwined halves:
