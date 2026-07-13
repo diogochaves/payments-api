@@ -13,7 +13,7 @@ executing it.
 For detailed execution mechanics (branching, code style, No Mocks Rule), read
 `references/workflow.md` on demand.
 
-## Contexto necessário
+## Required context
 
 Read before editing — and only this:
 
@@ -58,7 +58,7 @@ module boundary.
 
 When invoked without a step argument, execute the three steps in sequence.
 Before starting, confirm the requested behavior exists in the OBC and BDD
-Feature listed in Contexto necessário above.
+Feature listed in Required context above.
 
 1. **[start](steps/start/SKILL.md)** — clean working tree, sync base branch, create feature branch
 2. **[tdd](steps/tdd/SKILL.md)** — Red → Green → Yellow TDD cycle with artifact closure
