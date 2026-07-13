@@ -141,7 +141,7 @@ EXP-004 was recovered as a reference record because the global trail, Reliabilit
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/upstream-trail.md`
 - `prodops/journeys/assessment/risks.md`
-- `prodops/journeys/discovery/features/README.md`
+- `prodops/journeys/discovery/features/README.md` (removed: directory consolidated into `prodops/artifacts/bdd/`)
 
 ### Decision
 
@@ -149,7 +149,7 @@ Ready for Assessment.
 
 ### Notes
 
-The historical reference to `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature` remains a gap: the file is referenced by trail entries but is not present in the workspace.
+The historical reference to `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature` (removed: no successor in `prodops/artifacts/bdd/`) remains a gap: the file is referenced by trail entries but is not present in the workspace.
 
 ## 2026-07-03 17:58
 
@@ -401,8 +401,8 @@ A new Checkout Feature Flag readiness BDD was added to represent the EXP-004 lea
 
 ### Artifacts Updated
 
-- `prodops/journeys/discovery/features/credit-card-payment.feature`
-- `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature`
+- `prodops/journeys/discovery/features/credit-card-payment.feature` (migrated: now `prodops/artifacts/bdd/credit-card-payment.feature`)
+- `prodops/journeys/discovery/features/checkout-gateway-feature-flag.feature` (removed: no successor in `prodops/artifacts/bdd/`)
 
 ### Decision
 
@@ -435,7 +435,7 @@ Webhook handling now records card-specific Asaas events — such as authorizatio
 
 - `api/src/modules/invoices/dto/create-invoice.dto.ts`
 - `api/src/modules/invoices/services/invoice.service.ts`
-- `api/test/create-invoice.acceptance.e2e-spec.ts`
+- `api/test/create-invoice.acceptance.e2e-spec.ts` (renamed: now `api/test/criar-invoice.e2e-spec.ts`)
 
 ### Decision
 
@@ -468,7 +468,7 @@ The Validation Workbench now lets agents and humans explore hosted card, saved-c
 - `prodops/upstream/experiments/001-credit-card-lifecycle/experiment.md`
 - `prodops/upstream/experiments.md`
 - `prodops/upstream/learnings.md`
-- `prodops/journeys/discovery/features/credit-card-payment.feature`
+- `prodops/journeys/discovery/features/credit-card-payment.feature` (migrated: now `prodops/artifacts/bdd/credit-card-payment.feature`)
 - `prodops/product/tracking-list.md`
 - `prodops/journeys/assessment/risks.md`
 - `prodops/upstream/obcs/credit-card-authorization-confirmation.md`
