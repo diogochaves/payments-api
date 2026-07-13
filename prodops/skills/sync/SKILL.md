@@ -8,8 +8,15 @@ description: Synchronize a work branch with its base or align ProdOps artifacts 
 Use this skill to make the repository internally consistent with the current
 ProdOps context or to synchronize a work branch with its intended base.
 
-The Sync phase has two independent steps. When invoked with a step argument
-(`/sync <step>`), execute only that step. Otherwise run both in sequence.
+The Sync phase has two independent steps, each guaranteeing a distinct integrity:
+
+- **`rebase` — integridade do repositório git** (pronto para merge, base incorporada, testes preservados)
+- **`align` — integridade dos artefatos ProdOps** (BDD, Event Storming, arquitetura, OBC e Release Trail refletem o diff do branch)
+
+Os steps são complementares: nenhum substitui o outro. O Sync **não** abre PR
+(Finish), **não** roda a pipeline completa (Ship) e **não** reescreve decisões
+de produto upstream. Quando invocado com um argumento de step (`/sync <step>`),
+execute apenas aquele step. Caso contrário, execute ambos em sequência.
 
 ## Steps
 

@@ -7,6 +7,8 @@ description: Align ProdOps artifacts with the current implementation. Use when B
 
 Execute only the artifact alignment step of the Sync flow.
 
+**Responsabilidade:** garantir a **integridade dos artefatos ProdOps** — revisar o diff do branch e atualizar apenas os artefatos canônicos inconsistentes com o que foi implementado. Este é um step de **rastreabilidade**, não de git (isso é `rebase`) nem de produto (decisões upstream são preservadas, não reescritas).
+
 ## Inputs
 
 - Current diff (`git diff main...HEAD`) — what changed in this branch
@@ -29,14 +31,16 @@ Review the branch diff and list:
 
 ### 2. Trace the source of truth
 
-For each item identified, locate the canonical artifact in `prodops/`:
+For each item identified, locate the canonical artifact in `prodops/`. Use this mapping as the source of truth — when in doubt, the artifact path wins over heuristics from module filenames:
 
-| Changed area | Canonical artifact |
+| Mudança no código | Artefato canônico |
 |---|---|
-| Behavior / acceptance criteria | BDD Feature in `prodops/artifacts/bdd/` |
-| Domain events | `prodops/journeys/assessment/event-storming/plan.json` |
-| Structure / modules / routes | `prodops/journeys/assessment/architecture/overview.md` |
-| OBC criteria | `prodops/artifacts/obcs/<capability>.md` |
+| Comportamento novo ou alterado | BDD Feature em `prodops/artifacts/bdd/` |
+| Evento de domínio adicionado, renomeado ou removido | `prodops/journeys/assessment/event-storming/plan.json` |
+| Novo módulo, rota, dependência externa ou tabela | `prodops/journeys/assessment/architecture/overview.md` |
+| OBC satisfeito ou alterado | `prodops/artifacts/obcs/<slug>.md` |
+
+Quando uma mudança não se encaixa em nenhuma linha da tabela, isso é um sinal de artefato canônico ausente — registre como gap (veja Guardrails), em vez de inventar um novo artefato.
 
 ### 3. Update only stale artifacts
 
@@ -64,9 +68,11 @@ Preserve all historical entries — append only, never replace.
 
 ## Post-conditions
 
+**Critério de conclusão — integridade dos artefatos ProdOps:** concluído quando **todos** os itens abaixo são verdadeiros:
+
 - All ProdOps artifacts reflect the current implementation.
 - No stale BDD Features, Event Storming entries, or architecture descriptions remain for this branch's changes.
-- Release Trail updated when applicable.
+- Release Trail updated when the alignment was meaningful.
 - No product decisions were rewritten.
 
 ## Guardrails
@@ -76,3 +82,10 @@ Preserve all historical entries — append only, never replace.
 - Do not update artifacts that are unrelated to this branch's changes.
 - Preserve historical Release Trail entries — append, never replace.
 - If an artifact is missing entirely (e.g. no BDD Feature exists for the behavior), record it as a gap rather than inventing content.
+
+## Out of scope — not the responsibility of `align`
+
+- `align` **does not** resolve git conflicts or integrate the base — that is `rebase`.
+- `align` **does not** validate quality gates of code (lint, tests, coverage) — that is Hack (Yellow Bar) and Finish.
+- `align` **does not** open a pull request — that is Finish.
+- `align` **does not** rewrite product decisions made upstream. If the diff diverges from a BDD Feature or OBC in a way that changes intent (not just detail), record the divergence in the Release Trail and surface it to Finish — do not silently re-specify the product here.

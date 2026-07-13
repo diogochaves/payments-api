@@ -367,3 +367,35 @@ Removida a árvore documental legada `docs/` após triagem. Contexto válido foi
 - Nenhuma BDD committed foi substituída pela especificação alternativa existente em `docs/`.
 - O Event Storming canônico em `prodops/journeys/assessment/event-storming/plan.json` foi preservado.
 - A mudança é exclusivamente documental; testes de aplicação não são requeridos.
+
+## 2026-07-13 — refine(sync): rebase como integridade do repo, align como integridade dos artefatos ProdOps
+
+### Summary
+
+Refinamento conceitual da fase Sync em `prodops/journeys/delivery/phases/sync/`. Os dois steps ganharam responsabilidades articuladas com precisão: `rebase` é a **integridade do repositório git** (tornar o repo pronto para merge, sem enfraquecer testes), e `align` é a **integridade dos artefatos ProdOps** (BDD, Event Storming, arquitetura, OBC e Release Trail refletem o diff do branch). Foram tornadas explícitas as fronteiras do Sync com Hack (quality gates/Yellow Bar), Finish (abertura de PR) e Ship (pipeline assíncrona), além do critério de conclusão de cada step e da tabela canônica mudança → artefato.
+
+### Related
+
+- Fase: `prodops/journeys/delivery/phases/sync/README.md` (e `.en.md`)
+- Skills: `prodops/skills/sync/steps/rebase/SKILL.md`, `prodops/skills/sync/steps/align/SKILL.md` (e versões `.en.md`)
+- Prompts Copilot: `.github/prompts/sync-rebase.prompt.md`, `.github/prompts/sync-align.prompt.md`
+
+### Artifacts Updated
+
+- Product Deck: não alterado.
+- Service Deck: não alterado.
+- Iteration Plan: não alterado.
+- OBC: não alterado.
+- BDD Feature: não alterada.
+- Riscos: não alterados.
+
+### Validation
+
+- Mudança exclusivamente documental; sem código de aplicação e sem testes afetados.
+- Links internos dos 10 arquivos alterados verificados — todos resolvem (`python3` check, saída 0).
+- Sem renomeação de paths, sem quebra de contratos.
+
+### Notes / Decision Trail
+
+- O `align` não reescreve decisões de produto upstream: se o diff divergir de BDD/OBC em intenção (não só em detalhe), a divergência é registrada no Release Trail e sinalizada ao Finish, em conformidade com a regra de Context Rules do `AGENTS.md`.
+- O `rebase` executa testes/lint apenas como smoke pós-integração (não quality gate); cobertura nova e correção de code smell herdado continuam sendo do Hack (Yellow Bar).
