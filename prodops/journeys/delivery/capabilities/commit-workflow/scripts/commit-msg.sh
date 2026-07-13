@@ -15,13 +15,13 @@ if echo "$MSG" | grep -qE '^(Merge |Revert |fixup! |squash! )'; then
   exit 0
 fi
 
-PATTERN='^(feat|fix|docs|test|refactor|perf|build|ci|style|chore|revert)(\([a-zA-Z0-9/_-]+\))?!?: .{1,100}$'
+PATTERN='^(feat|fix|docs|test|refactor|perf|build|ci|style|chore|revert)(\([a-zA-Z0-9/_-]+\))?!?: .{1,72}$'
 
 if ! echo "$MSG" | grep -qE "$PATTERN"; then
   echo ""
   echo "  ✗ Commit message does not follow Conventional Commits format."
   echo ""
-  echo "  Expected:  <type>(<scope>): <summary>"
+  echo "  Expected:  <type>(<scope>): <summary>  (summary max 72 chars)"
   echo "  Received:  $MSG"
   echo ""
   echo "  Valid types: feat fix docs test refactor perf build ci style chore revert"
