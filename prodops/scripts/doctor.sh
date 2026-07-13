@@ -85,18 +85,18 @@ if have_rg; then
     rg -n \
       "${legacy_pattern}" \
       "${legacy_targets[@]}" \
-      -g '!prodops/framework/canonical-paths.md' \
-      -g '!prodops/journeys/discovery/upstream-trail.md' \
-      -g '!prodops/journeys/discovery/experiments/**/upstream-trail.md' \
-      -g '!prodops/journeys/discovery/experiments/**/experiment.md' \
-      -g '!prodops/documentation-review.md' \
+      -g '!prodops/framework/canonical-paths*.md' \
+      -g '!prodops/journeys/discovery/upstream-trail*.md' \
+      -g '!prodops/journeys/discovery/experiments/**/upstream-trail*.md' \
+      -g '!prodops/journeys/discovery/experiments/**/experiment*.md' \
+      -g '!prodops/documentation-review*.md' \
       || true
   )"
 else
   legacy_refs="$(
     grep -rEn "${legacy_pattern}" "${legacy_targets[@]}" 2>/dev/null \
-      | grep -vE '^(prodops/framework/canonical-paths\.md|prodops/journeys/discovery/upstream-trail\.md|prodops/documentation-review\.md):' \
-      | grep -vE '^prodops/journeys/discovery/experiments/[^:]*/(upstream-trail|experiment)\.md:' \
+      | grep -vE '^(prodops/framework/canonical-paths(\.en)?\.md|prodops/journeys/discovery/upstream-trail(\.en)?\.md|prodops/documentation-review(\.en)?\.md):' \
+      | grep -vE '^prodops/journeys/discovery/experiments/[^:]*/(upstream-trail|experiment)(\.en)?\.md:' \
       || true
   )"
 fi
@@ -128,8 +128,8 @@ if have_rg; then
       -g '!.git/**' \
       -g '!node_modules/**' \
       -g '!api/node_modules/**' \
-      -g '!prodops/framework/canonical-paths.md' \
-      -g '!prodops/documentation-review.md' \
+      -g '!prodops/framework/canonical-paths*.md' \
+      -g '!prodops/documentation-review*.md' \
       -g '!PROJECT-REVIEW.md' \
       | grep -vE "${stale_annotation}" \
       || true
@@ -139,7 +139,7 @@ else
     grep -rEn --include='*.md' --exclude-dir=.git --exclude-dir=node_modules \
       "${stale_pattern}" . 2>/dev/null \
       | sed 's|^\./||' \
-      | grep -vE '^(prodops/framework/canonical-paths\.md|prodops/documentation-review\.md|PROJECT-REVIEW\.md):' \
+      | grep -vE '^(prodops/framework/canonical-paths(\.en)?\.md|prodops/documentation-review(\.en)?\.md|PROJECT-REVIEW\.md):' \
       | grep -vE "${stale_annotation}" \
       || true
   )"
