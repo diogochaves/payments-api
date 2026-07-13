@@ -1,0 +1,215 @@
+name: PR Quality Gates
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Pipeline structure
+#
+#  lint ─┐
+#  acceptance ─┤
+#  build ─┼─► (all parallel — no needs: chains, fast feedback)
+#  no_mocks ─┤
+#  prodops_consistency ─┘
+#
+#  Each job mirrors a gate defined in prodops/exec/manifest.yaml (gates:).
+#  Job names match the manifest keys so the mapping is obvious:
+#
+#  lint                 gates.lint       — ESLint over api sources, no errors
+#                                          (same criterion as the manifest gate).
+#  acceptance           gates.acceptance — e2e acceptance suites against
+#                                          LocalStack; the repo has no unit
+#                                          suites, so this is the test gate.
+#  build                gates.build      — NestJS production build compiles.
+#  no_mocks             gates.no_mocks   — No Mocks Rule: forbidden jest mock
+#                                          patterns must not appear in api/src or
+#                                          api/test. Source of the rule:
+#                                          prodops/skills/hack/references/workflow.md
+#  prodops_consistency  manifest drift   — prose docs must reference (not rewrite)
+#                                          manifest values; doctor is advisory.
+#
+#  The `smoke` gate from the manifest is conditional (bootstrap) and covered
+#  by staging-deploy.yml — it is intentionally not part of the per-PR gates.
+#
+#  Implements the layered automated PR review baseline (issue #5,
+#  PROJECT-REVIEW.md §8.2.4).
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+# One run per PR; new pushes cancel the previous run.
+concurrency:
+  group: pr-gates-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  # ── Gate: lint ──────────────────────────────────────────────────────────────
+  # Manifest: gates.lint ("cd api && npm run lint", expect exit0).
+  # `npm run lint` uses --fix, which rewrites files instead of failing — useless
+  # as a CI gate. We run eslint directly with the SAME glob pattern as the
+  # package.json lint script but WITHOUT --fix: errors fail the job, warnings
+  # do not — the same criterion the manifest gate expresses (exit 0). The
+  # codebase carries 15 pre-existing warnings; tightening to --max-warnings 0
+  # is a separate cleanup, not a gate decision.
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: api/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint (no --fix)
+        run: npx eslint "{src,apps,libs,test}/**/*.ts"
+
+  # ── Gate: acceptance ────────────────────────────────────────────────────────
+  # Manifest: gates.acceptance. The repo has no unit suites (jest on api/src
+  # finds 0 tests); the acceptance e2e suites are the test gate. They need
+  # LocalStack — the app fixture provisions DynamoDB tables even with the
+  # in-memory repository — so this mirrors staging-deploy.yml's service
+  # container pattern.
+  acceptance:
+    name: acceptance
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+
+    services:
+      localstack:
+        image: localstack/localstack:4
+        ports:
+          - 4566:4566
+        env:
+          SERVICES: dynamodb,sqs
+          DEBUG: '0'
+        options: >-
+          --health-cmd "curl -sf http://localhost:4566/_localstack/health"
+          --health-interval 5s
+          --health-timeout 10s
+          --health-retries 12
+
+    env:
+      NODE_ENV: test
+      INVOICE_REPOSITORY: memory
+      ENABLED_PAYMENT_PROVIDERS: ASAAS
+      DEFAULT_PAYMENT_PROVIDER: ASAAS
+      ASAAS_MOCK: 'true'
+      AWS_DYNAMODB_ENDPOINT: http://localhost:4566
+      AWS_SQS_ENDPOINT: http://localhost:4566
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: api/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Acceptance tests
+        run: npm run test:acceptance
+
+  # ── Gate: build ─────────────────────────────────────────────────────────────
+  # Manifest: gates.build ("cd api && npm run build", expect exit0).
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: api/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+  # ── Gate: no_mocks ──────────────────────────────────────────────────────────
+  # Manifest: gates.no_mocks (forbidden patterns in api/src + api/test,
+  # expect zero_hits). Enforces the No Mocks Rule:
+  # prodops/skills/hack/references/workflow.md
+  # Fixed-string grep (-F) — the patterns contain "." and "(" that must match
+  # literally. Zero hits = pass; any hit fails and is printed.
+  no_mocks:
+    name: no_mocks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for forbidden mock patterns
+        run: |
+          # Patterns from prodops/exec/manifest.yaml (gates.no_mocks.grep)
+          HITS=$(grep -rFn \
+            -e 'jest.fn(' \
+            -e '.mockReturnValue(' \
+            -e '.overrideProvider(' \
+            -e 'jest.mock(' \
+            api/src api/test || true)
+
+          if [ -n "$HITS" ]; then
+            echo "FAIL: forbidden mock patterns found (No Mocks Rule)."
+            echo "See prodops/skills/hack/references/workflow.md — tests must"
+            echo "exercise real implementations (in-memory repository, ASAAS_MOCK)."
+            echo ""
+            echo "$HITS"
+            exit 1
+          fi
+          echo "PASS: no forbidden mock patterns in api/src or api/test."
+
+  # ── Gate: prodops_consistency ───────────────────────────────────────────────
+  # Validates the repo against prodops/exec/manifest.yaml (prose docs must
+  # reference manifest values, not rewrite them) and runs the repo doctor.
+  prodops_consistency:
+    name: prodops_consistency
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate exec manifest
+        run: ./prodops/scripts/validate-manifest.sh
+
+      # Advisory for now: doctor gets stricter on a sibling branch and the
+      # fixes it flags land in separate branches. Flip to blocking once the
+      # fix branches are merged.
+      - name: ProdOps doctor (advisory)
+        continue-on-error: true
+        run: ./prodops/scripts/doctor.sh
