@@ -1,0 +1,84 @@
+# ============================================================================
+# ProdOps Exec Manifest — fonte única e legível por máquina do Framework
+# ============================================================================
+#
+# Regras de uso:
+#   1. Documentos em prosa REFERENCIAM valores deste arquivo — nunca os
+#      reescrevem. Duplicação de pipeline, paths ou vocabulário em prosa é
+#      considerada drift (ver prodops/scripts/validate-manifest.sh).
+#   2. Agentes (Claude Code, Copilot, Codex) leem este arquivo em vez de
+#      percorrer a cadeia de documentos do framework.
+#   3. Scripts (doctor, hooks, CI) validam o repositório CONTRA este arquivo.
+#
+# Validação: ./prodops/scripts/validate-manifest.sh
+# ============================================================================
+
+version: 1
+
+# O pipeline oficial do ProdOps Delivery (fonte: até então repetido em ~15 docs)
+pipeline:
+  ci_sync: [bootstrap, hack, sync, finish]
+  ci_async: [ship, validate, promote]
+
+# Skill executável de cada fase (invocável via /nome nos agentes)
+skills:
+  bootstrap: prodops/skills/bootstrap/SKILL.md
+  hack: prodops/skills/hack/SKILL.md
+  sync: prodops/skills/sync/SKILL.md
+  finish: prodops/skills/finish/SKILL.md
+  ship: prodops/skills/ship/SKILL.md
+  validate: prodops/skills/validate/SKILL.md
+  promote: prodops/skills/promote/SKILL.md
+  upstream: prodops/skills/upstream/SKILL.md
+  downstream: prodops/skills/downstream/SKILL.md
+
+# Localizações canônicas dos artefatos (fonte: framework/canonical-paths.md)
+paths:
+  obcs: prodops/artifacts/obcs/
+  bdd: prodops/artifacts/bdd/
+  intents: prodops/business-intents/
+  product: prodops/artifacts/product/
+  iteration_plan: prodops/artifacts/plans/iteration-plan.md
+  release_trail: prodops/artifacts/trails/release-trail.md
+  risks: prodops/journeys/assessment/risks.md
+  reliability_plans: prodops/journeys/assessment/reliability-plans/
+  event_storming: prodops/journeys/assessment/event-storming/plan.json
+  architecture: prodops/journeys/assessment/architecture/overview.md
+  experiments: prodops/journeys/discovery/experiments/
+  templates: prodops/templates/
+  cards: prodops/exec/cards/ # optional — gerado pelo /bootstrap por card
+
+# Quality gates verificáveis (comando + critério objetivo)
+gates:
+  lint:
+    cmd: "cd api && npm run lint"
+    expect: exit0
+  # não há suites unitárias no repositório (jest em api/src encontra 0 testes
+  # e sai com código 1) — o gate de testes é o acceptance abaixo
+  acceptance:
+    cmd: "./scripts/test-acceptance.sh"
+    expect: exit0
+    when: behavior_or_contract_changed
+    note: "executa as 4 suítes de aceitação; requer LocalStack (CI: service container)"
+  build:
+    cmd: "cd api && npm run build"
+    expect: exit0
+  no_mocks:
+    # fonte: prodops/skills/hack/references/workflow.md (No Mocks Rule)
+    grep: ["jest.fn(", ".mockReturnValue(", ".overrideProvider(", "jest.mock("]
+    in: [api/src, api/test]
+    expect: zero_hits
+  smoke:
+    # descritivo — mecânica em prodops/skills/payments-api-local-testing/
+    cmd: "api/scripts/start-sandbox-api.sh && POST /invoices"
+    expect: "201"
+    when: bootstrap
+
+# Vocabulário canônico (enums — corrige drift entre docs, skills e instâncias)
+vocabulary:
+  # fonte de verdade: hook commit-msg.sh (11 tipos)
+  commit_types: [feat, fix, docs, test, refactor, perf, build, ci, style, chore, revert]
+  commit_summary_max: 72
+  # gate do move-to-downstream; experimentos legados usam variantes livres
+  promotion_decision: ["Promover", "Promover com restrição", "Não promover", "Descartar"]
+  iteration_status: ["Entrou", "Adiada", "Saiu"]
